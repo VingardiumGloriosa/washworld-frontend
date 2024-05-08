@@ -1,17 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, View, Text } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import HomeScreen from "./screens/HistoryScreen";
-import HallScreen from "./screens/HallScreen";
 import NotificationScreen from "./screens/NotificationScreen";
 import ProfileScreen from "./screens/ProfileScreen";
-import HallsIcon from "./assets/svg/halls.svg";
 import HistoryIcon from "./assets/svg/history.svg";
+import HallsIcon from "./assets/svg/halls.svg";
 import NotificationIcon from "./assets/svg/notification.svg";
 import ProfileIcon from "./assets/svg/profile.svg";
 import * as Font from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
+import HallStack from "./components/HallStack"; // Adjust the path as necessary
 
 const Tab = createBottomTabNavigator();
 
@@ -21,9 +20,7 @@ export default function App() {
   useEffect(() => {
     async function loadResourcesAndData() {
       try {
-        // Keep the splash screen visible while fetching resources
         await SplashScreen.preventAutoHideAsync();
-        // Load fonts
         await Font.loadAsync({
           "Gilroy-Regular": require("./assets/fonts/Gilroy-Regular.otf"),
           "Gilroy-Medium": require("./assets/fonts/Gilroy-Medium.otf"),
@@ -33,7 +30,6 @@ export default function App() {
       } catch (e) {
         console.warn(e);
       } finally {
-        // After loading fonts, hide the splash screen
         setFontsLoaded(true);
         await SplashScreen.hideAsync();
       }
@@ -43,7 +39,6 @@ export default function App() {
   }, []);
 
   if (!fontsLoaded) {
-    // Return null or an empty View to render nothing while loading
     return null;
   }
 
@@ -83,7 +78,7 @@ export default function App() {
         })}
       >
         <Tab.Screen name="History" component={HomeScreen} />
-        <Tab.Screen name="Wash Halls" component={HallScreen} />
+        <Tab.Screen name="Wash Halls" component={HallStack} />
         <Tab.Screen name="Notifications" component={NotificationScreen} />
         <Tab.Screen name="Profile" component={ProfileScreen} />
       </Tab.Navigator>

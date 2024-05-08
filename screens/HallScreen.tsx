@@ -5,19 +5,19 @@ import {
   Image,
   StyleSheet,
   View,
-  Dimensions,
   Text,
   ActivityIndicator,
+  TouchableOpacity,
 } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import WashCard from "../components/WashCard";
 import Title from "../components/Title";
 import WashHallIcon from "../assets/svg/halls.svg";
 import LocationIcon from "../assets/svg/location.svg";
 import MapIcon from "../assets/svg/map.svg";
 import DropDownPicker from "react-native-dropdown-picker";
-import { debounce } from "lodash";
 
-//GOTTTA FETCH STUFF HERE YALL
+// Dummy data fetcher
 const fetchWashHallData = async () => {
   // dummy data
   return Array.from({ length: 10 }, (_, index) => ({
@@ -35,6 +35,7 @@ const fetchWashHallData = async () => {
 };
 
 const HallScreen = () => {
+  const navigation = useNavigation();
   const [washHallData, setWashHallData] = useState([]);
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("any");
@@ -122,7 +123,9 @@ const HallScreen = () => {
             listItemLabelStyle={styles.listItemLabel}
           />
         </View>
-        <MapIcon fill="#34B566" width={40} height={40} />
+        <TouchableOpacity onPress={() => navigation.navigate("Map")}>
+          <MapIcon fill="#34B566" width={40} height={40} />
+        </TouchableOpacity>
       </View>
       <Title text={"Wash Halls"} Icon={WashHallIcon} width={30} height={30} />
       <FlatList

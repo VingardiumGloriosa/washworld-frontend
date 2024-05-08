@@ -14,7 +14,6 @@ const LoyaltyCarousel = () => {
   }));
 
   const renderItem = ({ item }) => {
-    console.log("Rendering item:", item);
     return <LoyaltyCard title={item.title} isActive={item.isActive} />;
   };
 
