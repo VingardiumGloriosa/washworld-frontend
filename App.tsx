@@ -10,7 +10,9 @@ import NotificationIcon from "./assets/svg/notification.svg";
 import ProfileIcon from "./assets/svg/profile.svg";
 import * as Font from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
-import HallStack from "./components/HallStack"; // Adjust the path as necessary
+import HallStack from "./components/HallStack";
+import LoginScreen from "./screens/LoginScreen";
+import SignUpScreen from "./screens/SignupScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -50,16 +52,15 @@ export default function App() {
             let IconComponent;
             let iconColor = focused ? "#34B566" : "gray";
 
-            if (route.name === "History") {
+            if (route.name === "Login") {
               IconComponent = HistoryIcon;
             } else if (route.name === "Wash Halls") {
               IconComponent = HallsIcon;
-            } else if (route.name === "Notifications") {
+            } else if (route.name === "Signup") {
               IconComponent = NotificationIcon;
             } else if (route.name === "Profile") {
               IconComponent = ProfileIcon;
             }
-
             return (
               <IconComponent fill={iconColor} width={size} height={size} />
             );
@@ -77,9 +78,9 @@ export default function App() {
           headerShown: false,
         })}
       >
-        <Tab.Screen name="History" component={HomeScreen} />
+        <Tab.Screen name="Login" component={LoginScreen} />
         <Tab.Screen name="Wash Halls" component={HallStack} />
-        <Tab.Screen name="Notifications" component={NotificationScreen} />
+        <Tab.Screen name="Signup" component={SignUpScreen} />
         <Tab.Screen name="Profile" component={ProfileScreen} />
       </Tab.Navigator>
     </NavigationContainer>
