@@ -10,7 +10,9 @@ import NotificationIcon from "./assets/svg/notification.svg";
 import ProfileIcon from "./assets/svg/profile.svg";
 import * as Font from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
-import HallStack from "./components/HallStack"; // Adjust the path as necessary
+import HallStack from "./components/HallStack";
+import LoginScreen from "./screens/LoginScreen";
+import SignUpScreen from "./screens/SignupScreen";
 import { Provider } from "react-redux"
 import { store } from "./state/store"
 
@@ -53,39 +55,37 @@ export default function App() {
               let IconComponent;
               let iconColor = focused ? "#34B566" : "gray";
 
-              if (route.name === "History") {
-                IconComponent = HistoryIcon;
-              } else if (route.name === "Wash Halls") {
-                IconComponent = HallsIcon;
-              } else if (route.name === "Notifications") {
-                IconComponent = NotificationIcon;
-              } else if (route.name === "Profile") {
-                IconComponent = ProfileIcon;
-              }
-
-              return (
-                <IconComponent fill={iconColor} width={size} height={size} />
-              );
-            },
-            tabBarActiveTintColor: "#34B566",
-            tabBarInactiveTintColor: "gray",
-            tabBarLabelStyle: {
-              fontSize: 12,
-              fontFamily: "Gilroy-Medium",
-            },
-            tabBarStyle: {
-              backgroundColor: "#E6E7E9",
-              paddingBottom: 15,
-            },
-            headerShown: false,
-          })}
-        >
-          <Tab.Screen name="History" component={HomeScreen} />
-          <Tab.Screen name="Wash Halls" component={HallStack} />
-          <Tab.Screen name="Notifications" component={NotificationScreen} />
-          <Tab.Screen name="Profile" component={ProfileScreen} />
-        </Tab.Navigator>
-      </NavigationContainer>
-    </Provider>
+            if (route.name === "Login") {
+              IconComponent = HistoryIcon;
+            } else if (route.name === "Wash Halls") {
+              IconComponent = HallsIcon;
+            } else if (route.name === "Signup") {
+              IconComponent = NotificationIcon;
+            } else if (route.name === "Profile") {
+              IconComponent = ProfileIcon;
+            }
+            return (
+              <IconComponent fill={iconColor} width={size} height={size} />
+            );
+          },
+          tabBarActiveTintColor: "#34B566",
+          tabBarInactiveTintColor: "gray",
+          tabBarLabelStyle: {
+            fontSize: 12,
+            fontFamily: "Gilroy-Medium",
+          },
+          tabBarStyle: {
+            backgroundColor: "#E6E7E9",
+            paddingBottom: 15,
+          },
+          headerShown: false,
+        })}
+      >
+        <Tab.Screen name="Login" component={LoginScreen} />
+        <Tab.Screen name="Wash Halls" component={HallStack} />
+        <Tab.Screen name="Signup" component={SignUpScreen} />
+        <Tab.Screen name="Profile" component={ProfileScreen} />
+      </Tab.Navigator>
+    </NavigationContainer>
   );
 }
