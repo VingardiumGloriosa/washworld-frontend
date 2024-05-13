@@ -3,7 +3,6 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import HomeScreen from "./screens/HistoryScreen";
 import NotificationScreen from "./screens/NotificationScreen";
-import ProfileScreen from "./screens/ProfileScreen";
 import HistoryIcon from "./assets/svg/history.svg";
 import HallsIcon from "./assets/svg/halls.svg";
 import NotificationIcon from "./assets/svg/notification.svg";
@@ -13,6 +12,7 @@ import * as SplashScreen from "expo-splash-screen";
 import HallStack from "./components/HallStack";
 import LoginScreen from "./screens/LoginScreen";
 import SignUpScreen from "./screens/SignupScreen";
+import ProfileStack from "./components/ProfileStack";
 
 const Tab = createBottomTabNavigator();
 
@@ -61,9 +61,7 @@ export default function App() {
             } else if (route.name === "Profile") {
               IconComponent = ProfileIcon;
             }
-            return (
-              <IconComponent fill={iconColor} width={size} height={size} />
-            );
+            return <IconComponent fill={iconColor} width={size} height={size} />;
           },
           tabBarActiveTintColor: "#34B566",
           tabBarInactiveTintColor: "gray",
@@ -81,7 +79,7 @@ export default function App() {
         <Tab.Screen name="Login" component={LoginScreen} />
         <Tab.Screen name="Wash Halls" component={HallStack} />
         <Tab.Screen name="Signup" component={SignUpScreen} />
-        <Tab.Screen name="Profile" component={ProfileScreen} />
+        <Tab.Screen name="Profile" component={ProfileStack} />
       </Tab.Navigator>
     </NavigationContainer>
   );
