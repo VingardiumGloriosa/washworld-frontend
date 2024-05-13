@@ -1,27 +1,55 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   StyleSheet,
   View,
   Text,
   TextInput,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import Logo from "../assets/svg/logo.svg";
+import { useDispatch } from "react-redux";
+import { loginAsync } from "../state/slices/userSlice"; // Assuming the file path is correct
 
 export default function Login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const dispatch = useDispatch();
+
+  const handleLogin = async () => {
+    try {
+      // Dispatch the loginAsync thunk action creator with user credentials
+      await loginAsync({ email, password });
+      // If login is successful, you can navigate the user to another screen or perform any other action
+    } catch (error) {
+      console.error('Login failed:', error);
+      Alert.alert('Error', 'Login failed. Please check your credentials.');
+      // Handle login failure, e.g., display an error message to the user
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Logo width={160} height={80} />
       <Text style={styles.subHeader}>Log in</Text>
 
-      <TextInput style={styles.input} placeholder="Enter email" />
+      <TextInput
+        style={styles.input}
+        placeholder="Enter email"
+        value={email}
+        onChangeText={setEmail}
+        keyboardType="email-address"
+        autoCapitalize="none"
+      />
       <TextInput
         style={styles.input}
         placeholder="Enter password"
+        value={password}
+        onChangeText={setPassword}
         secureTextEntry
       />
 
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity style={styles.button} onPress={handleLogin}>
         <Text style={styles.buttonText}>Log in</Text>
       </TouchableOpacity>
 
@@ -39,11 +67,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     padding: 20,
-  },
-  header: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 20,
   },
   subHeader: {
     fontSize: 18,

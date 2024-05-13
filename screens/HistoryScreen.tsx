@@ -36,7 +36,7 @@ export default function HistoryScreen() {
       {
         id: 2,
         locationName: "Heaven",
-        updatedAt: "Tomorrow",
+        updatedAt: "Today",
         imageSrc: require("../assets/images/hall.jpeg"),
       },
       {
