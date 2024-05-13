@@ -7,8 +7,13 @@ import {
   TouchableOpacity,
 } from "react-native";
 import Logo from "../assets/svg/logo.svg";
+import { useNavigation } from "@react-navigation/native";
 
 export default function SignupScreen() {
+
+  const navigation = useNavigation();
+
+  
   return (
     <View style={styles.container}>
       <Logo width={160} height={80} />
@@ -28,7 +33,7 @@ export default function SignupScreen() {
       <TouchableOpacity style={styles.button}>
         <Text style={styles.buttonText}>Sign up</Text>
       </TouchableOpacity>
-      <TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.navigate("LoginScreen")}>
         <Text style={styles.loginText}>Already a customer? Log in</Text>
       </TouchableOpacity>
     </View>

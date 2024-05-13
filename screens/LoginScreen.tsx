@@ -7,19 +7,30 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
+import { useNavigation } from '@react-navigation/native';
 import Logo from "../assets/svg/logo.svg";
 import { useDispatch } from "react-redux";
 import { loginAsync } from "../state/slices/userSlice"; // Assuming the file path is correct
+import LoginSignupStack from "../components/LoginSignupStack";
+import { StackNavigationProp } from '@react-navigation/stack';
 
-export default function Login() {
+export type RootStackParamList = {
+  YourScreen: { id: number } | undefined;
+};
+
+export default function Login( ) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
+  // const navigation = useNavigation<StackNavigationProp<RootStackParamList>>()
+  const navigation = useNavigation();
+
 
   const handleLogin = async () => {
     try {
       // Dispatch the loginAsync thunk action creator with user credentials
       await loginAsync({ email, password });
+
       // If login is successful, you can navigate the user to another screen or perform any other action
     } catch (error) {
       console.error('Login failed:', error);
@@ -27,6 +38,7 @@ export default function Login() {
       // Handle login failure, e.g., display an error message to the user
     }
   };
+  
 
   return (
     <View style={styles.container}>
@@ -53,7 +65,7 @@ export default function Login() {
         <Text style={styles.buttonText}>Log in</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.navigate("SignupScreen")}>
         <Text style={styles.loginText}>Not a customer? Sign up</Text>
       </TouchableOpacity>
     </View>
