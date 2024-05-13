@@ -10,12 +10,12 @@ import NotificationIcon from "./assets/svg/notification.svg";
 import ProfileIcon from "./assets/svg/profile.svg";
 import * as Font from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
-import HallStack from "./components/HallStack";
+import HallStack from "./navigation/HallStack";
 import LoginScreen from "./screens/LoginScreen";
 import SignUpScreen from "./screens/SignupScreen";
 import { Provider } from "react-redux"
 import { store } from "./state/store"
-import LoginSignupStack from './components/LoginSignupStack';
+import LoginSignupStack from './navigation/LoginSignupStack';
 
 const Tab = createBottomTabNavigator();
 

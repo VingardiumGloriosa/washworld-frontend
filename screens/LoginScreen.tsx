@@ -11,7 +11,7 @@ import { useNavigation } from '@react-navigation/native';
 import Logo from "../assets/svg/logo.svg";
 import { useDispatch } from "react-redux";
 import { loginAsync } from "../state/slices/userSlice"; // Assuming the file path is correct
-import LoginSignupStack from "../components/LoginSignupStack";
+import LoginSignupStack from "../navigation/LoginSignupStack";
 import { StackNavigationProp } from '@react-navigation/stack';
 
 export type RootStackParamList = {
