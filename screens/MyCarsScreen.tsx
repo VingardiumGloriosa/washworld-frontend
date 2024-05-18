@@ -8,33 +8,42 @@ const MyCarsScreen = () => {
   const navigation = useNavigation();
 
   return (
-    <View style={styles.container}>
-      <TouchableOpacity style={styles.arrowContainer} onPress={() => navigation.goBack()}>
-        <ArrowIcon width={25} height={25} fill={"#808285"} />
-      </TouchableOpacity>
+    <ScrollView contentContainerStyle={styles.scrollViewContainer}>
+      <View style={styles.container}>
+        <TouchableOpacity style={styles.arrowContainer} onPress={() => navigation.goBack()}>
+          <ArrowIcon width={25} height={25} fill={"#808285"} />
+        </TouchableOpacity>
 
-      {/* Title and Car Icon */}
-      <View style={styles.titleContainer}>
-        <Text style={styles.title}>My Cars</Text>
-        <CarIcon width={30} height={30} fill={"black"} />
+        {/* Title and Car Icon */}
+        <View style={styles.titleContainer}>
+          <Text style={styles.title}>My Cars</Text>
+          <CarIcon width={30} height={30} fill={"black"} />
+        </View>
+
+        {/* Container with Background Color */}
+        <View style={styles.contentContainer}>
+          {/* QR Code Image */}
+          <Image source={require("../assets/images/qr-code.png")} style={styles.qrCodeImage} />
+
+          {/* Car Image */}
+          <Image source={require("../assets/images/toyota.jpg")} style={styles.carImage} />
+
+          {/* License Plate Text */}
+          <Text style={styles.licensePlate}>License Plate: ABC123</Text>
+        </View>
+
+        <TouchableOpacity style={styles.button}>
+          <Text style={styles.buttonText}>Add car</Text>
+        </TouchableOpacity>
       </View>
-
-      {/* Container with Background Color */}
-      <View style={styles.contentContainer}>
-        {/* QR Code Image */}
-        <Image source={require("../assets/images/qr-code.png")} style={styles.qrCodeImage} />
-
-        {/* Car Image */}
-        <Image source={require("../assets/images/toyota.jpg")} style={styles.carImage} />
-
-        {/* License Plate Text */}
-        <Text style={styles.licensePlate}>License Plate: ABC123</Text>
-      </View>
-    </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
+  scrollViewContainer: {
+    flexGrow: 1,
+  },
   container: {
     flex: 1,
     backgroundColor: "white",
@@ -81,6 +90,23 @@ const styles = StyleSheet.create({
   licensePlate: {
     fontFamily: "Gilroy-Heavy",
     fontSize: 20,
+  },
+  button: {
+    backgroundColor: "#808285", // Default color
+    color: "white",
+    fontSize: 16,
+    fontWeight: "bold",
+    alignItems: "center",
+    paddingVertical: 15,
+    marginHorizontal: 20,
+    marginBottom: 20,
+    marginTop: 20,
+    width: "90%",
+  },
+  buttonText: {
+    color: "white",
+    fontSize: 16,
+    fontFamily: "Gilroy-Medium",
   },
 });
 

@@ -13,6 +13,8 @@ import HallStack from "./components/HallStack";
 import LoginScreen from "./screens/LoginScreen";
 import SignUpScreen from "./screens/SignupScreen";
 import ProfileStack from "./components/ProfileStack";
+import { Provider } from "react-redux";
+import { store } from "./store/store";
 
 const Tab = createBottomTabNavigator();
 
@@ -45,42 +47,44 @@ export default function App() {
   }
 
   return (
-    <NavigationContainer>
-      <Tab.Navigator
-        screenOptions={({ route }) => ({
-          tabBarIcon: ({ focused, color, size }) => {
-            let IconComponent;
-            let iconColor = focused ? "#34B566" : "gray";
+    <Provider store={store}>
+      <NavigationContainer>
+        <Tab.Navigator
+          screenOptions={({ route }) => ({
+            tabBarIcon: ({ focused, color, size }) => {
+              let IconComponent;
+              let iconColor = focused ? "#34B566" : "gray";
 
-            if (route.name === "Login") {
-              IconComponent = HistoryIcon;
-            } else if (route.name === "Wash Halls") {
-              IconComponent = HallsIcon;
-            } else if (route.name === "Signup") {
-              IconComponent = NotificationIcon;
-            } else if (route.name === "Profile") {
-              IconComponent = ProfileIcon;
-            }
-            return <IconComponent fill={iconColor} width={size} height={size} />;
-          },
-          tabBarActiveTintColor: "#34B566",
-          tabBarInactiveTintColor: "gray",
-          tabBarLabelStyle: {
-            fontSize: 12,
-            fontFamily: "Gilroy-Medium",
-          },
-          tabBarStyle: {
-            backgroundColor: "#E6E7E9",
-            paddingBottom: 15,
-          },
-          headerShown: false,
-        })}
-      >
-        <Tab.Screen name="Login" component={LoginScreen} />
-        <Tab.Screen name="Wash Halls" component={HallStack} />
-        <Tab.Screen name="Signup" component={SignUpScreen} />
-        <Tab.Screen name="Profile" component={ProfileStack} />
-      </Tab.Navigator>
-    </NavigationContainer>
+              if (route.name === "Login") {
+                IconComponent = HistoryIcon;
+              } else if (route.name === "Wash Halls") {
+                IconComponent = HallsIcon;
+              } else if (route.name === "Signup") {
+                IconComponent = NotificationIcon;
+              } else if (route.name === "Profile") {
+                IconComponent = ProfileIcon;
+              }
+              return <IconComponent fill={iconColor} width={size} height={size} />;
+            },
+            tabBarActiveTintColor: "#34B566",
+            tabBarInactiveTintColor: "gray",
+            tabBarLabelStyle: {
+              fontSize: 12,
+              fontFamily: "Gilroy-Medium",
+            },
+            tabBarStyle: {
+              backgroundColor: "#E6E7E9",
+              paddingBottom: 15,
+            },
+            headerShown: false,
+          })}
+        >
+          <Tab.Screen name="Login" component={LoginScreen} />
+          <Tab.Screen name="Wash Halls" component={HallStack} />
+          <Tab.Screen name="Signup" component={SignUpScreen} />
+          <Tab.Screen name="Profile" component={ProfileStack} />
+        </Tab.Navigator>
+      </NavigationContainer>
+    </Provider>
   );
 }

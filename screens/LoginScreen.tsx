@@ -1,27 +1,42 @@
-import React from "react";
-import {
-  StyleSheet,
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-} from "react-native";
+import React, { useEffect, useState } from "react";
+import { StyleSheet, View, Text, TextInput, TouchableOpacity } from "react-native";
 import Logo from "../assets/svg/logo.svg";
+import { AppDispatch, RootState } from "../store/store";
+import { useDispatch, useSelector } from "react-redux";
+import { login, setToken } from "../store/userSlice";
+import * as SecureStore from "expo-secure-store";
 
 export default function Login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const dispatch = useDispatch<AppDispatch>();
+  const token = useSelector((state: RootState) => state.user.token);
+
+  const handleLogin = () => {
+    // Perform login logic here
+    dispatch(login({ email: email, password: password }));
+    console.log("Logging in with email:", email, "and password:", password);
+  };
+
+  useEffect(() => {
+    async function readFromSecureStore() {
+      const token = await SecureStore.getItemAsync("token");
+      console.log("read token from SecureStore", token);
+
+      token && dispatch(setToken(token));
+    }
+    readFromSecureStore();
+  }, []);
+
   return (
     <View style={styles.container}>
       <Logo width={160} height={80} />
       <Text style={styles.subHeader}>Log in</Text>
 
-      <TextInput style={styles.input} placeholder="Enter email" />
-      <TextInput
-        style={styles.input}
-        placeholder="Enter password"
-        secureTextEntry
-      />
+      <TextInput style={styles.input} placeholder="Enter email" value={email} onChangeText={setEmail} />
+      <TextInput style={styles.input} placeholder="Enter password" secureTextEntry value={password} onChangeText={setPassword} />
 
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity style={styles.button} onPress={handleLogin}>
         <Text style={styles.buttonText}>Log in</Text>
       </TouchableOpacity>
 
