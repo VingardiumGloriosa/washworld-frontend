@@ -1,9 +1,15 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { AppThunk } from '../store'; // Assuming you have defined AppThunk type
-import { createUser, loginUser  } from '../api'; // Assuming you have an API function to fetch current user data
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import { UserQueries } from "../userQueries";
+import * as SecureStore from "expo-secure-store";
 
+interface UserState {
+  currentUser: User | null;
+  token: string | null;
+  loading: boolean;
+  error: string | null;
+}
 
-export interface User {
+interface User {
   id: number;
   email: string;
   photo: string;
@@ -12,45 +18,60 @@ export interface User {
   membership_id: number;
 }
 
-interface UserState {
-  currentUser: User | null;
-}
-
 const initialState: UserState = {
   currentUser: null,
+  token: null,
+  loading: false,
+  error: null,
 };
 
 const userSlice = createSlice({
-  name: 'user',
+  name: "user",
   initialState,
   reducers: {
     setCurrentUser: (state, action: PayloadAction<User | null>) => {
       state.currentUser = action.payload;
     },
+    setToken: (state, action: PayloadAction<string>) => {
+      state.token = action.payload;
+    },
+    logout: (state) => {
+      state.token = null;
+      console.log("Logging out");
+
+      SecureStore.deleteItemAsync("token");
+    },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(signup.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    });
+    builder.addCase(signup.fulfilled, (state, action) => {
+      state.loading = false;
+      state.currentUser = action.payload;
+      state.error = null;
+      state.token = action.payload.token;
+    });
+    builder.addCase(signup.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.error.message;
+    });
   },
 });
 
-export const { setCurrentUser } = userSlice.actions;
+export const signup = createAsyncThunk("user/signup", async (credentials: { username: string; email: string; password: string }) => {
+  console.log("signup thunk", credentials);
+  const response = await UserQueries.signup(credentials.username, credentials.email, credentials.password);
+  return response;
+});
 
-// Thunk action creator for user sign up
-export const signUpAsync = (userData: any): AppThunk => async (dispatch) => {
-  try {
-    const newUser = await createUser(userData); // Assuming createUser function is defined in the API
-    dispatch(setCurrentUser(newUser));
-  } catch (error) {
-    console.error('Error signing up:', error);
-    // Handle error, e.g., show an error message to the user
-  }
-};
+export const login = createAsyncThunk("user/login", async (credentials: { email: string; password: string }) => {
+  console.log("login thunk", credentials);
+  const response = await UserQueries.login(credentials.email, credentials.password);
+  return response;
+});
 
-// Thunk action creator for user login
-export const loginAsync = (userData: any): AppThunk => async (dispatch) => {
-  try {
-    const user = await loginUser(userData); // Assuming loginUser function is defined in the API
-    dispatch(setCurrentUser(user));
-  } catch (error) {
-    console.error('Error logging in:', error);
-  }
-};
+export const { setCurrentUser, setToken, logout } = userSlice.actions;
 
 export default userSlice.reducer;
