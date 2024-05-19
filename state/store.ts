@@ -1,5 +1,4 @@
 import { configureStore } from "@reduxjs/toolkit";
-import thunk from "redux-thunk";
 import membershipTypesReducer from "./slices/membershipTypesSlice";
 import loyaltyRewardTypesReducer from "./slices/loyaltyRewardTypesSlice";
 import locationsReducer from "./slices/locationsSlice";
