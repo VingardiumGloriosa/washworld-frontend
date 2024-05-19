@@ -1,10 +1,9 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { UserQueries } from "../api/userQueries";
+import { UserQueries } from "../userQueries";
 import * as SecureStore from "expo-secure-store";
 
 interface UserState {
-  username: User | null;
-  email: string | null;
+  currentUser: User | null;
   token: string | null;
   loading: boolean;
   error: string | null;
@@ -12,34 +11,27 @@ interface UserState {
 
 interface User {
   id: number;
-  username: string;
   email: string;
+  photo: string;
+  password: string;
+  full_name: string;
+  membership_id: number;
 }
 
 const initialState: UserState = {
-  username: null,
-  email: null,
+  currentUser: null,
   token: null,
   loading: false,
   error: null,
 };
 
-export const signup = createAsyncThunk("user/signup", async (credentials: { username: string; email: string; password: string }) => {
-  console.log("signup thunk", credentials);
-  const response = await UserQueries.signup(credentials.username, credentials.email, credentials.password);
-  return response;
-});
-
-export const login = createAsyncThunk("user/login", async (credentials: { email: string; password: string }) => {
-  console.log("login thunk", credentials);
-  const response = await UserQueries.login(credentials.email, credentials.password);
-  return response;
-});
-
 const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
+    setCurrentUser: (state, action: PayloadAction<User | null>) => {
+      state.currentUser = action.payload;
+    },
     setToken: (state, action: PayloadAction<string>) => {
       state.token = action.payload;
     },
@@ -57,7 +49,7 @@ const userSlice = createSlice({
     });
     builder.addCase(signup.fulfilled, (state, action) => {
       state.loading = false;
-      state.username = action.payload;
+      state.currentUser = action.payload;
       state.error = null;
       state.token = action.payload.token;
     });
@@ -68,6 +60,18 @@ const userSlice = createSlice({
   },
 });
 
-export const { setToken, logout } = userSlice.actions;
+export const signup = createAsyncThunk("user/signup", async (credentials: { username: string; email: string; password: string }) => {
+  console.log("signup thunk", credentials);
+  const response = await UserQueries.signup(credentials.username, credentials.email, credentials.password);
+  return response;
+});
+
+export const login = createAsyncThunk("user/login", async (credentials: { email: string; password: string }) => {
+  console.log("login thunk", credentials);
+  const response = await UserQueries.login(credentials.email, credentials.password);
+  return response;
+});
+
+export const { setCurrentUser, setToken, logout } = userSlice.actions;
 
 export default userSlice.reducer;

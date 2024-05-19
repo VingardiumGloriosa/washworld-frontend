@@ -1,16 +1,24 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View, Text, TextInput, TouchableOpacity } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import Logo from "../assets/svg/logo.svg";
-import { AppDispatch, RootState } from "../store/store";
+import { AppDispatch, RootState } from "../state/store";
 import { useDispatch, useSelector } from "react-redux";
-import { login, setToken } from "../store/userSlice";
+import { login, setToken } from "../state/slices/userSlice";
 import * as SecureStore from "expo-secure-store";
+import LoginSignupStack from "../navigation/LoginSignupStack";
+import { StackNavigationProp } from "@react-navigation/stack";
+
+export type RootStackParamList = {
+  YourScreen: { id: number } | undefined;
+};
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useDispatch<AppDispatch>();
-  const token = useSelector((state: RootState) => state.user.token);
+  const token = useSelector((state: RootState) => state.users.token);
+  const navigation = useNavigation();
 
   const handleLogin = () => {
     // Perform login logic here
@@ -40,7 +48,7 @@ export default function Login() {
         <Text style={styles.buttonText}>Log in</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.navigate("SignupScreen")}>
         <Text style={styles.loginText}>Not a customer? Sign up</Text>
       </TouchableOpacity>
     </View>

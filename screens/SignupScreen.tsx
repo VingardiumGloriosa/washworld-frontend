@@ -1,21 +1,34 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View, Text, TextInput, TouchableOpacity } from "react-native";
 import Logo from "../assets/svg/logo.svg";
-import { AppDispatch } from "../store/store";
+import { AppDispatch } from "../state/store";
 import { useDispatch } from "react-redux";
-import { setToken, signup } from "../store/userSlice";
+import { setToken, signup } from "../state/slices/userSlice";
 import * as SecureStore from "expo-secure-store";
+import { useNavigation } from "@react-navigation/native";
 
 export default function SignupScreen() {
+  const navigation = useNavigation();
+
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useDispatch<AppDispatch>();
 
-  const handleSignup = () => {
+  const handleSignup = async () => {
     // Perform signup logic here
     dispatch(signup({ username: username, email: email, password: password }));
     console.log("Signing up with username:", username, "email:", email, "and password:", password);
+
+    // Simulate token creation (replace this with actual token from your API response)
+    const token = "temporarytoken123";
+
+    // Store the token in SecureStore
+    await SecureStore.setItemAsync("token", token);
+    console.log("Token created and stored:", token);
+
+    // Dispatch the token to the Redux store
+    dispatch(setToken(token));
   };
 
   useEffect(() => {
@@ -43,7 +56,7 @@ export default function SignupScreen() {
       <TouchableOpacity style={styles.button} onPress={handleSignup}>
         <Text style={styles.buttonText}>Sign up</Text>
       </TouchableOpacity>
-      <TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.navigate("LoginScreen")}>
         <Text style={styles.loginText}>Already a customer? Log in</Text>
       </TouchableOpacity>
     </View>

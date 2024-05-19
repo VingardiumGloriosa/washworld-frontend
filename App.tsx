@@ -9,12 +9,12 @@ import NotificationIcon from "./assets/svg/notification.svg";
 import ProfileIcon from "./assets/svg/profile.svg";
 import * as Font from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
-import HallStack from "./components/HallStack";
-import LoginScreen from "./screens/LoginScreen";
-import SignUpScreen from "./screens/SignupScreen";
-import ProfileStack from "./components/ProfileStack";
+import HallStack from "./navigation/HallStack";
+import ProfileStack from "./navigation/ProfileStack";
 import { Provider } from "react-redux";
-import { store } from "./store/store";
+import { store } from "./state/store";
+import LoginSignupStack from "./navigation/LoginSignupStack";
+import SignupScreen from "./screens/SignupScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -79,9 +79,9 @@ export default function App() {
             headerShown: false,
           })}
         >
-          <Tab.Screen name="Login" component={LoginScreen} />
+          <Tab.Screen name="Login" component={LoginSignupStack} />
           <Tab.Screen name="Wash Halls" component={HallStack} />
-          <Tab.Screen name="Signup" component={SignUpScreen} />
+          <Tab.Screen name="Signup" component={SignupScreen} />
           <Tab.Screen name="Profile" component={ProfileStack} />
         </Tab.Navigator>
       </NavigationContainer>
