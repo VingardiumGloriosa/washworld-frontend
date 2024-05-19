@@ -1,4 +1,4 @@
-import { configureStore } from "@reduxjs/toolkit";
+import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit";
 import membershipTypesReducer from "./slices/membershipTypesSlice";
 import loyaltyRewardTypesReducer from "./slices/loyaltyRewardTypesSlice";
 import locationsReducer from "./slices/locationsSlice";
@@ -8,8 +8,6 @@ import usersReducer from "./slices/userSlice";
 import membershipsReducer from "./slices/membershipsSlice";
 import carsReducer from "./slices/carsSlice";
 import loyaltyRewardsReducer from "./slices/loyaltyRewardsSlice";
-import { ThunkAction } from "@reduxjs/toolkit";
-import { Action } from "redux";
 
 export const store = configureStore({
   reducer: {

@@ -72,7 +72,7 @@ export const getMembership = async () => {
 };
 
 // Function to get cars
-export const getCars = async () => {
+export const getCars = async (): Promise<Car[]> => {
   try {
     const response = await axios.get(`${BASE_URL}/cars`);
     return response.data;

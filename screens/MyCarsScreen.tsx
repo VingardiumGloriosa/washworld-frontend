@@ -3,6 +3,9 @@ import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, Modal, Tex
 import { useNavigation } from "@react-navigation/native";
 import ArrowIcon from "../assets/svg/leftArrow.svg";
 import CarIcon from "../assets/svg/car.svg";
+import { useDispatch, useSelector } from "react-redux";
+import { addCarAsync, fetchCarsAsync } from "../state/slices/carsSlice";
+import { RootState } from "../state/store";
 
 // Placeholder function to get user ID from session
 const getUserID = () => {
@@ -12,34 +15,30 @@ const getUserID = () => {
 
 const MyCarsScreen = () => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const cars = useSelector((state: RootState) => state.cars.cars);
 
   const [modalVisible, setModalVisible] = useState(false);
   const [carImageLink, setCarImageLink] = useState("");
   const [licensePlate, setLicensePlate] = useState("");
-  const [cars, setCars] = useState([]);
   const userID = getUserID();
 
   useEffect(() => {
-    fetchCars();
-  }, []);
-
-  const fetchCars = async () => {
-    try {
-      // Replace this with your actual API call
-      const response = await fetch("API_ENDPOINT");
-      const data = await response.json();
-      setCars(data);
-    } catch (error) {
-      console.error("Error fetching car data:", error);
-    }
-  };
+    dispatch(fetchCarsAsync());
+  }, [dispatch]);
 
   const handleAddCar = () => {
     console.log("add car function");
     console.log("Car Image Link:", carImageLink, "License Plate:", licensePlate, "User ID:", userID);
 
-    // add car logic here
-    //dispatch(addCar({ carImageLink, licensePlate }));
+    const newCar = {
+      id: cars.length + 1, // Temporary ID, should be replaced by backend-generated ID
+      user_id: getUserID(),
+      licensePlate: licensePlate,
+      carImageLink: carImageLink,
+    };
+
+    dispatch(addCarAsync(newCar));
 
     setCarImageLink("");
     setLicensePlate("");
@@ -69,6 +68,7 @@ const MyCarsScreen = () => {
           <CarIcon width={30} height={30} fill={"black"} />
         </View>
 
+        {/* Temporary Car List */}
         <View style={styles.carListContainer}>
           {/* Container with Background Color */}
           <View style={styles.carCardContainer}>
@@ -94,6 +94,7 @@ const MyCarsScreen = () => {
           </View>
         </View>
 
+        {/* Dynamic Car List */}
         <View style={styles.carListContainer}>
           {/* Container with Background Color */}
           {cars.map((car, index) => (
