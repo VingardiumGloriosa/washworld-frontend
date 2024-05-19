@@ -1,36 +1,59 @@
-import React from "react";
-import {
-  StyleSheet,
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-} from "react-native";
+import React, { useEffect, useState } from "react";
+import { StyleSheet, View, Text, TextInput, TouchableOpacity } from "react-native";
 import Logo from "../assets/svg/logo.svg";
+import { AppDispatch } from "../state/store";
+import { useDispatch } from "react-redux";
+import { setToken, signup } from "../state/slices/userSlice";
+import * as SecureStore from "expo-secure-store";
 import { useNavigation } from "@react-navigation/native";
 
 export default function SignupScreen() {
-
   const navigation = useNavigation();
 
-  
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const dispatch = useDispatch<AppDispatch>();
+
+  const handleSignup = async () => {
+    // Perform signup logic here
+    dispatch(signup({ username: username, email: email, password: password }));
+    console.log("Signing up with username:", username, "email:", email, "and password:", password);
+
+    // Simulate token creation (replace this with actual token from your API response)
+    const token = "temporarytoken123";
+
+    // Store the token in SecureStore
+    await SecureStore.setItemAsync("token", token);
+    console.log("Token created and stored:", token);
+
+    // Dispatch the token to the Redux store
+    dispatch(setToken(token));
+  };
+
+  useEffect(() => {
+    async function load() {
+      const token = await SecureStore.getItemAsync("token");
+      console.log("read token from SecureStore", token);
+
+      dispatch(setToken(token || ""));
+    }
+    load();
+  }, []);
+
   return (
     <View style={styles.container}>
       <Logo width={160} height={80} />
       <Text style={styles.subHeader}>Sign up</Text>
-      <TextInput style={styles.input} placeholder="Full name" />
-      <TextInput style={styles.input} placeholder="Enter email" />
-      <TextInput
-        style={styles.input}
-        placeholder="Enter password"
-        secureTextEntry
-      />
-      <TextInput
+      <TextInput style={styles.input} placeholder="Full name" value={username} onChangeText={setUsername} />
+      <TextInput style={styles.input} placeholder="Enter email" value={email} onChangeText={setEmail} />
+      <TextInput style={styles.input} placeholder="Enter password" secureTextEntry value={password} onChangeText={setPassword} />
+      {/* <TextInput
         style={styles.input}
         placeholder="Repeat password"
         secureTextEntry
-      />
-      <TouchableOpacity style={styles.button}>
+      />    */}
+      <TouchableOpacity style={styles.button} onPress={handleSignup}>
         <Text style={styles.buttonText}>Sign up</Text>
       </TouchableOpacity>
       <TouchableOpacity onPress={() => navigation.navigate("LoginScreen")}>

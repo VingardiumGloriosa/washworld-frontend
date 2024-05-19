@@ -1,17 +1,14 @@
 // api.ts
-import axios from 'axios';
-import { Car } from './slices/carsSlice';
-import { User } from './slices/userSlice';
-
-
+import axios from "axios";
+import { Car } from "./slices/carsSlice";
 
 // Base URL of your API
-const BASE_URL = 'https://example.com/api';
+const BASE_URL = "https://example.com/api";
 
 // Example function to handle errors
 const handleError = (error: any) => {
-  console.error('API request failed:', error);
-  throw new Error('API request failed');
+  console.error("API request failed:", error);
+  throw new Error("API request failed");
 };
 
 // Function to get membership types
@@ -64,26 +61,6 @@ export const getWashHalls = async () => {
   }
 };
 
-// Function to create a new user
-export const createUser = async (userData: any): Promise<any> => {
-    try {
-      const response = await axios.post(`${BASE_URL}/signup`, userData);
-      return response.data;
-    } catch (error) {
-      handleError(error);
-    }
-  };
-  
-  // Function to authenticate and login a user
-  export const loginUser = async (userData: any): Promise<any> => {
-    try {
-      const response = await axios.post(`${BASE_URL}/login`, userData);
-      return response.data;
-    } catch (error) {
-      handleError(error);
-    }
-  };
-
 // Function to get memberships
 export const getMembership = async () => {
   try {
@@ -106,13 +83,13 @@ export const getCars = async () => {
 
 // Function to add a car to the database
 export const addCarToDatabase = async (car: Car): Promise<Car> => {
-    try {
-      const response = await axios.post(`${BASE_URL}/cars`, car);
-      return response.data;
-    } catch (error) {
-      handleError(error);
-    }
-  };
+  try {
+    const response = await axios.post(`${BASE_URL}/cars`, car);
+    return response.data;
+  } catch (error) {
+    handleError(error);
+  }
+};
 
 // Function to get loyalty rewards
 export const getLoyaltyRewards = async () => {
