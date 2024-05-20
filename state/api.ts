@@ -1,17 +1,14 @@
 // api.ts
-import axios from 'axios';
-import { Car } from './slices/carsSlice';
-import { User } from './slices/userSlice';
-
-
+import axios from "axios";
+import { Car } from "./slices/carsSlice";
 
 // Base URL of your API
 const API_URL = 'https://localhost:3005';
 
 // Example function to handle errors
 const handleError = (error: any) => {
-  console.error('API request failed:', error);
-  throw new Error('API request failed');
+  console.error("API request failed:", error);
+  throw new Error("API request failed");
 };
 
 

@@ -3,7 +3,6 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import HomeScreen from "./screens/HistoryScreen";
 import NotificationScreen from "./screens/NotificationScreen";
-import ProfileScreen from "./screens/ProfileScreen";
 import HistoryIcon from "./assets/svg/history.svg";
 import HallsIcon from "./assets/svg/halls.svg";
 import NotificationIcon from "./assets/svg/notification.svg";
@@ -16,6 +15,7 @@ import SignUpScreen from "./screens/SignupScreen";
 import { Provider } from "react-redux"
 import { store } from "./state/store"
 import LoginSignupStack from './navigation/LoginSignupStack';
+import ProfileStack from "./navigation/ProfileStack";
 
 const Tab = createBottomTabNavigator();
 
@@ -85,7 +85,7 @@ export default function App() {
           <Tab.Screen name="Login" component={LoginSignupStack} />
           <Tab.Screen name="Wash Halls" component={HallStack} />
           <Tab.Screen name="Notifications" component={NotificationScreen} />
-          <Tab.Screen name="Profile" component={ProfileScreen} />
+          <Tab.Screen name="Profile" component={ProfileStack} />
         </Tab.Navigator>
       </NavigationContainer>
     </Provider>

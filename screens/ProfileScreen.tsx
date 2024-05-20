@@ -1,32 +1,28 @@
 import React from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
 const ProfileScreen = () => {
+  const navigation = useNavigation();
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Image
-          source={require("../assets/images/hall.jpeg")}
-          style={styles.profileImage}
-        />
+        <Image source={require("../assets/images/profile-pic.png")} style={styles.profileImage} />
         <Text style={styles.userName}>Carrie Washington</Text>
         <Text style={styles.loyaltyText}>17 loyalty rewards claimed</Text>
       </View>
       <View style={styles.menu}>
-        <TouchableOpacity
-          style={[styles.button, { backgroundColor: "#34B566" }]}
-        >
+        <TouchableOpacity style={[styles.button, { backgroundColor: "#34B566" }]} onPress={() => navigation.navigate("MyMemberships")}>
           <Text style={styles.buttonText}>My Memberships</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("MyCars")}>
           <Text style={styles.buttonText}>My Cars</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.button}>
           <Text style={styles.buttonText}>History</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.button, { backgroundColor: "#57585A" }]}
-        >
+        <TouchableOpacity style={[styles.button, { backgroundColor: "#57585A" }]}>
           <Text style={styles.buttonText}>Log Out</Text>
         </TouchableOpacity>
       </View>
