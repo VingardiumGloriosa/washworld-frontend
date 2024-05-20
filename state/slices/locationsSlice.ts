@@ -1,41 +1,85 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { getLocations } from '../api'; // Import your API function to fetch locations
-import { AppThunk } from '../store';
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import { fetchLocation, getDistance, getDistances } from "../api";
 
-interface Location {
+export interface Location {
   id: number;
-  photo_url: string;
   name: string;
   address: string;
-  maps_url: string;
+  mapsUrl: string;
+  distance?: number;
+  washHalls: {
+    available: number;
+    total: number;
+    outOfService: number;
+    nextAvailable: string | null;
+  };
+  selfWashHalls: {
+    available: number;
+    total: number;
+    outOfService: number;
+    nextAvailable: string | null;
+  };
 }
 
-interface LocationsState {
+interface LocationState {
   locations: Location[];
+  loading: boolean;
+  error: string | null;
 }
 
-const initialState: LocationsState = {
+const initialState: LocationState = {
   locations: [],
+  loading: false,
+  error: null,
 };
 
-const locationsSlice = createSlice({
-  name: 'locations',
+// Thunks
+export const fetchLocationById = createAsyncThunk('location/fetchLocationById', async (locationId: number) => {
+  const response = await fetchLocation(locationId);
+  return response;
+});
+
+export const fetchDistances = createAsyncThunk('location/fetchDistances', async (data: { currentLocation: { latitude: number, longitude: number }, destinationLocations: { id: number, latitude: number, longitude: number }[] }) => {
+  const response = await getDistances(data);
+  return response;
+});
+
+const locationSlice = createSlice({
+  name: "location",
   initialState,
-  reducers: {
-    setLocations: (state, action: PayloadAction<Location[]>) => {
-      state.locations = action.payload;
-    }
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchLocationById.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchLocationById.fulfilled, (state, action: PayloadAction<Location>) => {
+        state.loading = false;
+        const index = state.locations.findIndex(location => location.id === action.payload.id);
+        if (index !== -1) {
+          state.locations[index] = action.payload;
+        } else {
+          state.locations.push(action.payload);
+        }
+      })
+      .addCase(fetchLocationById.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+      .addCase(fetchDistances.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchDistances.fulfilled, (state, action: PayloadAction<Location[]>) => {
+        state.loading = false;
+        state.locations = action.payload;
+      })
+      .addCase(fetchDistances.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      });
   },
 });
 
-export const { setLocations } = locationsSlice.actions;
-
-export default locationsSlice.reducer;
-
-export const fetchLocations = (): AppThunk => async (dispatch) => {
-  try {
-    const locations = await getLocations();
-    dispatch(setLocations(locations));
-  } catch (error) {
-    console.error('Error fetching locations:', error);  }
-};
+export default locationSlice.reducer;
