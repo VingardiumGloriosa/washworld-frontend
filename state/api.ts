@@ -1,6 +1,6 @@
 // api.ts
 import axios from "axios";
-import { Car } from "./slices/carsSlice";
+import { Car } from "./slices/userSlice";
 
 // Base URL of your API
 const API_URL = 'https://localhost:3005';
