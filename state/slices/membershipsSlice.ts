@@ -1,42 +1,67 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { getMembership } from '../api';
-import { AppThunk } from '../store'
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import { fetchMembershipTypes, createMembership, deleteMembership } from "../api";
 
-interface Membership {
+export interface MembershipType {
   id: number;
-  membership_type_id: number;
-  start_date: Date;
-  end_date: Date;
-  status: string;
+  name: string;
+  price: number;
+  currency: string;
+  washingDuration: number;
 }
 
 interface MembershipState {
-  membership: Membership | null;
+  membershipTypes: MembershipType[];
+  loading: boolean;
+  error: string | null;
 }
 
 const initialState: MembershipState = {
-  membership: null,
+  membershipTypes: [],
+  loading: false,
+  error: null,
 };
 
-const membershipSlice = createSlice({
-  name: 'membership',
-  initialState,
-  reducers: {
-    setMembership: (state, action: PayloadAction<Membership>) => {
-      state.membership = (action.payload);
-    },
-  },
+// Thunks
+export const fetchMembershipTypesData = createAsyncThunk('membership/fetchMembershipTypesData', async () => {
+  const response = await fetchMembershipTypes();
+  return response;
 });
 
-export const { setMembership } = membershipSlice.actions;
+export const addMembership = createAsyncThunk('membership/addMembership', async ({ userId, membershipTypeId }: { userId: number, membershipTypeId: number }) => {
+  const response = await createMembership(userId, membershipTypeId);
+  return response;
+});
 
-export const fetchAndSetMembership = (): AppThunk => async (dispatch) => {
-  try {
-    const membership = await getMembership();
-    dispatch(setMembership(membership));
-  }catch(error) {
-    console.error('Error fetching membership:', error)
-  }
-}
+export const removeMembership = createAsyncThunk('membership/removeMembership', async (userId: number) => {
+  await deleteMembership(userId);
+  return userId;
+});
+
+const membershipSlice = createSlice({
+  name: "membership",
+  initialState,
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchMembershipTypesData.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchMembershipTypesData.fulfilled, (state, action: PayloadAction<MembershipType[]>) => {
+        state.loading = false;
+        state.membershipTypes = action.payload;
+      })
+      .addCase(fetchMembershipTypesData.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+      .addCase(addMembership.fulfilled, (state, action: PayloadAction<any>) => {
+        // Handle the addition of a membership
+      })
+      .addCase(removeMembership.fulfilled, (state, action: PayloadAction<number>) => {
+        // Handle the removal of a membership
+      });
+  },
+});
 
 export default membershipSlice.reducer;
