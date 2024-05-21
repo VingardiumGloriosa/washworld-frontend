@@ -6,6 +6,7 @@ import CarIcon from "../assets/svg/car.svg";
 import { useDispatch, useSelector } from "react-redux";
 import { addCarAsync, fetchCarsAsync } from "../state/slices/carsSlice";
 import { RootState } from "../state/store";
+import QRCode from "react-native-qrcode-svg";
 
 // Placeholder function to get user ID from session
 const getUserID = () => {
@@ -16,36 +17,45 @@ const getUserID = () => {
 const MyCarsScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const cars = useSelector((state: RootState) => state.cars.cars);
+  /* const cars = useSelector((state: RootState) => state.cars.cars); */
+  const [cars, setCars] = useState([]);
 
   const [modalVisible, setModalVisible] = useState(false);
   const [carImageLink, setCarImageLink] = useState("");
   const [licensePlate, setLicensePlate] = useState("");
   const userID = getUserID();
 
-  useEffect(() => {
+  /* useEffect(() => {
     dispatch(fetchCarsAsync());
-  }, [dispatch]);
+  }, [dispatch]); */
 
-  const handleAddCar = () => {
+  const handleAddCar = async () => {
     console.log("add car function");
     console.log("Car Image Link:", carImageLink, "License Plate:", licensePlate, "User ID:", userID);
 
-    const newCar = {
-      id: cars.length + 1, // Temporary ID, should be replaced by backend-generated ID
-      user_id: getUserID(),
-      licensePlate: licensePlate,
-      carImageLink: carImageLink,
-    };
+    try {
+      // Generate QR code data
+      const qrCodeData = `Car ID: ${cars.length + 1}, User ID: ${userID}, License Plate: ${licensePlate}`;
 
-    console.log("handleAddCar", newCar);
+      const newCar = {
+        id: cars.length + 1, // Temporary ID, should be replaced by backend-generated ID
+        user_id: userID,
+        licensePlate: licensePlate,
+        carImageLink: carImageLink,
+        qrCodeData: qrCodeData, // Store the data to generate the QR code later
+      };
 
-    dispatch(addCarAsync(newCar));
+      console.log("handleAddCar", newCar);
 
-    setCarImageLink("");
-    setLicensePlate("");
+      /*  dispatch(addCarAsync(newCar)); */
+      setCars([...cars, newCar]);
 
-    setModalVisible(false);
+      setCarImageLink("");
+      setLicensePlate("");
+      setModalVisible(false);
+    } catch (error) {
+      console.error("Error in handleAddCar:", error);
+    }
   };
 
   const handleCancel = () => {
@@ -101,8 +111,8 @@ const MyCarsScreen = () => {
           {/* Container with Background Color */}
           {cars.map((car, index) => (
             <View key={index} style={styles.carCardContainer}>
-              {/* QR Code Image */}
-              <Image source={{ uri: car.qrCodeImageLink }} style={styles.qrCodeImage} />
+              {/* QR Code */}
+              <QRCode value={car.qrCodeData} size={250} />
 
               {/* Car Image */}
               <Image source={{ uri: car.carImageLink }} style={styles.carImage} />
@@ -111,7 +121,6 @@ const MyCarsScreen = () => {
               <Text style={styles.licensePlate}>License Plate: {car.licensePlate}</Text>
             </View>
           ))}
-
           <TouchableOpacity style={styles.button} onPress={() => setModalVisible(true)}>
             <Text style={styles.buttonText}>Add car</Text>
           </TouchableOpacity>

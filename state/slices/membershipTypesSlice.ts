@@ -1,6 +1,6 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { AppThunk } from '../store';
-import { getMembershipTypes } from '../api'; // Import your API function to fetch membership types
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { AppThunk } from "../store";
+import { getMembershipTypes } from "../api"; // Import your API function to fetch membership types
 
 interface MembershipType {
   id: number;
@@ -19,7 +19,7 @@ const initialState: MembershipTypesState = {
 };
 
 const membershipTypesSlice = createSlice({
-  name: 'membershipTypes',
+  name: "membershipTypes",
   initialState,
   reducers: {
     setMembershipTypes: (state, action: PayloadAction<MembershipType[]>) => {
@@ -37,5 +37,6 @@ export const fetchMembershipTypes = (): AppThunk => async (dispatch) => {
     const membershipTypes = await getMembershipTypes();
     dispatch(setMembershipTypes(membershipTypes));
   } catch (error) {
-    console.error('Error fetching membership types:', error);  }
+    console.error("Error fetching membership types:", error);
+  }
 };

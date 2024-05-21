@@ -7,7 +7,7 @@ export interface Car {
   user_id: string;
   licensePlate: string;
   carImageLink: string;
-  qrCodeImageLink?: string;
+  qrCodeData?: string;
 }
 
 interface CarState {
