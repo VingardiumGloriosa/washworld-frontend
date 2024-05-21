@@ -48,6 +48,7 @@ export const addCarAsync =
   async (dispatch) => {
     try {
       const newCar = await addCarToDatabase(car);
+      console.log("addCarAsync", newCar);
       dispatch(addCar(newCar));
     } catch (error) {
       console.error("Error adding car:", error);

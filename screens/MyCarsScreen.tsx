@@ -38,6 +38,8 @@ const MyCarsScreen = () => {
       carImageLink: carImageLink,
     };
 
+    console.log("handleAddCar", newCar);
+
     dispatch(addCarAsync(newCar));
 
     setCarImageLink("");
