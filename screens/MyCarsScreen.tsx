@@ -4,7 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import ArrowIcon from "../assets/svg/leftArrow.svg";
 import CarIcon from "../assets/svg/car.svg";
 import { useDispatch, useSelector } from "react-redux";
-import { addCarAsync, fetchCarsAsync } from "../state/slices/carSlice";
+import { addCar, fetchCars } from "../state/slices/carSlice";
 import { RootState } from "../state/store";
 import QRCode from "react-native-qrcode-svg";
 
@@ -23,23 +23,23 @@ const MyCarsScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [carImageLink, setCarImageLink] = useState("");
   const [licensePlate, setLicensePlate] = useState("");
-  const userID = getUserID();
+  const userId = getUserID();
 
   /* useEffect(() => {
-    dispatch(fetchCarsAsync());
+    dispatch(fetchCars());
   }, [dispatch]); */ //uncomment this line to use redux
 
   const handleAddCar = async () => {
     console.log("add car function");
-    console.log("Car Image Link:", carImageLink, "License Plate:", licensePlate, "User ID:", userID);
+    console.log("Car Image Link:", carImageLink, "License Plate:", licensePlate, "User ID:", userId);
 
     try {
       // Generate QR code data
-      const qrCodeData = `Car ID: ${cars.length + 1}, User ID: ${userID}, License Plate: ${licensePlate}`;
+      const qrCodeData = `Car ID: ${cars.length + 1}, User ID: ${userId}, License Plate: ${licensePlate}`;
 
       const newCar = {
         id: cars.length + 1, // Temporary ID, should be replaced by backend-generated ID
-        user_id: userID,
+        userId: userId,
         licensePlate: licensePlate,
         carImageLink: carImageLink,
         qrCodeData: qrCodeData, // Store the data to generate the QR code later
@@ -47,7 +47,7 @@ const MyCarsScreen = () => {
 
       console.log("handleAddCar", newCar);
 
-      /*  dispatch(addCarAsync(newCar)); */ //uncomment this line to use redux
+      /*  dispatch(addCar(newCar)); */ //uncomment this line to use redux
 
       setCars([...cars, newCar]); // Temporary solution to update the car list
 
@@ -141,7 +141,7 @@ const MyCarsScreen = () => {
             <TextInput style={styles.input} placeholder="License Plate" value={licensePlate} onChangeText={setLicensePlate} />
 
             {/* Hidden User ID */}
-            <TextInput style={styles.hiddenInput} value={userID} editable={false} />
+            <TextInput style={styles.hiddenInput} value={userId} editable={false} />
 
             {/* Submit Button */}
             <TouchableOpacity style={styles.submitButton} onPress={handleAddCar}>
