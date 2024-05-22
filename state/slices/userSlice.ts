@@ -25,7 +25,7 @@ const initialState: UserState = {
   token: null,
   loading: false,
   error: null,
-  isAuthenticated: true,
+  isAuthenticated: true, // Change to false when done testing authentication flow
 };
 
 const userSlice = createSlice({
@@ -92,6 +92,8 @@ const userSlice = createSlice({
         state.currentUser = null;
       }
     });
+    // uncommment when done testing authentication flow
+    /* 
     builder.addCase(checkAuthentication.rejected, (state) => {
       state.isAuthenticated = false;
       state.token = null;
@@ -99,7 +101,7 @@ const userSlice = createSlice({
     });
     builder.addCase(checkAuthentication.pending, (state) => {
       state.loading = true;
-    });
+    }); */
     builder.addCase(fetchUserProfile.pending, (state) => {
       state.loading = true;
       state.error = null;
@@ -130,6 +132,7 @@ export const login = createAsyncThunk("user/login", async (credentials: { email:
 
 export const checkAuthentication = createAsyncThunk("user/checkAuthentication", async () => {
   const token = await SecureStore.getItemAsync("token");
+  console.log("Retrieved token", token);
   if (token) {
     // Optionally fetch user info with the token
     const user = await UserQueries.fetchUserWithToken(token);
