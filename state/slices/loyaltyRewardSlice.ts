@@ -20,7 +20,7 @@ const initialState: LoyaltyRewardState = {
 };
 
 // Thunk to toggle loyalty reward
-export const toggleReward = createAsyncThunk('loyaltyReward/toggleReward', async (rewardId: number) => {
+export const toggleReward = createAsyncThunk("loyaltyReward/toggleReward", async (rewardId: number) => {
   const response = await toggleLoyaltyReward(rewardId);
   return response;
 });
@@ -38,7 +38,7 @@ const loyaltyRewardSlice = createSlice({
       .addCase(toggleReward.fulfilled, (state, action: PayloadAction<LoyaltyReward>) => {
         state.loading = false;
         const updatedReward = action.payload;
-        const index = state.rewards.findIndex(reward => reward.id === updatedReward.id);
+        const index = state.rewards.findIndex((reward) => reward.id === updatedReward.id);
         if (index !== -1) {
           state.rewards[index] = updatedReward;
         } else {

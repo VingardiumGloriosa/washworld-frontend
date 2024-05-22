@@ -1,20 +1,18 @@
-import { configureStore } from '@reduxjs/toolkit';
-import locationsReducer from './slices/locationsSlice';
-import usersReducer from './slices/userSlice';
-import membershipsReducer from './slices/membershipsSlice';
-import loyaltyRewardReducer from './slices/loyaltyRewardSlice';
-import carReducer from './slices/carSlice';
-import { ThunkAction } from '@reduxjs/toolkit';
-import { Action } from 'redux';
+import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit";
+import locationsReducer from "./slices/locationsSlice";
+import usersReducer from "./slices/userSlice";
+import membershipsReducer from "./slices/membershipsSlice";
+import loyaltyRewardReducer from "./slices/loyaltyRewardSlice";
+import carReducer from "./slices/carSlice";
 
 export const store = configureStore({
-    reducer: {
-        locations: locationsReducer,
-        users: usersReducer,
-        memberships: membershipsReducer,
-        loyaltyRewards: loyaltyRewardReducer,
-        cars: carReducer,
-      },
+  reducer: {
+    locations: locationsReducer,
+    users: usersReducer,
+    memberships: membershipsReducer,
+    loyaltyRewards: loyaltyRewardReducer,
+    cars: carReducer,
+  },
 });
 
 export type RootState = ReturnType<typeof store.getState>;

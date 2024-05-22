@@ -3,6 +3,10 @@ import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, Modal, Tex
 import { useNavigation } from "@react-navigation/native";
 import ArrowIcon from "../assets/svg/leftArrow.svg";
 import CarIcon from "../assets/svg/car.svg";
+import { useDispatch, useSelector } from "react-redux";
+import { addCarAsync, fetchCarsAsync } from "../state/slices/carSlice";
+import { RootState } from "../state/store";
+import QRCode from "react-native-qrcode-svg";
 
 // Placeholder function to get user ID from session
 const getUserID = () => {
@@ -12,39 +16,47 @@ const getUserID = () => {
 
 const MyCarsScreen = () => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+  /* const cars = useSelector((state: RootState) => state.cars.cars); */ //uncomment this line to use redux
+  const [cars, setCars] = useState([]);
 
   const [modalVisible, setModalVisible] = useState(false);
   const [carImageLink, setCarImageLink] = useState("");
   const [licensePlate, setLicensePlate] = useState("");
-  const [cars, setCars] = useState([]);
   const userID = getUserID();
 
-  useEffect(() => {
-    fetchCars();
-  }, []);
+  /* useEffect(() => {
+    dispatch(fetchCarsAsync());
+  }, [dispatch]); */ //uncomment this line to use redux
 
-  const fetchCars = async () => {
-    try {
-      // Replace this with your actual API call
-      const response = await fetch("API_ENDPOINT");
-      const data = await response.json();
-      setCars(data);
-    } catch (error) {
-      console.error("Error fetching car data:", error);
-    }
-  };
-
-  const handleAddCar = () => {
+  const handleAddCar = async () => {
     console.log("add car function");
     console.log("Car Image Link:", carImageLink, "License Plate:", licensePlate, "User ID:", userID);
 
-    // add car logic here
-    //dispatch(addCar({ carImageLink, licensePlate }));
+    try {
+      // Generate QR code data
+      const qrCodeData = `Car ID: ${cars.length + 1}, User ID: ${userID}, License Plate: ${licensePlate}`;
 
-    setCarImageLink("");
-    setLicensePlate("");
+      const newCar = {
+        id: cars.length + 1, // Temporary ID, should be replaced by backend-generated ID
+        user_id: userID,
+        licensePlate: licensePlate,
+        carImageLink: carImageLink,
+        qrCodeData: qrCodeData, // Store the data to generate the QR code later
+      };
 
-    setModalVisible(false);
+      console.log("handleAddCar", newCar);
+
+      /*  dispatch(addCarAsync(newCar)); */ //uncomment this line to use redux
+
+      setCars([...cars, newCar]); // Temporary solution to update the car list
+
+      setCarImageLink("");
+      setLicensePlate("");
+      setModalVisible(false);
+    } catch (error) {
+      console.error("Error in handleAddCar:", error);
+    }
   };
 
   const handleCancel = () => {
@@ -69,6 +81,7 @@ const MyCarsScreen = () => {
           <CarIcon width={30} height={30} fill={"black"} />
         </View>
 
+        {/* Temporary Car List */}
         <View style={styles.carListContainer}>
           {/* Container with Background Color */}
           <View style={styles.carCardContainer}>
@@ -94,12 +107,13 @@ const MyCarsScreen = () => {
           </View>
         </View>
 
+        {/* Dynamic Car List */}
         <View style={styles.carListContainer}>
           {/* Container with Background Color */}
           {cars.map((car, index) => (
             <View key={index} style={styles.carCardContainer}>
-              {/* QR Code Image */}
-              <Image source={{ uri: car.qrCodeImageLink }} style={styles.qrCodeImage} />
+              {/* QR Code */}
+              <QRCode value={car.qrCodeData} size={250} />
 
               {/* Car Image */}
               <Image source={{ uri: car.carImageLink }} style={styles.carImage} />
@@ -108,7 +122,6 @@ const MyCarsScreen = () => {
               <Text style={styles.licensePlate}>License Plate: {car.licensePlate}</Text>
             </View>
           ))}
-
           <TouchableOpacity style={styles.button} onPress={() => setModalVisible(true)}>
             <Text style={styles.buttonText}>Add car</Text>
           </TouchableOpacity>

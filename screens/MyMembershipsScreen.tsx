@@ -74,35 +74,6 @@ const MyMembershipsScreen = () => {
             <Text style={styles.priceText}>99kr. /month</Text>
           </View>
         </View>
-
-        <Text style={styles.membershipsTitle2}>Add membership</Text>
-        <View style={styles.membershipContainer}>
-          <View style={styles.leftContainer}>
-            <Text style={styles.membershipText}>Premium Plus (1 car)</Text>
-          </View>
-
-          <View style={styles.rightContainer}>
-            <Text style={styles.priceText}>99kr. /month</Text>
-          </View>
-        </View>
-        <View style={styles.membershipContainer}>
-          <View style={styles.leftContainer}>
-            <Text style={styles.membershipText}>Premium Plus (1 car)</Text>
-          </View>
-
-          <View style={styles.rightContainer}>
-            <Text style={styles.priceText}>99kr. /month</Text>
-          </View>
-        </View>
-        <View style={styles.membershipContainer}>
-          <View style={styles.leftContainer}>
-            <Text style={styles.membershipText}>Premium Plus (1 car)</Text>
-          </View>
-
-          <View style={styles.rightContainer}>
-            <Text style={styles.priceText}>99kr. /month</Text>
-          </View>
-        </View>
       </View>
     </ScrollView>
   );

@@ -3,7 +3,7 @@ import axios from "axios";
 import { Car } from "./slices/carSlice";
 
 // Base URL of your API
-const API_URL = 'https://localhost:3005';
+const API_URL = "https://localhost:3005";
 
 // Example function to handle errors
 const handleError = (error: any) => {
@@ -18,12 +18,22 @@ export const fetchUserHome = async (userId: number) => {
   const response = await axios.get(`${API_URL}/user/${userId}/home`, {
     headers: {
       // Authorization: `Bearer ${token}`
-    }
+    },
   });
   return response.data;
 };
 
 // CARS
+
+// Function to get cars
+export const getCars = async (): Promise<Car[]> => {
+  try {
+    const response = await axios.get(`${API_URL}/locations`);
+    return response.data;
+  } catch (error) {
+    handleError(error);
+  }
+};
 
 // Function to get cars for a user
 export const fetchUserCars = async (userId: number) => {
@@ -78,11 +88,15 @@ export const deleteUserCar = async (userId: number, carId: number) => {
 
 export const toggleLoyaltyReward = async (rewardId: number) => {
   // const token = await getToken();
-  const response = await axios.patch(`${API_URL}/loyalty-rewards/${rewardId}`, {}, {
-    headers: {
-      // Authorization: `Bearer ${token}`
+  const response = await axios.patch(
+    `${API_URL}/loyalty-rewards/${rewardId}`,
+    {},
+    {
+      headers: {
+        // Authorization: `Bearer ${token}`
+      },
     }
-  });
+  );
   return response.data;
 };
 
@@ -111,7 +125,7 @@ export const getDistance = async (data: { currentLocation: { latitude: number; l
   const response = await axios.post(`${API_URL}/distance`, data, {
     headers: {
       // Authorization: `Bearer ${token}`
-    }
+    },
   });
   return response.data;
 };
@@ -121,7 +135,7 @@ export const getDistances = async (data: { currentLocation: { latitude: number; 
   const response = await axios.post(`${API_URL}/distances`, data, {
     headers: {
       // Authorization: `Bearer ${token}`
-    }
+    },
   });
   return response.data;
 };
@@ -139,11 +153,15 @@ export const fetchMembershipTypes = async () => {
 
 export const createMembership = async (userId: number, membershipTypeId: number) => {
   // const token = await getToken();
-  const response = await axios.post(`${API_URL}/user/${userId}/membership`, { membershipTypeId }, {
-    headers: {
-      // Authorization: `Bearer ${token}`
+  const response = await axios.post(
+    `${API_URL}/user/${userId}/membership`,
+    { membershipTypeId },
+    {
+      headers: {
+        // Authorization: `Bearer ${token}`
+      },
     }
-  });
+  );
   return response.data;
 };
 
@@ -152,6 +170,6 @@ export const deleteMembership = async (userId: number) => {
   await axios.delete(`${API_URL}/user/${userId}/membership`, {
     headers: {
       // Authorization: `Bearer ${token}`
-    }
+    },
   });
 };
