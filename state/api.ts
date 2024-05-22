@@ -1,6 +1,6 @@
 // api.ts
 import axios from "axios";
-import { Car } from "./slices/carsSlice";
+import { Car } from "./slices/carSlice";
 
 // Base URL of your API
 const BASE_URL = "https://example.com/api";

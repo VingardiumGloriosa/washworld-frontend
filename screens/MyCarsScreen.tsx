@@ -4,7 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import ArrowIcon from "../assets/svg/leftArrow.svg";
 import CarIcon from "../assets/svg/car.svg";
 import { useDispatch, useSelector } from "react-redux";
-import { addCarAsync, fetchCarsAsync } from "../state/slices/carsSlice";
+import { addCarAsync, fetchCarsAsync } from "../state/slices/carSlice";
 import { RootState } from "../state/store";
 import QRCode from "react-native-qrcode-svg";
 
@@ -17,7 +17,7 @@ const getUserID = () => {
 const MyCarsScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  /* const cars = useSelector((state: RootState) => state.cars.cars); */
+  /* const cars = useSelector((state: RootState) => state.cars.cars); */ //uncomment this line to use redux
   const [cars, setCars] = useState([]);
 
   const [modalVisible, setModalVisible] = useState(false);
@@ -27,7 +27,7 @@ const MyCarsScreen = () => {
 
   /* useEffect(() => {
     dispatch(fetchCarsAsync());
-  }, [dispatch]); */
+  }, [dispatch]); */ //uncomment this line to use redux
 
   const handleAddCar = async () => {
     console.log("add car function");
@@ -47,8 +47,9 @@ const MyCarsScreen = () => {
 
       console.log("handleAddCar", newCar);
 
-      /*  dispatch(addCarAsync(newCar)); */
-      setCars([...cars, newCar]);
+      /*  dispatch(addCarAsync(newCar)); */ //uncomment this line to use redux
+
+      setCars([...cars, newCar]); // Temporary solution to update the car list
 
       setCarImageLink("");
       setLicensePlate("");
