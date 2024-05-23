@@ -6,13 +6,13 @@ import loyaltyRewardReducer from "./slices/loyaltyRewardSlice";
 import carReducer from "./slices/carSlice";
 
 export const store = configureStore({
-  reducer: {
-    locations: locationsReducer,
-    users: usersReducer,
-    memberships: membershipsReducer,
-    loyaltyRewards: loyaltyRewardReducer,
-    cars: carReducer,
-  },
+    reducer: {
+        location: locationsReducer,
+        users: usersReducer,
+        memberships: membershipsReducer,
+        loyaltyRewards: loyaltyRewardReducer,
+        cars: carReducer,
+      },
 });
 
 export type RootState = ReturnType<typeof store.getState>;
