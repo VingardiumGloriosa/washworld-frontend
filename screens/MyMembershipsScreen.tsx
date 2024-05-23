@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { useDispatch, useSelector } from "react-redux";
 import ArrowIcon from "../assets/svg/leftArrow.svg";
 
 const MyMembershipsScreen = () => {
@@ -124,6 +125,8 @@ const styles = StyleSheet.create({
   membershipContainer: {
     flexDirection: "row",
     marginTop: 20,
+    overflow: "hidden",
+    backgroundColor: "#F2F3F4",
   },
   leftContainer: {
     flex: 3, // Adjusted to 60%
@@ -135,6 +138,9 @@ const styles = StyleSheet.create({
     flex: 2, // Adjusted to 40%
     backgroundColor: "#34B566",
     justifyContent: "center",
+    transform: [{ skewX: "-30deg" }],
+    marginRight: -20,
+    paddingRight: 15,
   },
   membershipText: {
     color: "#1E1E1E",
@@ -147,6 +153,7 @@ const styles = StyleSheet.create({
     fontFamily: "Gilroy-Regular",
     fontSize: 18,
     textAlign: "center", // Center text horizontally
+    transform: [{ skewX: "30deg" }],
   },
   membershipDesription: {
     color: "#57585A",
@@ -159,6 +166,9 @@ const styles = StyleSheet.create({
     flex: 2, // Adjusted to 40%
     backgroundColor: "#F36A21",
     justifyContent: "center",
+    transform: [{ skewX: "-30deg" }],
+    marginRight: -20,
+    paddingRight: 15,
   },
   membershipsTitle2: {
     color: "#57585A",
