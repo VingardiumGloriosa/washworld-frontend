@@ -12,10 +12,11 @@ import * as SplashScreen from "expo-splash-screen";
 import HallStack from "./navigation/HallStack";
 import LoginScreen from "./screens/LoginScreen";
 import SignUpScreen from "./screens/SignupScreen";
-import { Provider } from "react-redux"
-import { store } from "./state/store"
-import LoginSignupStack from './navigation/LoginSignupStack';
+import { Provider } from "react-redux";
+import { store } from "./state/store";
+import LoginSignupStack from "./navigation/LoginSignupStack";
 import ProfileStack from "./navigation/ProfileStack";
+import CameraScreen from "./screens/CameraScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -84,7 +85,7 @@ export default function App() {
         >
           <Tab.Screen name="Login" component={LoginSignupStack} />
           <Tab.Screen name="Wash Halls" component={HallStack} />
-          <Tab.Screen name="Notifications" component={NotificationScreen} />
+          <Tab.Screen name="Notifications" component={CameraScreen} />
           <Tab.Screen name="Profile" component={ProfileStack} />
         </Tab.Navigator>
       </NavigationContainer>
