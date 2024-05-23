@@ -9,7 +9,7 @@ import { Action } from 'redux';
 
 export const store = configureStore({
     reducer: {
-        locations: locationsReducer,
+        location: locationsReducer,
         users: usersReducer,
         memberships: membershipsReducer,
         loyaltyRewards: loyaltyRewardReducer,
