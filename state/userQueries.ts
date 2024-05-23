@@ -33,4 +33,15 @@ export class UserQueries extends SuperQueries {
 
     return response.data;
   }
+
+  static async fetchUserWithToken(token: string) {
+    console.log("calling...", this.baseUrl + "me");
+
+    const response = await axios.get(this.baseUrl + "me", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    console.log(response);
+
+    return response.data;
+  }
 }
