@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, View, Text, TextInput, TouchableOpacity } from "react-native";
+import { StyleSheet, View, Text, TextInput, TouchableOpacity, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import Logo from "../assets/svg/logo.svg";
 import { AppDispatch, RootState } from "../state/store";
 import { useDispatch, useSelector } from "react-redux";
-import { login, setToken } from "../state/slices/userSlice";
+import { login, setCurrentUser, setToken } from "../state/slices/userSlice";
 import * as SecureStore from "expo-secure-store";
 import LoginSignupStack from "../navigation/LoginSignupStack";
+import HistoryScreen from "./HistoryScreen";
 import { StackNavigationProp } from "@react-navigation/stack";
 
 export type RootStackParamList = {
@@ -17,24 +18,39 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useDispatch<AppDispatch>();
-  const token = useSelector((state: RootState) => state.users.token);
   const navigation = useNavigation();
 
-  const handleLogin = () => {
-    // Perform login logic here
-    dispatch(login({ email: email, password: password }));
-    console.log("Logging in with email:", email, "and password:", password);
-  };
+  const token = useSelector((state: RootState) => state.users.token);
+  const loading = useSelector((state: RootState) => state.users.loading);
+  const error = useSelector((state: RootState) => state.users.error);
 
   useEffect(() => {
     async function readFromSecureStore() {
       const token = await SecureStore.getItemAsync("token");
-      console.log("read token from SecureStore", token);
-
-      token && dispatch(setToken(token));
+      if (token) {
+        dispatch(setToken(token));
+      }
     }
     readFromSecureStore();
-  }, []);
+  }, [dispatch]);
+
+  const handleLogin = () => {
+    dispatch(login({ email, password })).then((result) => {
+      if (result.meta.requestStatus === "fulfilled") {
+        // Extract the user data from the action payload
+        const user = result.payload;
+        // Dispatch an action to update the currentUser state in Redux
+        dispatch(setCurrentUser(user));
+        // Navigate to the desired screen
+        // Clear input fields
+        setEmail("");
+        setPassword("");
+        navigation.navigate("History");
+      } else {
+        Alert.alert("Login Failed", "Invalid email or password");
+      }
+    });
+  };
 
   return (
     <View style={styles.container}>
@@ -43,6 +59,9 @@ export default function Login() {
 
       <TextInput style={styles.input} placeholder="Enter email" value={email} onChangeText={setEmail} />
       <TextInput style={styles.input} placeholder="Enter password" secureTextEntry value={password} onChangeText={setPassword} />
+
+      {loading && <Text>Loading...</Text>}
+      {error && <Text style={styles.errorText}>{error}</Text>}
 
       <TouchableOpacity style={styles.button} onPress={handleLogin}>
         <Text style={styles.buttonText}>Log in</Text>
@@ -96,5 +115,8 @@ const styles = StyleSheet.create({
   loginText: {
     color: "#000",
     fontSize: 16,
+  },
+  errorText: {
+    color: "red",
   },
 });

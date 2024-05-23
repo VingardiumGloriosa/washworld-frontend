@@ -173,3 +173,31 @@ export const deleteMembership = async (userId: number) => {
     },
   });
 };
+
+export const pauseMembership = async (userId: number) => {
+  // const token = await getToken();
+  const response = await axios.patch(
+    `${API_URL}/user/${userId}/membership/pause`,
+    {},
+    {
+      headers: {
+        // Authorization: `Bearer ${token}`
+      },
+    }
+  );
+  return response.data;
+};
+
+export const updateMembership = async (userId: number, membershipTypeId: number) => {
+  // const token = await getToken();
+  const response = await axios.patch(
+    `${API_URL}/user/${userId}/membership`,
+    { membershipTypeId },
+    {
+      headers: {
+        // Authorization: `Bearer ${token}`
+      },
+    }
+  );
+  return response.data;
+};
