@@ -10,91 +10,76 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { useDispatch, useSelector } from "react-redux";
 import WashCard from "../components/WashCard";
 import Title from "../components/Title";
 import WashHallIcon from "../assets/svg/halls.svg";
 import LocationIcon from "../assets/svg/location.svg";
 import MapIcon from "../assets/svg/map.svg";
 import DropDownPicker from "react-native-dropdown-picker";
-
-// Dummy data fetcher
-const fetchWashHallData = async () => {
-  // dummy data
-  return Array.from({ length: 10 }, (_, index) => ({
-    id: index.toString(),
-    locationName: `Location ${index + 1}`,
-    address: `Address ${index + 1}`,
-    distance: (Math.random() * 10).toFixed(1),
-    availableWashHalls: (Math.random() * 5).toFixed(0),
-    availableSelfWash: (Math.random() * 5).toFixed(0),
-    totalWashHalls: "5",
-    totalSelfWash: "5",
-    ourOfService: (Math.random() * 3).toFixed(0),
-    waitTime: (Math.random() * 15).toFixed(0),
-  }));
-};
+import { AppDispatch, RootState } from "../state/store";
+import { fetchAllLocations } from "../state/slices/locationsSlice";
 
 const HallScreen = () => {
   const navigation = useNavigation();
-  const [washHallData, setWashHallData] = useState([]);
+  const dispatch = useDispatch<AppDispatch>();
+  const locations = useSelector((state: RootState) => state.location.locations);
+  const loading = useSelector((state: RootState) => state.location.loading);
+  const error = useSelector((state: RootState) => state.location.error);
+
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("any");
   const [items, setItems] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const data = await fetchWashHallData();
-        setWashHallData(data);
+    dispatch(fetchAllLocations());
+  }, [dispatch]);
 
-        const uniqueLocations = [
-          { label: "Any Location", value: "any" },
-          ...[...new Set(data.map((item) => item.locationName))].map(
-            (location) => ({ label: location, value: location.toLowerCase() })
-          ),
-        ];
-        setItems(uniqueLocations);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
+  useEffect(() => {
+    if (locations.length > 0) {
+      const uniqueLocations = [
+        { label: "Any Location", value: "any" },
+        ...[...new Set(locations.map((item) => item.name))].map((location) => ({
+          label: location,
+          value: location.toLowerCase(),
+        })),
+      ];
+      setItems(uniqueLocations);
+    }
+  }, [locations]);
 
   const filteredWashHallData =
     value === "any"
-      ? washHallData
-      : washHallData.filter(
-          (item) => item.locationName.toLowerCase() === value
-        );
+      ? locations
+      : locations.filter((item) => item.name.toLowerCase() === value);
 
   const renderItem = useCallback(
-    ({ item }) => (
-      <WashCard
-        key={item.id}
-        ImageComponent={
-          <Image
-            source={require("../assets/images/hall.jpeg")}
-            style={{ width: 100, height: 60 }}
-          />
-        }
-        locationName={item.locationName}
-        address={item.address}
-        distance={item.distance}
-        availableWashHalls={item.availableWashHalls}
-        availableSelfWash={item.availableSelfWash}
-        totalWashHalls={item.totalWashHalls}
-        totalSelfWash={item.totalSelfWash}
-        ourOfService={parseInt(item.ourOfService, 10)}
-        waitTime={parseInt(item.waitTime, 10)}
-      />
-    ),
+    ({ item }) => {
+      // Ensure washHalls and selfWashHalls exist and provide default values if not
+      const washHalls = item.washHalls || { available: 0, total: 0, outOfService: 0, nextAvailable: null };
+      const selfWashHalls = item.selfWashHalls || { available: 0, total: 0, outOfService: 0, nextAvailable: null };
+
+      return (
+        <WashCard
+          key={item.id}
+          ImageComponent={
+            <Image
+              source={require("../assets/images/hall.jpeg")}
+              style={{ width: 100, height: 60 }}
+            />
+          }
+          locationName={item.name}
+          address={item.address}
+          distance={item.distance?.toFixed(1) ?? "N/A"}
+          availableWashHalls={washHalls.available.toString()}
+          availableSelfWash={selfWashHalls.available.toString()}
+          totalWashHalls={washHalls.total.toString()}
+          totalSelfWash={selfWashHalls.total.toString()}
+          outOfService={washHalls.outOfService}
+          waitTime={0} // Assuming wait time is not available from the API
+        />
+      );
+    },
     []
   );
 
@@ -123,15 +108,15 @@ const HallScreen = () => {
             listItemLabelStyle={styles.listItemLabel}
           />
         </View>
-        <TouchableOpacity onPress={() => navigation.navigate("Map")}>
+        {/* <TouchableOpacity onPress={() => navigation.navigate("Map", { locations })}>
           <MapIcon fill="#34B566" width={40} height={40} />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
       <Title text={"Wash Halls"} Icon={WashHallIcon} width={30} height={30} />
       <FlatList
         data={filteredWashHallData}
         renderItem={renderItem}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.id.toString()}
       />
     </SafeAreaView>
   );

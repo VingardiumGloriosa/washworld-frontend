@@ -3,11 +3,32 @@ import axios from "axios";
 import { Car } from "./slices/carSlice";
 
 // Base URL of your API
-const API_URL = "https://localhost:3005";
+const API_URL = 'http://localhost:3005'; //'http://192.168.68.66:3005' //
 
-// Example function to handle errors
 const handleError = (error: any) => {
-  console.error("API request failed:", error);
+  if (axios.isAxiosError(error)) {
+    console.error("Axios error message:", error.message);
+    console.error("Axios error code:", error.code);
+    console.error("Axios error config:", error.config);
+    
+    if (error.response) {
+      // The request was made and the server responded with a status code
+      // that falls out of the range of 2xx
+      console.error("Axios error response data:", error.response.data);
+      console.error("Axios error response status:", error.response.status);
+      console.error("Axios error response headers:", error.response.headers);
+    } else if (error.request) {
+      // The request was made but no response was received
+      console.error("Axios error request:", error.request);
+    } else {
+      // Something happened in setting up the request that triggered an Error
+      console.error("Axios error:", error.message);
+    }
+  } else {
+    // Handle non-Axios errors
+    console.error("Non-Axios error:", error);
+  }
+
   throw new Error("API request failed");
 };
 
@@ -113,7 +134,9 @@ export const fetchLoyaltyRewards = async () => {
 
 export const fetchLocations = async () => {
   try {
+    console.log("test fetch locations 1")
     const response = await axios.get(`${API_URL}/locations`);
+    console.log("test fetch locations 2")
     return response.data;
   } catch (error) {
     handleError(error);

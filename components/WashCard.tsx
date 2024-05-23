@@ -12,7 +12,7 @@ type WashCardProps = {
   availableSelfWash: string;
   totalWashHalls: string;
   totalSelfWash: string;
-  ourOfService: number;
+  outOfService: number;
   waitTime: number;
 };
 
@@ -25,7 +25,7 @@ const WashCard: React.FC<WashCardProps> = ({
   availableSelfWash,
   totalWashHalls,
   totalSelfWash,
-  ourOfService,
+  outOfService,
   waitTime,
 }) => {
   return (
@@ -40,30 +40,33 @@ const WashCard: React.FC<WashCardProps> = ({
       </View>
       <View style={styles.divider} />
 
-      <Text style={styles.availability}>
-        {"Available wash halls: " + availableWashHalls + " / " + totalWashHalls}
-      </Text>
-      <Text style={styles.availability}>
-        {"Available self wash: " + availableSelfWash + " / " + totalSelfWash}
-      </Text>
+      <View style={styles.availabilityContainer}>
+        <Text style={styles.availability}>
+          {"Available wash halls: " + availableWashHalls + " / " + totalWashHalls}
+        </Text>
+        {outOfService > 0 && (
+          <View style={styles.serviceLine}>
+            <InfoIcon width={20} height={20} />
+            <Text style={styles.service}>
+              {outOfService + " out of service"}
+            </Text>
+          </View>
+        )}
+      </View>
 
-      {/* Only show "out of service" info if `ourOfService` is greater than zero */}
-      {ourOfService > 0 && (
-        <View style={styles.serviceLine}>
-          <InfoIcon width={20} height={20} />
-          <Text style={styles.service}>
-            {ourOfService + " out of service "}
-          </Text>
-        </View>
-      )}
-
-      {/* Only show "wait time" info if `waitTime` is greater than zero */}
-      {waitTime > 0 && (
-        <View style={styles.serviceLine}>
-          <ClockIcon width={20} height={20} />
-          <Text style={styles.wait}>{waitTime + " min wait time "}</Text>
-        </View>
-      )}
+      <View style={styles.availabilityContainer}>
+        <Text style={styles.availability}>
+          {"Available self wash: " + availableSelfWash + " / " + totalSelfWash}
+        </Text>
+        {waitTime > 0 && (
+          <View style={styles.serviceLine}>
+            <ClockIcon width={20} height={20} />
+            <Text style={styles.wait}>
+              {waitTime + " min wait time"}
+            </Text>
+          </View>
+        )}
+      </View>
     </View>
   );
 };
@@ -111,22 +114,30 @@ const styles = StyleSheet.create({
     color: "#34B566",
     fontFamily: "Gilroy-Medium",
   },
+  availabilityContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
   availability: {
     fontSize: 14,
     fontFamily: "Gilroy-Medium",
   },
   serviceLine: {
     flexDirection: "row",
+    alignItems: "center",
   },
   service: {
     fontSize: 14,
     fontFamily: "Gilroy-Medium",
     color: "#F36A21",
+    marginLeft: 5,
   },
   wait: {
     fontSize: 14,
     fontFamily: "Gilroy-Medium",
     color: "#34B566",
+    marginLeft: 5,
   },
 });
 

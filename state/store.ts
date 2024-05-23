@@ -6,19 +6,13 @@ import loyaltyRewardReducer from "./slices/loyaltyRewardSlice";
 import carReducer from "./slices/carSlice";
 
 export const store = configureStore({
-  reducer: {
-    locations: locationsReducer,
-    users: usersReducer,
-    memberships: membershipsReducer,
-    loyaltyRewards: loyaltyRewardReducer,
-    cars: carReducer,
-  },
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({
-      thunk: {
-        extraArgument: {}, // Add any extra arguments here
+    reducer: {
+        location: locationsReducer,
+        users: usersReducer,
+        memberships: membershipsReducer,
+        loyaltyRewards: loyaltyRewardReducer,
+        cars: carReducer,
       },
-    }),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

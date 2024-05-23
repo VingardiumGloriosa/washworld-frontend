@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { fetchLocation, getDistance, getDistances } from "../api";
+import { fetchLocation, getDistance, getDistances, fetchLocations } from "../api";
 
 export interface Location {
   id: number;
@@ -39,6 +39,11 @@ export const fetchLocationById = createAsyncThunk('location/fetchLocationById', 
   return response;
 });
 
+export const fetchAllLocations = createAsyncThunk('location/fetchAllLocations', async () => {
+  const response = await fetchLocations();
+  return response;
+});
+
 export const fetchDistances = createAsyncThunk('location/fetchDistances', async (data: { currentLocation: { latitude: number, longitude: number }, destinationLocations: { id: number, latitude: number, longitude: number }[] }) => {
   const response = await getDistances(data);
   return response;
@@ -64,6 +69,18 @@ const locationSlice = createSlice({
         }
       })
       .addCase(fetchLocationById.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+      .addCase(fetchAllLocations.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchAllLocations.fulfilled, (state, action: PayloadAction<Location[]>) => {
+        state.loading = false;
+        state.locations = action.payload;
+      })
+      .addCase(fetchAllLocations.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
       })
