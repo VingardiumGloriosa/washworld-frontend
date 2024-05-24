@@ -13,6 +13,12 @@ export const store = configureStore({
     loyaltyRewards: loyaltyRewardReducer,
     cars: carReducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      thunk: {
+        extraArgument: {}, // Add any extra arguments here
+      },
+    }),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

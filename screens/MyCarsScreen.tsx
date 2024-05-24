@@ -8,22 +8,17 @@ import { addCar, fetchCars } from "../state/slices/carSlice";
 import { RootState } from "../state/store";
 import QRCode from "react-native-qrcode-svg";
 
-// Placeholder function to get user ID from session
-const getUserID = () => {
-  // Replace this with the actual logic to get user ID from your authentication system
-  return "12345"; // Example user ID
-};
-
 const MyCarsScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   /* const cars = useSelector((state: RootState) => state.cars.cars); */ //uncomment this line to use redux
   const [cars, setCars] = useState([]);
+  const { currentUser } = useSelector((state: RootState) => state.users);
 
   const [modalVisible, setModalVisible] = useState(false);
   const [carImageLink, setCarImageLink] = useState("");
   const [licensePlate, setLicensePlate] = useState("");
-  const userId = getUserID();
+  const userId = currentUser?.id || 123;
 
   /* useEffect(() => {
     dispatch(fetchCars());
@@ -141,7 +136,7 @@ const MyCarsScreen = () => {
             <TextInput style={styles.input} placeholder="License Plate" value={licensePlate} onChangeText={setLicensePlate} />
 
             {/* Hidden User ID */}
-            <TextInput style={styles.hiddenInput} value={userId} editable={false} />
+            <TextInput style={styles.hiddenInput} value={`${userId}`} editable={false} />
 
             {/* Submit Button */}
             <TouchableOpacity style={styles.submitButton} onPress={handleAddCar}>
