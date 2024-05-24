@@ -100,6 +100,15 @@ export const toggleLoyaltyReward = async (rewardId: number) => {
   return response.data;
 };
 
+export const fetchLoyaltyRewards = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/loyalty-rewards`);
+    return response.data;
+  } catch (error) {
+    handleError(error);
+  }
+};
+
 // LOCATIONS
 
 export const fetchLocations = async () => {

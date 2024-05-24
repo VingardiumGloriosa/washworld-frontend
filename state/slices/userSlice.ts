@@ -25,7 +25,7 @@ const initialState: UserState = {
   token: null,
   loading: false,
   error: null,
-  isAuthenticated: false, // Toggle for testing authentication flow
+  isAuthenticated: true, // Toggle for testing authentication flow
 };
 
 const userSlice = createSlice({
