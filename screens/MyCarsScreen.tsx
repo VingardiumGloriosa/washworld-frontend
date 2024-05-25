@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, Modal, TextInput } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  ScrollView,
+  Modal,
+  TextInput,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import ArrowIcon from "../assets/svg/leftArrow.svg";
 import CarIcon from "../assets/svg/car.svg";
@@ -16,37 +25,103 @@ const MyCarsScreen = () => {
   const { currentUser } = useSelector((state: RootState) => state.users);
 
   const [modalVisible, setModalVisible] = useState(false);
-  const [carImageLink, setCarImageLink] = useState("");
+  const [photo, setPhoto] = useState("");
   const [licensePlate, setLicensePlate] = useState("");
+
   const userId = currentUser?.id || 123;
 
   /* useEffect(() => {
     dispatch(fetchCars());
-  }, [dispatch]); */ //uncomment this line to use redux
+  }, [dispatch]);*/
+
+  //temporary test since I have no idea how redux works and I am here to just test some fetching and rendering bois
+  const BACKEND_URL = "http://192.168.8.5:3005"; // Replace with your actual backend URL
+
+  useEffect(() => {
+    const fetchCars = async () => {
+      try {
+        const response = await fetch(`${BACKEND_URL}/user/${userId}/cars`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        //console.log(data);
+        setCars(data);
+      } catch (error) {
+        console.error("Error fetching cars:", error);
+      }
+    };
+
+    fetchCars();
+  }, [userId]);
+  //end of temporrary janky fetch code
+  //start of temporary janky post code
+
+  const postCar = async (car) => {
+    try {
+      const response = await fetch(`${BACKEND_URL}/user/${userId}/cars`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(car),
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const newCar = await response.json();
+      return newCar;
+    } catch (error) {
+      console.error("Error posting car:", error);
+      throw error;
+    }
+  };
+
+  const openCamera = () => {
+    setModalVisible(false);
+    navigation.navigate("Camera", {
+      onCapture: (imageBase64) => {
+        setPhoto(imageBase64);
+        setModalVisible(true);
+      },
+    });
+  };
 
   const handleAddCar = async () => {
-    console.log("add car function");
-    console.log("Car Image Link:", carImageLink, "License Plate:", licensePlate, "User ID:", userId);
+    //for some reason this never logs???
+    /*console.log("add car function");
+    console.log(
+      "Photo :",
+      photo,
+      "License Plate:",
+      licensePlate,
+      "User ID:",
+      userId
+    );*/
 
     try {
       // Generate QR code data
-      const qrCodeData = `Car ID: ${cars.length + 1}, User ID: ${userId}, License Plate: ${licensePlate}`;
+      const qrCodeData = `Car ID: ${
+        cars.length + 1
+      }, User ID: ${userId}, License Plate: ${licensePlate}`;
 
       const newCar = {
         id: cars.length + 1, // Temporary ID, should be replaced by backend-generated ID
         userId: userId,
         licensePlate: licensePlate,
-        carImageLink: carImageLink,
+        photo: photo,
         qrCodeData: qrCodeData, // Store the data to generate the QR code later
       };
 
       console.log("handleAddCar", newCar);
 
-      /*  dispatch(addCar(newCar)); */ //uncomment this line to use redux
+      const addedCar = await postCar(newCar);
 
-      setCars([...cars, newCar]); // Temporary solution to update the car list
+      //dispatch(addCar(newCar)); //uncomment this line to use redux
 
-      setCarImageLink("");
+      setCars([...cars, addedCar]); // Temporary solution to update the car list
+
+      setPhoto("");
       setLicensePlate("");
       setModalVisible(false);
     } catch (error) {
@@ -56,7 +131,7 @@ const MyCarsScreen = () => {
 
   const handleCancel = () => {
     // Clear the input fields first
-    setCarImageLink("");
+    setPhoto("");
     setLicensePlate("");
 
     // Close the modal after resetting the input fields
@@ -66,7 +141,10 @@ const MyCarsScreen = () => {
   return (
     <ScrollView contentContainerStyle={styles.scrollViewContainer}>
       <View style={styles.container}>
-        <TouchableOpacity style={styles.arrowContainer} onPress={() => navigation.goBack()}>
+        <TouchableOpacity
+          style={styles.arrowContainer}
+          onPress={() => navigation.goBack()}
+        >
           <ArrowIcon width={25} height={25} fill={"#808285"} />
         </TouchableOpacity>
 
@@ -74,32 +152,6 @@ const MyCarsScreen = () => {
         <View style={styles.titleContainer}>
           <Text style={styles.title}>My Cars</Text>
           <CarIcon width={30} height={30} fill={"black"} />
-        </View>
-
-        {/* Temporary Car List */}
-        <View style={styles.carListContainer}>
-          {/* Container with Background Color */}
-          <View style={styles.carCardContainer}>
-            {/* QR Code Image */}
-            <Image source={require("../assets/images/qr-code.png")} style={styles.qrCodeImage} />
-
-            {/* Car Image */}
-            <Image source={require("../assets/images/toyota.jpg")} style={styles.carImage} />
-
-            {/* License Plate Text */}
-            <Text style={styles.licensePlate}>License Plate: ABC123</Text>
-          </View>
-
-          <View style={styles.carCardContainer}>
-            {/* QR Code Image */}
-            <Image source={require("../assets/images/qr-code.png")} style={styles.qrCodeImage} />
-
-            {/* Car Image */}
-            <Image source={require("../assets/images/toyota.jpg")} style={styles.carImage} />
-
-            {/* License Plate Text */}
-            <Text style={styles.licensePlate}>License Plate: ABC123</Text>
-          </View>
         </View>
 
         {/* Dynamic Car List */}
@@ -111,23 +163,27 @@ const MyCarsScreen = () => {
               <QRCode value={car.qrCodeData} size={250} />
 
               {/* Car Image */}
-              <Image source={{ uri: car.carImageLink }} style={styles.carImage} />
-
+              <Image source={{ uri: `${car.photo}` }} style={styles.carImage} />
               {/* License Plate Text */}
-              <Text style={styles.licensePlate}>License Plate: {car.licensePlate}</Text>
+              <Text style={styles.licensePlate}>
+                License Plate: {car.licensePlate}
+              </Text>
             </View>
-          ))}
-          <TouchableOpacity style={styles.button} onPress={() => setModalVisible(true)}>
-            <Text style={styles.buttonText}>Add car</Text>
-          </TouchableOpacity>
+          ))}fm
         </View>
       </View>
-
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => setModalVisible(true)}
+      >
+        <Text style={styles.buttonText}>Add car</Text>
+      </TouchableOpacity>
       {/* Modal */}
       <Modal visible={modalVisible} animationType="slide" transparent={true}>
         <View style={styles.modalOverlay}>
           <View style={styles.modalContainer}>
             <Text style={styles.modalTitle}>Add a New Car</Text>
+
 
             {/* Car Image Link Input */}
             <TextInput style={styles.input} placeholder="Car Image Link" value={carImageLink} onChangeText={setCarImageLink} />
@@ -138,13 +194,30 @@ const MyCarsScreen = () => {
             {/* Hidden User ID */}
             <TextInput style={styles.hiddenInput} value={`${userId}`} editable={false} />
 
-            {/* Submit Button */}
-            <TouchableOpacity style={styles.submitButton} onPress={handleAddCar}>
+            <TextInput
+              style={styles.input}
+              placeholder="License Plate"
+              value={licensePlate}
+              onChangeText={setLicensePlate}
+            />
+
+            <TextInput
+              style={styles.hiddenInput}
+              value={userId}
+              editable={false}
+            />
+
+            <TouchableOpacity
+              style={styles.submitButton}
+              onPress={handleAddCar}
+            >
               <Text style={styles.submitButtonText}>Submit</Text>
             </TouchableOpacity>
 
-            {/* Cancel Button */}
-            <TouchableOpacity style={styles.cancelButton} onPress={handleCancel}>
+            <TouchableOpacity
+              style={styles.cancelButton}
+              onPress={handleCancel}
+            >
               <Text style={styles.cancelButtonText}>Cancel</Text>
             </TouchableOpacity>
           </View>
@@ -210,7 +283,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   button: {
-    backgroundColor: "#808285", // Default color
+    backgroundColor: "#808285",
     color: "white",
     fontSize: 16,
     fontWeight: "bold",
@@ -242,6 +315,21 @@ const styles = StyleSheet.create({
     fontFamily: "Gilroy-Heavy",
     fontSize: 20,
     marginBottom: 20,
+  },
+  cameraButton: {
+    backgroundColor: "#808285",
+    color: "white",
+    fontSize: 16,
+    fontWeight: "bold",
+    alignItems: "center",
+    paddingVertical: 15,
+    marginBottom: 10,
+    width: "100%",
+  },
+  cameraButtonText: {
+    color: "white",
+    fontSize: 16,
+    fontFamily: "Gilroy-Medium",
   },
   input: {
     borderWidth: 1,
