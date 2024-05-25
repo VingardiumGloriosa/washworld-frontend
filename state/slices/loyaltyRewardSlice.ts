@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { toggleLoyaltyReward } from "../api";
+import { toggleLoyaltyReward, fetchLoyaltyRewards } from "../api";
 
 export interface LoyaltyReward {
   id: number;
@@ -18,6 +18,16 @@ const initialState: LoyaltyRewardState = {
   loading: false,
   error: null,
 };
+
+// Thunk to fetch loyalty rewards
+export const fetchRewards = createAsyncThunk("loyaltyRewards/fetchRewards", async () => {
+  try {
+    const rewards = await fetchLoyaltyRewards();
+    return rewards; // Return the fetched rewards
+  } catch (error) {
+    throw new Error("Failed to fetch rewards"); // Throw an error if fetching fails
+  }
+});
 
 // Thunk to toggle loyalty reward
 export const toggleReward = createAsyncThunk("loyaltyReward/toggleReward", async (rewardId: number) => {
@@ -47,6 +57,19 @@ const loyaltyRewardSlice = createSlice({
         state.error = null;
       })
       .addCase(toggleReward.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+      .addCase(fetchRewards.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchRewards.fulfilled, (state, action: PayloadAction<LoyaltyReward[]>) => {
+        state.loading = false;
+        state.rewards = action.payload;
+        state.error = null;
+      })
+      .addCase(fetchRewards.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
       });

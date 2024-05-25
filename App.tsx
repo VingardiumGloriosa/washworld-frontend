@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import HomeScreen from "./screens/HistoryScreen";
+import HistoryScreen from "./screens/HistoryScreen";
 import NotificationScreen from "./screens/NotificationScreen";
 import HistoryIcon from "./assets/svg/history.svg";
 import HallsIcon from "./assets/svg/halls.svg";
@@ -67,7 +67,7 @@ function AppNavigator() {
         headerShown: false,
       })}
     >
-      <Tab.Screen name="History" component={HomeScreen} />
+      <Tab.Screen name="History" component={HistoryScreen} />
       <Tab.Screen name="Wash Halls" component={HallStack} />
       <Tab.Screen name="Notifications" component={NotificationScreen} />
       <Tab.Screen name="Profile" component={ProfileStack} />

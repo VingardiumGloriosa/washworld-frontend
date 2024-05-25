@@ -17,24 +17,20 @@ import { addCar, fetchCars } from "../state/slices/carSlice";
 import { RootState } from "../state/store";
 import QRCode from "react-native-qrcode-svg";
 
-// Placeholder function to get user ID from session
-const getUserID = () => {
-  // Replace this with the actual logic to get user ID from your authentication system
-  return "1"; // Example user ID
-};
-
 const MyCarsScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   /* const cars = useSelector((state: RootState) => state.cars.cars); */ //uncomment this line to use redux
   const [cars, setCars] = useState([]);
+  const { currentUser } = useSelector((state: RootState) => state.users);
 
   const [modalVisible, setModalVisible] = useState(false);
   const [photo, setPhoto] = useState("");
   const [licensePlate, setLicensePlate] = useState("");
-  const userId = getUserID();
-  /*to be uncommented when redux works
-  useEffect(() => {
+
+  const userId = currentUser?.id || 123;
+
+  /* useEffect(() => {
     dispatch(fetchCars());
   }, [dispatch]);*/
 
@@ -173,7 +169,7 @@ const MyCarsScreen = () => {
                 License Plate: {car.licensePlate}
               </Text>
             </View>
-          ))}
+          ))}fm
         </View>
       </View>
       <TouchableOpacity
@@ -188,9 +184,15 @@ const MyCarsScreen = () => {
           <View style={styles.modalContainer}>
             <Text style={styles.modalTitle}>Add a New Car</Text>
 
-            <TouchableOpacity style={styles.cameraButton} onPress={openCamera}>
-              <Text style={styles.cameraButtonText}>Open Camera</Text>
-            </TouchableOpacity>
+
+            {/* Car Image Link Input */}
+            <TextInput style={styles.input} placeholder="Car Image Link" value={carImageLink} onChangeText={setCarImageLink} />
+
+            {/* License Plate Input */}
+            <TextInput style={styles.input} placeholder="License Plate" value={licensePlate} onChangeText={setLicensePlate} />
+
+            {/* Hidden User ID */}
+            <TextInput style={styles.hiddenInput} value={`${userId}`} editable={false} />
 
             <TextInput
               style={styles.input}
