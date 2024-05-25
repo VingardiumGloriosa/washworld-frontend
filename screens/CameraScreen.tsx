@@ -1,26 +1,28 @@
 import { CameraView, useCameraPermissions } from "expo-camera";
-import * as MediaLibrary from "expo-media-library"; // [1] Import MediaLibrary
+import * as MediaLibrary from "expo-media-library";
 import { useState, useRef, useEffect } from "react";
 import { Button, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import ImageResizer from "react-native-image-resizer";
 
-export default function CameraScreen() {
+export default function CameraScreen({ route }) {
+  const { onCapture } = route.params; // Destructure the onCapture callback from route params
   const [facing, setFacing] = useState("back");
   const [permission, requestPermission] = useCameraPermissions();
   const [mediaPermission, requestMediaPermission] =
-    MediaLibrary.usePermissions(); // [2] Request Media Library Permissions
+    MediaLibrary.usePermissions();
   const cameraRef = useRef(null);
+  const navigation = useNavigation();
 
   useEffect(() => {
-    requestMediaPermission(); // [3] Request media library permission on mount
+    requestMediaPermission();
   }, []);
 
   if (!permission || !mediaPermission) {
-    // Camera or media library permissions are still loading.
     return <View />;
   }
 
   if (!permission.granted) {
-    // Camera permissions are not granted yet.
     return (
       <View style={styles.container}>
         <Text style={{ textAlign: "center" }}>
@@ -32,7 +34,6 @@ export default function CameraScreen() {
   }
 
   if (!mediaPermission.granted) {
-    // Media library permissions are not granted yet.
     return (
       <View style={styles.container}>
         <Text style={{ textAlign: "center" }}>
@@ -49,13 +50,17 @@ export default function CameraScreen() {
 
   const takePicture = async () => {
     if (cameraRef.current) {
-      const photo = await cameraRef.current.takePictureAsync();
-      console.log(photo);
-
-      // [4] Save the photo to the media library
+      const photo = await cameraRef.current.takePictureAsync({ base64: true });
       const asset = await MediaLibrary.createAssetAsync(photo.uri);
       await MediaLibrary.createAlbumAsync("Camera", asset, false);
       console.log("Photo saved to gallery:", asset.uri);
+
+      // Add the data URI scheme to the base64 string
+      const fullBase64Image = `data:image/jpg;base64,${photo.base64}`;
+
+      // Pass the full base64 image back to the previous screen
+      onCapture(fullBase64Image);
+      navigation.goBack();
     }
   };
 
