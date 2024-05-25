@@ -28,7 +28,7 @@ const MyCarsScreen = () => {
   const [photo, setPhoto] = useState("");
   const [licensePlate, setLicensePlate] = useState("");
 
-  const userId = currentUser?.id || 123;
+  const userId = currentUser?.id || 1;
 
   /* useEffect(() => {
     dispatch(fetchCars());
@@ -163,13 +163,13 @@ const MyCarsScreen = () => {
               <QRCode value={car.qrCodeData} size={250} />
 
               {/* Car Image */}
-              <Image source={{ uri: `${car.photo}` }} style={styles.carImage} />
+              <Image source={{ uri: `${car.photo}` }} style={styles.photo} />
               {/* License Plate Text */}
               <Text style={styles.licensePlate}>
                 License Plate: {car.licensePlate}
               </Text>
             </View>
-          ))}fm
+          ))}
         </View>
       </View>
       <TouchableOpacity
@@ -183,22 +183,19 @@ const MyCarsScreen = () => {
         <View style={styles.modalOverlay}>
           <View style={styles.modalContainer}>
             <Text style={styles.modalTitle}>Add a New Car</Text>
-
-
-            {/* Car Image Link Input */}
-            <TextInput style={styles.input} placeholder="Car Image Link" value={carImageLink} onChangeText={setCarImageLink} />
-
             {/* License Plate Input */}
-            <TextInput style={styles.input} placeholder="License Plate" value={licensePlate} onChangeText={setLicensePlate} />
-
-            {/* Hidden User ID */}
-            <TextInput style={styles.hiddenInput} value={`${userId}`} editable={false} />
-
             <TextInput
               style={styles.input}
               placeholder="License Plate"
               value={licensePlate}
               onChangeText={setLicensePlate}
+            />
+
+            {/* Hidden User ID */}
+            <TextInput
+              style={styles.hiddenInput}
+              value={`${userId}`}
+              editable={false}
             />
 
             <TextInput
@@ -207,6 +204,9 @@ const MyCarsScreen = () => {
               editable={false}
             />
 
+            <TouchableOpacity style={styles.cameraButton} onPress={openCamera}>
+              <Text style={styles.cameraButtonText}>Take photo of car</Text>
+            </TouchableOpacity>
             <TouchableOpacity
               style={styles.submitButton}
               onPress={handleAddCar}
@@ -272,7 +272,7 @@ const styles = StyleSheet.create({
     width: 250,
     height: 250,
   },
-  carImage: {
+  photo: {
     width: 250,
     height: 150,
     marginTop: 20,
