@@ -62,12 +62,7 @@ const HallScreen = () => {
       return (
         <WashCard
           key={item.id}
-          ImageComponent={
-            <Image
-              source={require("../assets/images/hall.jpeg")}
-              style={{ width: 100, height: 60 }}
-            />
-          }
+          image={ item.photo }
           locationName={item.name}
           address={item.address}
           distance={item.distance?.toFixed(1) ?? "N/A"}
