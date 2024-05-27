@@ -21,7 +21,7 @@ const MyCarsScreen = () => {
   const userId = currentUser?.id || 1;
 
   useEffect(() => {
-    dispatch(fetchCars(userId));
+    dispatch(fetchCars(9));
   }, [dispatch]);
 
   const openCamera = () => {

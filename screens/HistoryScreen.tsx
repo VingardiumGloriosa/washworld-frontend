@@ -16,45 +16,16 @@ const screenWidth = Dimensions.get("window").width;
 
 export default function HistoryScreen() {
   const dispatch = useDispatch<AppDispatch>();
-  const [progress, setProgress] = useState(0.5);
-  const [progressText, setProgressText] = useState("Wash your car 3 more times to unlock the next reward!");
-  const [washHistory, setWashHistory] = useState([]);
-  const rewards = useSelector((state: RootState) => state.loyaltyRewards.rewards);
   const history = useSelector((state: RootState) => state.users.currentUser?.history || []);
   const currentUser = useSelector((state: RootState) => state.users.currentUser);
 
-
-  // useEffect(() => {
-  //   dispatch(fetchRewards());
-  // }, [dispatch]);
-
   useEffect(() => {
+    // if(currentUser)
     dispatch(fetchUserProfile(9));
   }, [dispatch]);
-  
-  useEffect(() => {
-    //here we gotta yeet and yoot some fetchiessss but for now its hardcoded to check that the components render as desired
-    // setWashHistory([
-    //   {
-    //     id: 1,
-    //     locationName: "Hell",
-    //     updatedAt: "Today",
-    //     imageSrc: require("../assets/images/hall.jpeg"),
-    //   },
-    //   {
-    //     id: 2,
-    //     locationName: "Heaven",
-    //     updatedAt: "Today",
-    //     imageSrc: require("../assets/images/hall.jpeg"),
-    //   },
-    //   {
-    //     id: 3,
-    //     locationName: "Purgatory",
-    //     updatedAt: "Yesterday",
-    //     imageSrc: require("../assets/images/hall.jpeg"),
-    //   },
-    // ]);
-  }, []);
+
+  const progressLeft = currentUser ? currentUser.loyaltyRewardProgress.goal - currentUser.loyaltyRewardProgress.progress : null
+  const progressText = progressLeft ? `Wash your car ${progressLeft} more times to unlock the next reward!` : ''
 
   return (
     <SafeAreaView style={styles.container}>
@@ -62,9 +33,9 @@ export default function HistoryScreen() {
         <View style={styles.logo}>
           <Logo width={160} height={80} />
         </View>
-        <LoyaltyCarousel rewards={rewards} />
+        <LoyaltyCarousel userId={currentUser?.id || 9} rewards={currentUser?.loyaltyRewards || []} dispatch={dispatch} />
         <View style={styles.progressBarContainer}>
-          <ProgressBar text={progressText} progress={progress} width={screenWidth - 40} height={20} backgroundColor="#f0f0f0" fillColor="#34B566" />
+          <ProgressBar text={progressText} progress={currentUser?.loyaltyRewardProgress.progress/currentUser?.loyaltyRewardProgress.goal || 0} width={screenWidth - 40} height={20} backgroundColor="#f0f0f0" fillColor="#34B566" />
         </View>
         <View>
           <Title text={"Recent washes"} Icon={ClockIcon} width={30} height={30} />

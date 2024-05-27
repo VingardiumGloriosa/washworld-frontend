@@ -3,6 +3,7 @@ import { UserQueries } from "../userQueries";
 import * as SecureStore from "expo-secure-store";
 import { fetchUserHome } from "../api";
 import { Location } from "./locationsSlice";
+import { LoyaltyReward } from "./loyaltyRewardSlice";
 
 interface UserState {
   currentUser: User | null;
@@ -21,6 +22,8 @@ interface User {
   username: string;
   membership_id: number;
   history?: HistoryItem[];
+  loyaltyRewards: LoyaltyReward[];
+  loyaltyRewardProgress: { progress: number, goal: number };
 }
 
 interface HistoryItem {
@@ -155,8 +158,7 @@ export const checkAuthentication = createAsyncThunk("user/checkAuthentication", 
 
 export const fetchUserProfile = createAsyncThunk("user/fetchUserProfile", async (userId: number) => {
   const response = await fetchUserHome(userId);
-  // const history = response.history; 
-  return { ...response };
+  return response;
 });
 
 export const { setCurrentUser, setToken, logout } = userSlice.actions;

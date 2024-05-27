@@ -26,9 +26,9 @@ function AppNavigator() {
   const dispatch = useAppDispatch();
   const isAuthenticated = useAppSelector((state) => state.users.isAuthenticated);
 
-  useEffect(() => {
-    dispatch(checkAuthentication());
-  }, [dispatch]);
+  // useEffect(() => {
+  //   dispatch(checkAuthentication());
+  // }, [dispatch]);
 
   if (!isAuthenticated) {
     return <LoginSignupStack />;

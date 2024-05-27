@@ -4,7 +4,7 @@ import { Car } from "./slices/carSlice";
 import axiosInstance from "./axiosConfig";
 
 // Base URL of your API
-const API_URL = 'http://localhost:3005'; //'http://192.168.68.66:3005' //
+export const API_URL = 'http://192.168.68.66:3005'//'http://localhost:3005'; //'http://192.168.68.66:3005' //
 
 const handleError = (error: any) => {
   if (axios.isAxiosError(error)) {
@@ -109,17 +109,16 @@ export const deleteUserCar = async (userId: number, carId: number) => {
 
 // LOYALTY REWARDS
 
-export const toggleLoyaltyReward = async (rewardId: number) => {
+export const toggleLoyaltyReward = async (userId: number, rewardId: number, isActive: boolean) => {
   // const token = await getToken();
+  console.log(userId, rewardId, isActive)
+  const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imp1c3Rhc0BqdXN0YXMuY29tIiwiaWF0IjoxNzE2ODIzOTUzLCJleHAiOjE3MTk0MTU5NTN9.AjIVxkXRYIFh4U49fgGm6cpbNxzND6ixFKh7UHfRO0I'
   const response = await axios.patch(
-    `${API_URL}/loyalty-rewards/${rewardId}`,
-    {},
-    {
+    `${API_URL}/users/${userId}/loyalty-rewards/${rewardId}`, { isActive }, {
       headers: {
-        // Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${token}`
       },
-    }
-  );
+    });
   return response.data;
 };
 

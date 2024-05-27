@@ -94,7 +94,6 @@ const carSlice = createSlice({
       .addCase(removeCar.fulfilled, (state, action: PayloadAction<number>) => {
         state.cars = state.cars.filter((car) => car.id !== action.payload);
       });
-    console.log("removed car");
   },
 });
 

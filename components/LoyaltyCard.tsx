@@ -1,13 +1,13 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 
-const LoyaltyCard = ({ title, isActive }) => {
+const LoyaltyCard = ({ title, isActive, onPress = () => {} }) => {
   const backgroundColor = isActive ? "#34B566" : "#E0E0E0";
   const textColor = isActive ? "#FFFFFF" : "#000000";
   const labelColor = "black";
 
   return (
-    <View style={styles.shade}>
+    <TouchableOpacity onPress={onPress}>
       <View style={[styles.card, { backgroundColor }]}>
         <View style={[styles.label, { backgroundColor: labelColor }]}>
           <Text style={styles.labelText}>
@@ -16,7 +16,7 @@ const LoyaltyCard = ({ title, isActive }) => {
         </View>
         <Text style={[styles.title, { color: textColor }]}>{title}</Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
@@ -30,8 +30,6 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     elevation: 4,
     overflow: "hidden",
-  },
-  shade: {
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.23,
