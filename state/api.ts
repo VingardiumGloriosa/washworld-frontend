@@ -1,6 +1,7 @@
 // api.ts
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { Car } from "./slices/carSlice";
+import axiosInstance from "./axiosConfig";
 
 // Base URL of your API
 const API_URL = 'http://localhost:3005'; //'http://192.168.68.66:3005' //

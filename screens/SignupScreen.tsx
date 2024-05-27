@@ -19,15 +19,16 @@ export default function SignupScreen() {
   const handleSignup = async () => {
     try {
       // Perform signup logic here
-      const response = await dispatch(signup({ username: username, email: email, password: password }));
+      const response = await dispatch(signup({ username: username, email: email, password: password })).unwrap();
       console.log("Signing up with username:", username, "email:", email, "and password:", password);
 
       //Extract the user data from the response
-      const user = response.payload;
+      const user = response;
       console.log("User signed up:", user);
 
       // Simulate token creation (replace this with actual token from your API response)
       const token = "temporarytoken123";
+      /*  const token = response.payload.token; */
 
       // Store the token in SecureStore
       await SecureStore.setItemAsync("token", token);
@@ -45,10 +46,10 @@ export default function SignupScreen() {
       setPassword("");
 
       // Show confirmation message
-      Alert.alert("Signup Successful", "You have successfully signed up!", [{ text: "OK", onPress: () => navigation.navigate("LoginScreen") }]);
+      Alert.alert("Signup Successful", "You have successfully signed up! Please log in to access to your profile", [{ text: "OK", onPress: () => navigation.navigate("LoginScreen") }]);
     } catch (error) {
       console.error("Signup failed:", error);
-      Alert.alert("Signup Failed", "An error occurred during signup. Please try again later.");
+      Alert.alert("Signup Failed", error.message || "An error occurred during signup. Please try again later.");
     }
   };
 

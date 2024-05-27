@@ -1,3 +1,5 @@
+import { API_URL } from "./api";
+
 export class SuperQueries {
-  static baseUrl = "http://localhost:3000/";
+  static baseUrl = API_URL;
 }

@@ -24,9 +24,7 @@ const Tab = createBottomTabNavigator();
 
 function AppNavigator() {
   const dispatch = useAppDispatch();
-  const isAuthenticated = useAppSelector(
-    (state) => state.users.isAuthenticated
-  );
+  const isAuthenticated = useAppSelector((state) => state.users.isAuthenticated);
 
   useEffect(() => {
     dispatch(checkAuthentication());

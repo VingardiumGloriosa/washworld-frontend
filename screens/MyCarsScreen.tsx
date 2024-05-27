@@ -1,14 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Image,
-  ScrollView,
-  Modal,
-  TextInput,
-} from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, Modal, TextInput } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import ArrowIcon from "../assets/svg/leftArrow.svg";
 import CarIcon from "../assets/svg/car.svg";
@@ -20,9 +11,8 @@ import QRCode from "react-native-qrcode-svg";
 const MyCarsScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  /* const cars = useSelector((state: RootState) => state.cars.cars); */ //uncomment this line to use redux
-  const [cars, setCars] = useState([]);
-  const { currentUser } = useSelector((state: RootState) => state.users);
+  const cars = useSelector((state: RootState) => state.cars.cars);
+  const { currentUser, isAuthenticated, token } = useSelector((state: RootState) => state.users);
 
   const [modalVisible, setModalVisible] = useState(false);
   const [photo, setPhoto] = useState("");
@@ -30,52 +20,9 @@ const MyCarsScreen = () => {
 
   const userId = currentUser?.id || 1;
 
-  /* useEffect(() => {
-    dispatch(fetchCars());
-  }, [dispatch]);*/
-
-  //temporary test since I have no idea how redux works and I am here to just test some fetching and rendering bois
-  const BACKEND_URL = "http://192.168.8.5:3005"; // Replace with your actual backend URL
-
   useEffect(() => {
-    const fetchCars = async () => {
-      try {
-        const response = await fetch(`${BACKEND_URL}/user/${userId}/cars`);
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        //console.log(data);
-        setCars(data);
-      } catch (error) {
-        console.error("Error fetching cars:", error);
-      }
-    };
-
-    fetchCars();
-  }, [userId]);
-  //end of temporrary janky fetch code
-  //start of temporary janky post code
-
-  const postCar = async (car) => {
-    try {
-      const response = await fetch(`${BACKEND_URL}/user/${userId}/cars`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(car),
-      });
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const newCar = await response.json();
-      return newCar;
-    } catch (error) {
-      console.error("Error posting car:", error);
-      throw error;
-    }
-  };
+    dispatch(fetchCars(userId));
+  }, [dispatch]);
 
   const openCamera = () => {
     setModalVisible(false);
@@ -88,38 +35,24 @@ const MyCarsScreen = () => {
   };
 
   const handleAddCar = async () => {
-    //for some reason this never logs???
-    /*console.log("add car function");
-    console.log(
-      "Photo :",
-      photo,
-      "License Plate:",
-      licensePlate,
-      "User ID:",
-      userId
-    );*/
-
     try {
       // Generate QR code data
-      const qrCodeData = `Car ID: ${
-        cars.length + 1
-      }, User ID: ${userId}, License Plate: ${licensePlate}`;
+      const qrCodeData = `Car ID: ${cars.length + 1}, User ID: ${userId}, License Plate: ${licensePlate}`;
 
       const newCar = {
-        id: cars.length + 1, // Temporary ID, should be replaced by backend-generated ID
         userId: userId,
-        licensePlate: licensePlate,
-        photo: photo,
-        qrCodeData: qrCodeData, // Store the data to generate the QR code later
+        car: {
+          id: cars.length + 1,
+          userId: userId,
+          licensePlate: licensePlate,
+          photo: photo,
+          qrCodeData: qrCodeData,
+        },
       };
 
-      console.log("handleAddCar", newCar);
+      console.log("handleAddCar", "car id:", newCar.car.id, "user id:", newCar.car.userId, "license plate:", newCar.car.licensePlate, "photo:", newCar.car.photo.substring(0, 100), "qr code:", newCar.car.qrCodeData);
 
-      const addedCar = await postCar(newCar);
-
-      //dispatch(addCar(newCar)); //uncomment this line to use redux
-
-      setCars([...cars, addedCar]); // Temporary solution to update the car list
+      dispatch(addCar(newCar));
 
       setPhoto("");
       setLicensePlate("");
@@ -133,6 +66,7 @@ const MyCarsScreen = () => {
     // Clear the input fields first
     setPhoto("");
     setLicensePlate("");
+    console.log("user", currentUser, "isAuthenticated", isAuthenticated, "token", token);
 
     // Close the modal after resetting the input fields
     setModalVisible(false);
@@ -141,10 +75,7 @@ const MyCarsScreen = () => {
   return (
     <ScrollView contentContainerStyle={styles.scrollViewContainer}>
       <View style={styles.container}>
-        <TouchableOpacity
-          style={styles.arrowContainer}
-          onPress={() => navigation.goBack()}
-        >
+        <TouchableOpacity style={styles.arrowContainer} onPress={() => navigation.goBack()}>
           <ArrowIcon width={25} height={25} fill={"#808285"} />
         </TouchableOpacity>
 
@@ -165,17 +96,12 @@ const MyCarsScreen = () => {
               {/* Car Image */}
               <Image source={{ uri: `${car.photo}` }} style={styles.photo} />
               {/* License Plate Text */}
-              <Text style={styles.licensePlate}>
-                License Plate: {car.licensePlate}
-              </Text>
+              <Text style={styles.licensePlate}>License Plate: {car.licensePlate}</Text>
             </View>
           ))}
         </View>
       </View>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => setModalVisible(true)}
-      >
+      <TouchableOpacity style={styles.button} onPress={() => setModalVisible(true)}>
         <Text style={styles.buttonText}>Add car</Text>
       </TouchableOpacity>
       {/* Modal */}
@@ -184,40 +110,21 @@ const MyCarsScreen = () => {
           <View style={styles.modalContainer}>
             <Text style={styles.modalTitle}>Add a New Car</Text>
             {/* License Plate Input */}
-            <TextInput
-              style={styles.input}
-              placeholder="License Plate"
-              value={licensePlate}
-              onChangeText={setLicensePlate}
-            />
+            <TextInput style={styles.input} placeholder="License Plate" value={licensePlate} onChangeText={setLicensePlate} />
 
             {/* Hidden User ID */}
-            <TextInput
-              style={styles.hiddenInput}
-              value={`${userId}`}
-              editable={false}
-            />
+            <TextInput style={styles.hiddenInput} value={`${userId}`} editable={false} />
 
-            <TextInput
-              style={styles.hiddenInput}
-              value={userId}
-              editable={false}
-            />
+            <TextInput style={styles.hiddenInput} value={userId} editable={false} />
 
             <TouchableOpacity style={styles.cameraButton} onPress={openCamera}>
               <Text style={styles.cameraButtonText}>Take photo of car</Text>
             </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.submitButton}
-              onPress={handleAddCar}
-            >
+            <TouchableOpacity style={styles.submitButton} onPress={handleAddCar}>
               <Text style={styles.submitButtonText}>Submit</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity
-              style={styles.cancelButton}
-              onPress={handleCancel}
-            >
+            <TouchableOpacity style={styles.cancelButton} onPress={handleCancel}>
               <Text style={styles.cancelButtonText}>Cancel</Text>
             </TouchableOpacity>
           </View>
