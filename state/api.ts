@@ -4,32 +4,14 @@ import { Car } from "./slices/carSlice";
 import axiosInstance from "./axiosConfig";
 
 // Base URL of your API
-export const API_URL = 'http://192.168.68.66:3005'//'http://localhost:3005'; //'http://192.168.68.66:3005' //
+export const API_URL = "http://172.20.10.3:3005"; //'http://localhost:3005'; //'http://192.168.68.66:3005' //
 
-const handleError = (error: any) => {
-  if (axios.isAxiosError(error)) {
-    console.error("Axios error message:", error.message);
-    console.error("Axios error code:", error.code);
-    console.error("Axios error config:", error.config);
-    
-    if (error.response) {
-      // The request was made and the server responded with a status code
-      // that falls out of the range of 2xx
-      console.error("Axios error response data:", error.response.data);
-      console.error("Axios error response status:", error.response.status);
-      console.error("Axios error response headers:", error.response.headers);
-    } else if (error.request) {
-      // The request was made but no response was received
-      console.error("Axios error request:", error.request);
-    } else {
-      // Something happened in setting up the request that triggered an Error
-      console.error("Axios error:", error.message);
-    }
-  } else {
-    // Handle non-Axios errors
-    console.error("Non-Axios error:", error);
+const handleError = (error: AxiosError) => {
+  console.error("API request failed:", error.message);
+  if (error.response) {
+    console.error("Response status:", error.response.status);
+    console.error("Response data:", error.response.data);
   }
-
   throw new Error("API request failed");
 };
 
@@ -37,10 +19,10 @@ const handleError = (error: any) => {
 
 export const fetchUserHome = async (userId: number) => {
   // const token = await getToken();
-  const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imp1c3Rhc0BqdXN0YXMuY29tIiwiaWF0IjoxNzE2ODIzOTUzLCJleHAiOjE3MTk0MTU5NTN9.AjIVxkXRYIFh4U49fgGm6cpbNxzND6ixFKh7UHfRO0I'
+  const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imp1c3Rhc0BqdXN0YXMuY29tIiwiaWF0IjoxNzE2ODIzOTUzLCJleHAiOjE3MTk0MTU5NTN9.AjIVxkXRYIFh4U49fgGm6cpbNxzND6ixFKh7UHfRO0I";
   const response = await axios.get(`${API_URL}/users/${userId}/home`, {
     headers: {
-      Authorization: `Bearer ${token}`
+      Authorization: `Bearer ${token}`,
     },
   });
   return response.data;
@@ -111,14 +93,17 @@ export const deleteUserCar = async (userId: number, carId: number) => {
 
 export const toggleLoyaltyReward = async (userId: number, rewardId: number, isActive: boolean) => {
   // const token = await getToken();
-  console.log(userId, rewardId, isActive)
-  const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imp1c3Rhc0BqdXN0YXMuY29tIiwiaWF0IjoxNzE2ODIzOTUzLCJleHAiOjE3MTk0MTU5NTN9.AjIVxkXRYIFh4U49fgGm6cpbNxzND6ixFKh7UHfRO0I'
+  console.log(userId, rewardId, isActive);
+  const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imp1c3Rhc0BqdXN0YXMuY29tIiwiaWF0IjoxNzE2ODIzOTUzLCJleHAiOjE3MTk0MTU5NTN9.AjIVxkXRYIFh4U49fgGm6cpbNxzND6ixFKh7UHfRO0I";
   const response = await axios.patch(
-    `${API_URL}/users/${userId}/loyalty-rewards/${rewardId}`, { isActive }, {
+    `${API_URL}/users/${userId}/loyalty-rewards/${rewardId}`,
+    { isActive },
+    {
       headers: {
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${token}`,
       },
-    });
+    }
+  );
   return response.data;
 };
 
@@ -153,14 +138,13 @@ export const fetchLocation = async (locationId: number) => {
 
 export const calculateDistances = async (latitude: number, longitude: number): Promise<{ id: number; distance: number }[]> => {
   try {
-    const response = await axios.post<{ id: number; distance: number }[]>(`${API_URL}/distances`, { latitude, longitude }, { headers: { 'Content-Type': 'application/json' } });
+    const response = await axios.post<{ id: number; distance: number }[]>(`${API_URL}/distances`, { latitude, longitude }, { headers: { "Content-Type": "application/json" } });
     return response.data;
   } catch (error) {
     handleError(error);
     throw new Error("Failed to calculate distances");
   }
 };
-
 
 // MEMBERSHIP
 
@@ -195,4 +179,3 @@ export const deleteMembership = async (userId: number) => {
     },
   });
 };
-
