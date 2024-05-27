@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { UserQueries } from "../userQueries";
 import * as SecureStore from "expo-secure-store";
 import { fetchUserHome } from "../api";
+import { Location } from "./locationsSlice";
 
 interface UserState {
   currentUser: User | null;
@@ -9,6 +10,7 @@ interface UserState {
   loading: boolean;
   error: string | null;
   isAuthenticated: boolean;
+
 }
 
 interface User {
@@ -18,6 +20,13 @@ interface User {
   password: string;
   username: string;
   membership_id: number;
+  history?: HistoryItem[];
+}
+
+interface HistoryItem {
+  id: number;
+  date: string;
+  location: Location;
 }
 
 const initialState: UserState = {
@@ -143,7 +152,8 @@ export const checkAuthentication = createAsyncThunk("user/checkAuthentication", 
 
 export const fetchUserProfile = createAsyncThunk("user/fetchUserProfile", async (userId: number) => {
   const response = await fetchUserHome(userId);
-  return response;
+  // const history = response.history; 
+  return { ...response };
 });
 
 export const { setCurrentUser, setToken, logout } = userSlice.actions;

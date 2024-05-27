@@ -36,9 +36,10 @@ const handleError = (error: any) => {
 
 export const fetchUserHome = async (userId: number) => {
   // const token = await getToken();
-  const response = await axios.get(`${API_URL}/user/${userId}/home`, {
+  const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imp1c3Rhc0BqdXN0YXMuY29tIiwiaWF0IjoxNzE2ODIzOTUzLCJleHAiOjE3MTk0MTU5NTN9.AjIVxkXRYIFh4U49fgGm6cpbNxzND6ixFKh7UHfRO0I'
+  const response = await axios.get(`${API_URL}/users/${userId}/home`, {
     headers: {
-      // Authorization: `Bearer ${token}`
+      Authorization: `Bearer ${token}`
     },
   });
   return response.data;
@@ -134,9 +135,7 @@ export const fetchLoyaltyRewards = async () => {
 
 export const fetchLocations = async () => {
   try {
-    console.log("test fetch locations 1")
     const response = await axios.get(`${API_URL}/locations`);
-    console.log("test fetch locations 2")
     return response.data;
   } catch (error) {
     handleError(error);
@@ -152,25 +151,16 @@ export const fetchLocation = async (locationId: number) => {
   }
 };
 
-export const getDistance = async (data: { currentLocation: { latitude: number; longitude: number }; destinationLocation: { latitude: number; longitude: number } }) => {
-  // const token = await getToken();
-  const response = await axios.post(`${API_URL}/distance`, data, {
-    headers: {
-      // Authorization: `Bearer ${token}`
-    },
-  });
-  return response.data;
+export const calculateDistances = async (latitude: number, longitude: number): Promise<{ id: number; distance: number }[]> => {
+  try {
+    const response = await axios.post<{ id: number; distance: number }[]>(`${API_URL}/distances`, { latitude, longitude }, { headers: { 'Content-Type': 'application/json' } });
+    return response.data;
+  } catch (error) {
+    handleError(error);
+    throw new Error("Failed to calculate distances");
+  }
 };
 
-export const getDistances = async (data: { currentLocation: { latitude: number; longitude: number }; destinationLocations: { id: number; latitude: number; longitude: number }[] }) => {
-  // const token = await getToken();
-  const response = await axios.post(`${API_URL}/distances`, data, {
-    headers: {
-      // Authorization: `Bearer ${token}`
-    },
-  });
-  return response.data;
-};
 
 // MEMBERSHIP
 
@@ -206,30 +196,3 @@ export const deleteMembership = async (userId: number) => {
   });
 };
 
-export const pauseMembership = async (userId: number) => {
-  // const token = await getToken();
-  const response = await axios.patch(
-    `${API_URL}/user/${userId}/membership/pause`,
-    {},
-    {
-      headers: {
-        // Authorization: `Bearer ${token}`
-      },
-    }
-  );
-  return response.data;
-};
-
-export const updateMembership = async (userId: number, membershipTypeId: number) => {
-  // const token = await getToken();
-  const response = await axios.patch(
-    `${API_URL}/user/${userId}/membership`,
-    { membershipTypeId },
-    {
-      headers: {
-        // Authorization: `Bearer ${token}`
-      },
-    }
-  );
-  return response.data;
-};

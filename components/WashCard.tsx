@@ -4,7 +4,7 @@ import InfoIcon from "../assets/svg/info.svg";
 import ClockIcon from "../assets/svg/clock.svg";
 
 type WashCardProps = {
-  image: string;
+  ImageComponent: React.ReactElement,
   locationName: string;
   address: string;
   distance: string;
@@ -17,7 +17,7 @@ type WashCardProps = {
 };
 
 const WashCard: React.FC<WashCardProps> = ({
-  image,
+  ImageComponent,
   locationName,
   address,
   distance,
@@ -31,7 +31,7 @@ const WashCard: React.FC<WashCardProps> = ({
   return (
     <View style={styles.maincontainer}>
       <View style={styles.container}>
-        <Image source={{ uri: image }} style={styles.image} /> {/* Use Image component */}
+        {ImageComponent}        
         <View style={styles.infoContainer}>
           <Text style={styles.locationName}>{locationName}</Text>
           <Text style={styles.address}>{address}</Text>
@@ -72,76 +72,73 @@ const WashCard: React.FC<WashCardProps> = ({
 };
 
 const styles = StyleSheet.create({
-container: {
-  flexDirection: "row",
-  alignItems: "center",
-  overflow: "hidden",
-  shadowColor: "#000",
-  shadowOffset: { width: 0, height: 2 },
-  shadowOpacity: 0.1,
-  shadowRadius: 2,
-  elevation: 4,
-},
-divider: {
-  height: 1,
-  backgroundColor: "#ccc",
-  marginVertical: 10,
-  width: "100%",
-},
-maincontainer: {
-  backgroundColor: "#E6E7E9",
-  padding: 10,
-  margin: 10,
-},
-infoContainer: {
-  flex: 1,
-  justifyContent: "space-around",
-  paddingLeft: 10,
-},
-locationName: {
-  fontSize: 18,
-  fontWeight: "bold",
-  fontFamily: "Gilroy-Heavy",
-},
-address: {
-  fontSize: 14,
-  color: "#666",
-  fontFamily: "Gilroy-Medium",
-},
-distance: {
-  fontSize: 14,
-  fontWeight: "bold",
-  color: "#34B566",
-  fontFamily: "Gilroy-Medium",
-},
-availabilityContainer: {
-  flexDirection: "row",
-  justifyContent: "space-between",
-  alignItems: "center",
-},
-availability: {
-  fontSize: 14,
-  fontFamily: "Gilroy-Medium",
-},
-serviceLine: {
-  flexDirection: "row",
-  alignItems: "center",
-},
-service: {
-  fontSize: 14,
-  fontFamily: "Gilroy-Medium",
-  color: "#F36A21",
-  marginLeft: 5,
-},
-wait: {
-  fontSize: 14,
-  fontFamily: "Gilroy-Medium",
-  color: "#34B566",
-  marginLeft: 5,
-},
-image: {
-  
-}
+  container: {
+    flexDirection: "row",
+    alignItems: "center",
+    overflow: "hidden",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 4,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: "#ccc",
+    marginVertical: 10,
+    width: "100%",
+  },
+  maincontainer: {
+    backgroundColor: "#E6E7E9",
+    padding: 10,
+    margin: 10,
+  },
+  infoContainer: {
+    flex: 1,
+    justifyContent: "space-around",
+    paddingLeft: 10,
+  },
+  locationName: {
+    fontSize: 18,
+    fontWeight: "bold",
+    fontFamily: "Gilroy-Heavy",
+  },
+  address: {
+    fontSize: 14,
+    color: "#666",
+    fontFamily: "Gilroy-Medium",
+  },
+  distance: {
+    fontSize: 14,
+    fontWeight: "bold",
+    color: "#34B566",
+    fontFamily: "Gilroy-Medium",
+  },
+  availabilityContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  availability: {
+    fontSize: 14,
+    fontFamily: "Gilroy-Medium",
+  },
+  serviceLine: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  service: {
+    fontSize: 14,
+    fontFamily: "Gilroy-Medium",
+    color: "#F36A21",
+    marginLeft: 5,
+  },
+  wait: {
+    fontSize: 14,
+    fontFamily: "Gilroy-Medium",
+    color: "#34B566",
+    marginLeft: 5,
+  },
 });
 
 export default WashCard;

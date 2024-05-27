@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchMembershipTypesData, addMembership, removeMembership, pauseUserMembership, updateMembership } from "../state/slices/membershipsSlice";
+import { fetchMembershipTypesData, addMembership, removeMembership } from "../state/slices/membershipsSlice";
 import ArrowIcon from "../assets/svg/leftArrow.svg";
 import { RootState, AppDispatch } from "../state/store";
 
@@ -17,13 +17,13 @@ const MyMembershipsScreen = () => {
     dispatch(fetchMembershipTypesData());
   }, [dispatch]);
 
-  const handlePauseMembership = () => {
-    // Pause membership
-    console.log("Pausing membership for", currentUser?.id);
-    if (currentUser) {
-      dispatch(pauseUserMembership(currentUser.id));
-    }
-  };
+  // const handlePauseMembership = () => {
+  //   // Pause membership
+  //   console.log("Pausing membership for", currentUser?.id);
+  //   if (currentUser) {
+  //     dispatch(pauseUserMembership(currentUser.id));
+  //   }
+  // };
 
   const handleCancelMembership = () => {
     console.log("Cancelling membership for", currentUser?.id);
@@ -82,7 +82,7 @@ const MyMembershipsScreen = () => {
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam egestas turpis libero, placerat pharetra lectus vestibulum a. Donec elementum, metus vitae porttitor efficitur, mauris ex hendrerit velit, vel tempus lorem turpis vitae arcu.
         </Text>
         <View style={styles.membershipContainer}>
-          <TouchableOpacity style={styles.leftContainer} onPress={handlePauseMembership}>
+          <TouchableOpacity style={styles.leftContainer}>
             <Text style={styles.membershipText}>Pause</Text>
           </TouchableOpacity>
 
@@ -103,36 +103,7 @@ const MyMembershipsScreen = () => {
             </View>
           </TouchableOpacity>
         ))}
-
-        {/*This is the same as the code above, but with a hardcoded membership type*/}
-        <TouchableOpacity style={styles.membershipContainer} onPress={() => handleUpdateMembership(1)}>
-          <View style={styles.leftContainer}>
-            <Text style={styles.membershipText}>Premium Plus (1 car)</Text>
-          </View>
-
-          <View style={styles.rightContainer}>
-            <Text style={styles.priceText}>99kr. /month</Text>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.membershipContainer} onPress={() => handleUpdateMembership(2)}>
-          <View style={styles.leftContainer}>
-            <Text style={styles.membershipText}>Premium Plus (1 car)</Text>
-          </View>
-
-          <View style={styles.rightContainer}>
-            <Text style={styles.priceText}>99kr. /month</Text>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.membershipContainer} onPress={() => handleUpdateMembership(3)}>
-          <View style={styles.leftContainer}>
-            <Text style={styles.membershipText}>Premium Plus (1 car)</Text>
-          </View>
-
-          <View style={styles.rightContainer}>
-            <Text style={styles.priceText}>99kr. /month</Text>
-          </View>
-        </TouchableOpacity>
-      </View>
+      </View> 
     </ScrollView>
   );
 };

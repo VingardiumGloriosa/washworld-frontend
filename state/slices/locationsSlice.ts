@@ -1,12 +1,15 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { fetchLocation, getDistance, getDistances, fetchLocations } from "../api";
+import { fetchLocation, fetchLocations, calculateDistances } from "../api";
 
 export interface Location {
   id: number;
   name: string;
   address: string;
+  photo: string;
   mapsUrl: string;
-  distance?: number;
+  distance: number;
+  latitude: number;
+  longitude: number;
   washHalls: {
     available: number;
     total: number;
@@ -33,20 +36,29 @@ const initialState: LocationState = {
   error: null,
 };
 
-// Thunks
+// Thunk to fetch location by ID
 export const fetchLocationById = createAsyncThunk('location/fetchLocationById', async (locationId: number) => {
   const response = await fetchLocation(locationId);
   return response;
 });
 
+// Thunk to fetch all locations
 export const fetchAllLocations = createAsyncThunk('location/fetchAllLocations', async () => {
   const response = await fetchLocations();
   return response;
 });
 
-export const fetchDistances = createAsyncThunk('location/fetchDistances', async (data: { currentLocation: { latitude: number, longitude: number }, destinationLocations: { id: number, latitude: number, longitude: number }[] }) => {
-  const response = await getDistances(data);
-  return response;
+//Thunk to calculate distances for all locations
+export const calculateDistancesForAllLocations = createAsyncThunk('location/calculateDistancesForAllLocations', async (_, { getState, dispatch }) => {
+  const locations = await fetchLocations();
+  const distances = await calculateDistances(55.77419181465124, 12.514585695774914)
+  const updatedLocations = locations.map(location => {
+    return ({
+      ...location,
+      distance: distances.find(d => d.id === location.id)?.distance || null
+    })
+  });
+  return updatedLocations;
 });
 
 const locationSlice = createSlice({
@@ -84,15 +96,15 @@ const locationSlice = createSlice({
         state.loading = false;
         state.error = action.error.message;
       })
-      .addCase(fetchDistances.pending, (state) => {
+      .addCase(calculateDistancesForAllLocations.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(fetchDistances.fulfilled, (state, action: PayloadAction<Location[]>) => {
+      .addCase(calculateDistancesForAllLocations.fulfilled, (state, action: PayloadAction<Location[]>) => {
         state.loading = false;
-        state.locations = action.payload;
+        state.locations = action.payload
       })
-      .addCase(fetchDistances.rejected, (state, action) => {
+      .addCase(calculateDistancesForAllLocations.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
       });

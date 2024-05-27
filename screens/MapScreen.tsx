@@ -1,5 +1,5 @@
 // src/screens/MapScreen.js
-import React from "react";
+import React, { useEffect } from "react";
 import {
   SafeAreaView,
   StyleSheet,
@@ -10,11 +10,18 @@ import {
 import MapView, { Marker } from "react-native-maps";
 import ArrowIcon from "../assets/svg/leftArrow.svg"; // Ensure the SVG path is correct
 import { useNavigation } from "@react-navigation/native";
+import { AppDispatch, RootState } from "../state/store";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchAllLocations } from "../state/slices/locationsSlice";
 
 const MapScreen = () => {
   const navigation = useNavigation();
-  // const { locations } = route.params; // Receive locations data as props
-
+  const dispatch = useDispatch<AppDispatch>();
+  const locations = useSelector((state: RootState) => state.location.locations);
+  
+  useEffect(() => {
+    dispatch(fetchAllLocations());
+  }, [dispatch]);
 
   return (
     <View style={styles.container}>
@@ -33,7 +40,7 @@ const MapScreen = () => {
           longitudeDelta: 0.0421,
         }}
       >
-        {/* Add markers for each location
+        {/* Add markers for each location */}
         {locations.map((location) => (
           <Marker
             key={location.id}
@@ -44,34 +51,7 @@ const MapScreen = () => {
             title={location.name}
             description={location.address}
           />
-        ))} */}
-          <Marker
-            key={1}
-            coordinate={{
-              latitude: 55.6806284057663,
-              longitude: 12.5890510239421,
-            }}
-            title={'Inner City Wash'}
-            description={'not dynamic'}
-          />
-        <Marker
-            key={2}
-            coordinate={{
-              latitude: 55.67408217298727,
-              longitude: 12.556828525791119,
-            }}
-            title={'Frederiksberg Wash'}
-            description={'not dynamic'}
-          />
-           <Marker
-            key={3}
-            coordinate={{
-              latitude: 55.670966636057756,
-              longitude: 12.545858210448396,
-            }}
-            title={'Vesterbro Wash'}
-            description={'not dynamic'}
-          />
+        ))}
       </MapView>
     </View>
   );

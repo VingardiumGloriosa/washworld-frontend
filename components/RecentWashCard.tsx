@@ -1,29 +1,38 @@
 import React from "react";
-import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, Image, StyleSheet, TouchableOpacity, Linking } from "react-native";
 import LocationIcon from "../assets/svg/location.svg"; // Import your location icon SVG here
+import { useNavigation } from "@react-navigation/native";
 
 type RecentWashCardProps = {
-  ImageComponent: React.ReactElement;
+  imgSrc: string;
   locationName: string;
   updatedAt: string;
+  link: string;
 };
 
 const RecentWashCard: React.FC<RecentWashCardProps> = ({
-  ImageComponent,
+  imgSrc,
   locationName,
   updatedAt,
+  link
 }) => {
+  const clickButton = () => {
+    if(link?.startsWith('https://'))
+      Linking.openURL(link)
+  }
+
   return (
     <View style={styles.container}>
-      {ImageComponent}
+      {/* {ImageComponent} */}
+      <Image src={imgSrc} style={styles.image} />
       <View style={styles.infoContainer}>
         <LocationIcon width={24} height={24} style={styles.icon} />
         <Text style={styles.title}>{locationName}</Text>
         <Text style={styles.text}>{updatedAt}</Text>
+        <TouchableOpacity style={styles.button} onPress={clickButton}>
+          <Text style={styles.buttonText}>{"Get directions >"}</Text>
+        </TouchableOpacity>
       </View>
-      <TouchableOpacity style={styles.button}>
-        <Text style={styles.buttonText}>{"View location >"}</Text>
-      </TouchableOpacity>
     </View>
   );
 };
@@ -63,10 +72,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#34B566",
     justifyContent: "center",
     transform: [{ skewX: "-30deg" }],
-    position: "absolute",
-    bottom: 0,
-    right: 0,
-    marginRight: -10,
+    marginLeft: 'auto',
+    marginTop: 10
   },
   buttonText: {
     color: "white",

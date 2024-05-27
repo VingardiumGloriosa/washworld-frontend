@@ -9,42 +9,51 @@ import RecentWashCard from "../components/RecentWashCard";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchRewards, toggleReward } from "../state/slices/loyaltyRewardSlice";
 import { AppDispatch, RootState } from "../state/store";
+import { fetchUserProfile } from "../state/slices/userSlice";
+import { current } from "@reduxjs/toolkit";
 
 const screenWidth = Dimensions.get("window").width;
 
 export default function HistoryScreen() {
   const dispatch = useDispatch<AppDispatch>();
   const [progress, setProgress] = useState(0.5);
-  const [progressText, setProgressText] = useState("Wash your car 3 more times to unlock the next bonus!");
+  const [progressText, setProgressText] = useState("Wash your car 3 more times to unlock the next reward!");
   const [washHistory, setWashHistory] = useState([]);
   const rewards = useSelector((state: RootState) => state.loyaltyRewards.rewards);
+  const history = useSelector((state: RootState) => state.users.currentUser?.history || []);
+  const currentUser = useSelector((state: RootState) => state.users.currentUser);
+
+
+  // useEffect(() => {
+  //   dispatch(fetchRewards());
+  // }, [dispatch]);
 
   useEffect(() => {
-    dispatch(fetchRewards());
+    dispatch(fetchUserProfile(9));
   }, [dispatch]);
-
+  
   useEffect(() => {
     //here we gotta yeet and yoot some fetchiessss but for now its hardcoded to check that the components render as desired
-    setWashHistory([
-      {
-        id: 1,
-        locationName: "Hell",
-        updatedAt: "Today",
-        imageSrc: require("../assets/images/hall.jpeg"),
-      },
-      {
-        id: 2,
-        locationName: "Heaven",
-        updatedAt: "Today",
-        imageSrc: require("../assets/images/hall.jpeg"),
-      },
-      {
-        id: 3,
-        locationName: "Purgatory",
-        updatedAt: "Yesterday",
-        imageSrc: require("../assets/images/hall.jpeg"),
-      },
-    ]);
+    // setWashHistory([
+    //   {
+    //     id: 1,
+    //     locationName: "Hell",
+    //     updatedAt: "Today",
+    //     imageSrc: require("../assets/images/hall.jpeg"),
+    //   },
+    //   {
+    //     id: 2,
+    //     locationName: "Heaven",
+    //     updatedAt: "Today",
+    //     imageSrc: require("../assets/images/hall.jpeg"),
+    //   },
+    //   {
+    //     id: 3,
+    //     locationName: "Purgatory",
+    //     updatedAt: "Yesterday",
+    //     imageSrc: require("../assets/images/hall.jpeg"),
+    //   },
+    // ]);
   }, []);
 
   return (
@@ -59,8 +68,8 @@ export default function HistoryScreen() {
         </View>
         <View>
           <Title text={"Recent washes"} Icon={ClockIcon} width={30} height={30} />
-          {washHistory.map((wash) => (
-            <RecentWashCard key={wash.id} ImageComponent={<Image source={wash.imageSrc} style={{ width: 100, height: 75 }} />} locationName={wash.locationName} updatedAt={wash.updatedAt} />
+          {history.map((wash) => (
+            <RecentWashCard key={wash.id} imgSrc={wash.location.photo} locationName={wash.location.name} updatedAt={wash.date} link={wash.location.mapsUrl} />
           ))}
         </View>
       </ScrollView>

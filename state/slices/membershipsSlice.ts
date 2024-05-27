@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { fetchMembershipTypes, createMembership, deleteMembership, pauseMembership } from "../api";
+import { fetchMembershipTypes, createMembership, deleteMembership } from "../api";
 
 export interface MembershipType {
   id: number;
@@ -37,15 +37,6 @@ export const removeMembership = createAsyncThunk("membership/removeMembership", 
   return userId;
 });
 
-export const pauseUserMembership = createAsyncThunk("membership/pauseUserMembership", async (userId: number) => {
-  const response = await pauseMembership(userId);
-  return response;
-});
-
-export const updateMembership = createAsyncThunk("membership/updateMembership", async ({ userId, membershipTypeId }: { userId: number; membershipTypeId: number }) => {
-  const response = await updateMembership(userId, membershipTypeId);
-  return response;
-});
 
 const membershipSlice = createSlice({
   name: "membership",
@@ -71,12 +62,6 @@ const membershipSlice = createSlice({
       .addCase(removeMembership.fulfilled, (state, action: PayloadAction<number>) => {
         // Handle the removal of a membership
       })
-      .addCase(pauseUserMembership.fulfilled, (state, action: PayloadAction<any>) => {
-        // Handle the pausing of a membership
-      })
-      .addCase(updateMembership.fulfilled, (state, action: PayloadAction<any>) => {
-        // Handle the updating of a membership
-      });
   },
 });
 

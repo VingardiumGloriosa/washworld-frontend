@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import { AppThunk } from "../store"; // Assuming you have defined AppThunk type
-import { getCars, addCarToDatabase, fetchUserCars, fetchUserCar, updateUserCar, deleteUserCar } from "../api"; // Assuming you have an API function to fetch cars from the database
+import { addCarToDatabase, fetchUserCars, fetchUserCar, updateUserCar, deleteUserCar } from "../api"; // Assuming you have an API function to fetch cars from the database
 
 export interface Car {
   id: number;

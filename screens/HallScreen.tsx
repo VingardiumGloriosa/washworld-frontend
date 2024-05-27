@@ -18,7 +18,7 @@ import LocationIcon from "../assets/svg/location.svg";
 import MapIcon from "../assets/svg/map.svg";
 import DropDownPicker from "react-native-dropdown-picker";
 import { AppDispatch, RootState } from "../state/store";
-import { fetchAllLocations } from "../state/slices/locationsSlice";
+import { calculateDistancesForAllLocations, fetchAllLocations } from "../state/slices/locationsSlice";
 
 const HallScreen = () => {
   const navigation = useNavigation();
@@ -32,7 +32,7 @@ const HallScreen = () => {
   const [items, setItems] = useState([]);
 
   useEffect(() => {
-    dispatch(fetchAllLocations());
+    dispatch(calculateDistancesForAllLocations());
   }, [dispatch]);
 
   useEffect(() => {
@@ -58,14 +58,19 @@ const HallScreen = () => {
       // Ensure washHalls and selfWashHalls exist and provide default values if not
       const washHalls = item.washHalls || { available: 0, total: 0, outOfService: 0, nextAvailable: null };
       const selfWashHalls = item.selfWashHalls || { available: 0, total: 0, outOfService: 0, nextAvailable: null };
-
+      const distanceInKm = item.distance ? (item.distance/1000).toFixed(1) : null
       return (
         <WashCard
           key={item.id}
-          image={ item.photo }
+          ImageComponent={
+            <Image
+              source={{ uri: item.photo }} // Use the URI from the item's photo
+              style={{ width: 100, height: 60 }} // Apply any additional styles if needed
+            />
+          }
           locationName={item.name}
           address={item.address}
-          distance={item.distance?.toFixed(1) ?? "N/A"}
+          distance={distanceInKm ?? "N/A"}
           availableWashHalls={washHalls.available.toString()}
           availableSelfWash={selfWashHalls.available.toString()}
           totalWashHalls={washHalls.total.toString()}
@@ -103,9 +108,9 @@ const HallScreen = () => {
             listItemLabelStyle={styles.listItemLabel}
           />
         </View>
-        {/* <TouchableOpacity onPress={() => navigation.navigate("Map", { locations })}>
+        <TouchableOpacity onPress={() => navigation.navigate("Map")}>
           <MapIcon fill="#34B566" width={40} height={40} />
-        </TouchableOpacity> */}
+        </TouchableOpacity>
       </View>
       <Title text={"Wash Halls"} Icon={WashHallIcon} width={30} height={30} />
       <FlatList

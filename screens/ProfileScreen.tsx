@@ -19,7 +19,7 @@ const ProfileScreen = () => {
         <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("MyCars")}>
           <Text style={styles.buttonText}>My Cars</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("History")}>
           <Text style={styles.buttonText}>History</Text>
         </TouchableOpacity>
         <TouchableOpacity style={[styles.button, { backgroundColor: "#57585A" }]}>
