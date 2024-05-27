@@ -52,6 +52,7 @@ const userSlice = createSlice({
     builder.addCase(signup.pending, (state) => {
       state.loading = true;
       state.error = null;
+      console.log("Signup pending");
     });
     builder.addCase(signup.fulfilled, (state, action) => {
       state.loading = false;
@@ -60,10 +61,12 @@ const userSlice = createSlice({
       state.error = null;
       state.isAuthenticated = true;
       SecureStore.setItemAsync("token", action.payload.token);
+      console.log("Signup fulfilled", action.payload);
     });
     builder.addCase(signup.rejected, (state, action) => {
       state.loading = false;
       state.error = action.error.message;
+      console.log("Signup rejected", action.error.message);
     });
     builder.addCase(login.pending, (state) => {
       state.loading = true;

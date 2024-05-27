@@ -1,13 +1,18 @@
 // api.ts
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { Car } from "./slices/carSlice";
+import axiosInstance from "./axiosConfig";
 
 // Base URL of your API
-const API_URL = "https://localhost:3005";
+export const API_URL = "http://172.20.10.3:3005";
 
 // Example function to handle errors
-const handleError = (error: any) => {
-  console.error("API request failed:", error);
+const handleError = (error: AxiosError) => {
+  console.error("API request failed:", error.message);
+  if (error.response) {
+    console.error("Response status:", error.response.status);
+    console.error("Response data:", error.response.data);
+  }
   throw new Error("API request failed");
 };
 

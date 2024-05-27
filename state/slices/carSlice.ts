@@ -7,6 +7,7 @@ export interface Car {
   userId: number;
   licensePlate: string;
   photo?: string;
+  qrCodeData: string;
 }
 
 interface CarState {
@@ -56,14 +57,17 @@ const carSlice = createSlice({
       .addCase(fetchCars.pending, (state) => {
         state.loading = true;
         state.error = null;
+        console.log("fetching cars...");
       })
       .addCase(fetchCars.fulfilled, (state, action: PayloadAction<Car[]>) => {
         state.loading = false;
         state.cars = action.payload;
+        console.log("fetched cars");
       })
       .addCase(fetchCars.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
+        console.error("fetch cars error", action.error.message);
       })
       .addCase(fetchCar.fulfilled, (state, action: PayloadAction<Car>) => {
         const car = action.payload;
@@ -73,9 +77,11 @@ const carSlice = createSlice({
         } else {
           state.cars.push(car);
         }
+        console.log("fetched car");
       })
       .addCase(addCar.fulfilled, (state, action: PayloadAction<Car>) => {
         state.cars.push(action.payload);
+        console.log("added car");
       })
       .addCase(updateCar.fulfilled, (state, action: PayloadAction<Car>) => {
         const updatedCar = action.payload;
@@ -83,10 +89,12 @@ const carSlice = createSlice({
         if (index !== -1) {
           state.cars[index] = updatedCar;
         }
+        console.log("updated car");
       })
       .addCase(removeCar.fulfilled, (state, action: PayloadAction<number>) => {
         state.cars = state.cars.filter((car) => car.id !== action.payload);
       });
+    console.log("removed car");
   },
 });
 
