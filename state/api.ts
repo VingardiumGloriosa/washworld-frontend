@@ -43,7 +43,7 @@ export const getCars = async (): Promise<Car[]> => {
 // Function to get cars for a user
 export const fetchUserCars = async (userId: number) => {
   try {
-    const response = await axios.get(`${API_URL}/user/${userId}/cars`);
+    const response = await axios.get(`${API_URL}/users/${userId}/cars`);
     return response.data;
   } catch (error) {
     handleError(error);
@@ -53,7 +53,7 @@ export const fetchUserCars = async (userId: number) => {
 // Function to get a specific car for a user
 export const fetchUserCar = async (userId: number, carId: number) => {
   try {
-    const response = await axios.get(`${API_URL}/user/${userId}/cars/${carId}`);
+    const response = await axios.get(`${API_URL}/users/${userId}/cars/${carId}`);
     return response.data;
   } catch (error) {
     handleError(error);
@@ -63,7 +63,7 @@ export const fetchUserCar = async (userId: number, carId: number) => {
 // Function to add a car to the database
 export const addCarToDatabase = async (userId: number, car: Car): Promise<Car> => {
   try {
-    const response = await axios.post(`${API_URL}/user/${userId}/cars`, car);
+    const response = await axios.post(`${API_URL}/users/${userId}/cars`, car);
     return response.data;
   } catch (error) {
     handleError(error);
@@ -73,7 +73,7 @@ export const addCarToDatabase = async (userId: number, car: Car): Promise<Car> =
 // Function to update a car in the database
 export const updateUserCar = async (userId: number, carId: number, car: Partial<Car>): Promise<Car> => {
   try {
-    const response = await axios.put(`${API_URL}/user/${userId}/cars/${carId}`, car);
+    const response = await axios.put(`${API_URL}/users/${userId}/cars/${carId}`, car);
     return response.data;
   } catch (error) {
     handleError(error);
@@ -83,7 +83,7 @@ export const updateUserCar = async (userId: number, carId: number, car: Partial<
 // Function to delete a car from the database
 export const deleteUserCar = async (userId: number, carId: number) => {
   try {
-    await axios.delete(`${API_URL}/user/${userId}/cars/${carId}`);
+    await axios.delete(`${API_URL}/users/${userId}/cars/${carId}`);
   } catch (error) {
     handleError(error);
   }
@@ -160,7 +160,7 @@ export const fetchMembershipTypes = async () => {
 export const createMembership = async (userId: number, membershipTypeId: number) => {
   // const token = await getToken();
   const response = await axios.post(
-    `${API_URL}/user/${userId}/membership`,
+    `${API_URL}/users/${userId}/membership`,
     { membershipTypeId },
     {
       headers: {
@@ -173,7 +173,7 @@ export const createMembership = async (userId: number, membershipTypeId: number)
 
 export const deleteMembership = async (userId: number) => {
   // const token = await getToken();
-  await axios.delete(`${API_URL}/user/${userId}/membership`, {
+  await axios.delete(`${API_URL}/users/${userId}/membership`, {
     headers: {
       // Authorization: `Bearer ${token}`
     },
