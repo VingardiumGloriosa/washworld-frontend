@@ -19,7 +19,6 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const dispatch = useDispatch<AppDispatch>();
   const navigation = useNavigation();
-
   const token = useSelector((state: RootState) => state.users.token);
   const loading = useSelector((state: RootState) => state.users.loading);
   const error = useSelector((state: RootState) => state.users.error);
@@ -34,22 +33,53 @@ export default function Login() {
     readFromSecureStore();
   }, [dispatch]);
 
-  const handleLogin = () => {
-    dispatch(login({ email, password })).then((result) => {
-      if (result.meta.requestStatus === "fulfilled") {
-        // Extract the user data from the action payload
-        const user = result.payload;
-        // Dispatch an action to update the currentUser state in Redux
-        dispatch(setCurrentUser(user));
-        // Navigate to the desired screen
-        // Clear input fields
-        setEmail("");
-        setPassword("");
-        navigation.navigate("History");
-      } else {
-        Alert.alert("Login Failed", "Invalid email or password");
+  // Add the test useEffect here
+  useEffect(() => {
+    async function testSecureStore() {
+      try {
+        await SecureStore.setItemAsync("test_key", "test_value");
+        const storedValue = await SecureStore.getItemAsync("test_key");
+        console.log("Stored test value:", storedValue); // Should log "test_value"
+      } catch (error) {
+        console.error("SecureStore test failed:", error);
       }
-    });
+    }
+
+    testSecureStore();
+  }, []);
+
+  const handleLogin = async () => {
+    try {
+      // Perform login logic here
+      const response = await dispatch(login({ email, password })).unwrap();
+      console.log("Logging in with email:", email, "and password:", password);
+
+      const { token, user } = response;
+
+      console.log("Token type:", typeof token); // Check the type of the token
+      console.log("Token value:", token); // Log the token value
+
+      if (typeof token !== "string") {
+        throw new Error("Invalid token");
+      }
+
+      // Store the token in SecureStore
+      await SecureStore.setItemAsync("token", token);
+
+      // Dispatch the token to the Redux store
+      dispatch(setToken(token));
+      dispatch(setCurrentUser(user));
+
+      // Clear input fields
+      setEmail("");
+      setPassword("");
+
+      // Navigate to the desired screen
+      navigation.navigate("History");
+    } catch (error) {
+      console.error("Login failed:", error);
+      Alert.alert("Login Failed", error.message || "Invalid email or password");
+    }
   };
 
   return (

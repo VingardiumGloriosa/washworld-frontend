@@ -11,7 +11,6 @@ import HistoryScreen from "./HistoryScreen";
 export default function SignupScreen() {
   const navigation = useNavigation();
   const dispatch = useDispatch<AppDispatch>();
-
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -23,14 +22,19 @@ export default function SignupScreen() {
       console.log("Signing up with username:", username, "email:", email, "and password:", password);
 
       //Extract the user data from the response
-      const user = response;
-      console.log("User signed up:", user);
+      const { /* token,  */ user } = response;
+      console.log("User signed up:", user, "with token:" /* token */);
 
       // Simulate token creation (replace this with actual token from your API response)
-      const token = "temporarytoken123";
-      /*  const token = response.payload.token; */
+      const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imp1c3Rhc0BqdXN0YXMuY29tIiwiaWF0IjoxNzE2OTI2OTQzLCJleHAiOjE3MTk1MTg5NDN9.AZAbbFKxjDiG2vsU1ZftacFfyPe11LJCq0K1YWbXRG8";
+      console.log("Token type:", typeof token); // Check the type of the token
+      console.log("Token value:", token); // Log the token value
 
-      // Store the token in SecureStore
+      if (typeof token !== "string") {
+        throw new Error("Invalid token");
+      }
+
+      // Store the token in SecureStoreAA
       await SecureStore.setItemAsync("token", token);
       console.log("Token created and stored:", token);
 
@@ -55,7 +59,14 @@ export default function SignupScreen() {
 
   useEffect(() => {
     async function load() {
-      const token = await SecureStore.getItemAsync("token");
+      const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imp1c3Rhc0BqdXN0YXMuY29tIiwiaWF0IjoxNzE2OTI2OTQzLCJleHAiOjE3MTk1MTg5NDN9.AZAbbFKxjDiG2vsU1ZftacFfyPe11LJCq0K1YWbXRG8";
+
+      // Store the token in SecureStoreAA
+      await SecureStore.setItemAsync("token", token);
+      console.log("Token created and stored:", token);
+
+      /* const token = await SecureStore.getItemAsync("token"); */
+      await SecureStore.getItemAsync("token");
       console.log("read token from SecureStore", token);
 
       dispatch(setToken(token || ""));

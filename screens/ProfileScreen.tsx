@@ -1,9 +1,22 @@
 import React from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../state/store";
+import { logout } from "../state/slices/userSlice";
 
 const ProfileScreen = () => {
   const navigation = useNavigation();
+  const dispatch = useDispatch<AppDispatch>();
+
+  const handleLogout = () => {
+    // Perform logout logic here
+    console.log("Logging out");
+    dispatch(logout());
+
+    // Navigate to the login screen
+    navigation.navigate("LoginScreen");
+  };
 
   return (
     <View style={styles.container}>
@@ -22,7 +35,7 @@ const ProfileScreen = () => {
         <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("History")}>
           <Text style={styles.buttonText}>History</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.button, { backgroundColor: "#57585A" }]}>
+        <TouchableOpacity style={[styles.button, { backgroundColor: "#57585A" }]} onPress={handleLogout}>
           <Text style={styles.buttonText}>Log Out</Text>
         </TouchableOpacity>
       </View>
