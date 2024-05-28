@@ -10,7 +10,7 @@ import ProfileIcon from "./assets/svg/profile.svg";
 import * as Font from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import HallStack from "./navigation/HallStack";
-import CarStack from "./navigation/CarStack";
+/* import CarStack from "./navigation/CarStack"; */
 import LoginScreen from "./screens/LoginScreen";
 import SignUpScreen from "./screens/SignupScreen";
 import { Provider } from "react-redux";
@@ -26,13 +26,13 @@ function AppNavigator() {
   const dispatch = useAppDispatch();
   const isAuthenticated = useAppSelector((state) => state.users.isAuthenticated);
 
-  // useEffect(() => {
-  //   dispatch(checkAuthentication());
-  // }, [dispatch]);
+  /* useEffect(() => {
+    dispatch(checkAuthentication());
+  }, [dispatch]);
 
   if (!isAuthenticated) {
     return <LoginSignupStack />;
-  }
+  } */
 
   return (
     <Tab.Navigator

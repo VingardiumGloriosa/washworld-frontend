@@ -11,7 +11,6 @@ interface UserState {
   loading: boolean;
   error: string | null;
   isAuthenticated: boolean;
-
 }
 
 interface User {
@@ -23,7 +22,7 @@ interface User {
   membership_id: number;
   history?: HistoryItem[];
   loyaltyRewards: LoyaltyReward[];
-  loyaltyRewardProgress: { progress: number, goal: number };
+  loyaltyRewardProgress: { progress: number; goal: number };
 }
 
 interface HistoryItem {

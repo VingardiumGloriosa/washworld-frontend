@@ -6,7 +6,6 @@ export class UserQueries extends SuperQueries {
   static baseUrl = super.baseUrl + "/auth/";
 
   static async signup(username: string, email: string, password: string) {
-    console.log(this.baseUrl);
     const response = await axios.post(`${this.baseUrl}signup`, {
       username: username,
       email: email,

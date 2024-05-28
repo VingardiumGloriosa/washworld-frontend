@@ -21,7 +21,7 @@ const MyCarsScreen = () => {
   const userId = currentUser?.id || 9;
 
   useEffect(() => {
-    dispatch(fetchCars(9));
+    dispatch(fetchCars(userId));
   }, [dispatch]);
 
   const openCamera = () => {
@@ -42,7 +42,7 @@ const MyCarsScreen = () => {
       const newCar = {
         userId: userId,
         car: {
-          id: cars.length + 1,
+          id: cars.length + 1, // Temporary ID, should be replaced by backend-generated ID
           userId: userId,
           licensePlate: licensePlate,
           photo: photo,

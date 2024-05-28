@@ -4,32 +4,14 @@ import { Car } from "./slices/carSlice";
 import axiosInstance from "./axiosConfig";
 
 // Base URL of your API
-export const API_URL = 'http://192.168.68.66:3005'//'http://localhost:3005'; //'http://192.168.68.66:3005' //
+export const API_URL = "http://192.168.68.60:3005"; //'http://localhost:3005'; //'http://192.168.68.66:3005' //
 
-const handleError = (error: any) => {
-  if (axios.isAxiosError(error)) {
-    console.error("Axios error message:", error.message);
-    console.error("Axios error code:", error.code);
-    console.error("Axios error config:", error.config);
-    
-    if (error.response) {
-      // The request was made and the server responded with a status code
-      // that falls out of the range of 2xx
-      console.error("Axios error response data:", error.response.data);
-      console.error("Axios error response status:", error.response.status);
-      console.error("Axios error response headers:", error.response.headers);
-    } else if (error.request) {
-      // The request was made but no response was received
-      console.error("Axios error request:", error.request);
-    } else {
-      // Something happened in setting up the request that triggered an Error
-      console.error("Axios error:", error.message);
-    }
-  } else {
-    // Handle non-Axios errors
-    console.error("Non-Axios error:", error);
+const handleError = (error: AxiosError) => {
+  console.error("API request failed:", error.message);
+  if (error.response) {
+    console.error("Response status:", error.response.status);
+    console.error("Response data:", error.response.data);
   }
-
   throw new Error("API request failed");
 };
 
@@ -37,10 +19,10 @@ const handleError = (error: any) => {
 
 export const fetchUserHome = async (userId: number) => {
   // const token = await getToken();
-  const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imp1c3Rhc0BqdXN0YXMuY29tIiwiaWF0IjoxNzE2ODIzOTUzLCJleHAiOjE3MTk0MTU5NTN9.AjIVxkXRYIFh4U49fgGm6cpbNxzND6ixFKh7UHfRO0I'
+  const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imp1c3Rhc0BqdXN0YXMuY29tIiwiaWF0IjoxNzE2ODIzOTUzLCJleHAiOjE3MTk0MTU5NTN9.AjIVxkXRYIFh4U49fgGm6cpbNxzND6ixFKh7UHfRO0I";
   const response = await axios.get(`${API_URL}/users/${userId}/home`, {
     headers: {
-      Authorization: `Bearer ${token}`
+      Authorization: `Bearer ${token}`,
     },
   });
   return response.data;
@@ -61,7 +43,7 @@ export const getCars = async (): Promise<Car[]> => {
 // Function to get cars for a user
 export const fetchUserCars = async (userId: number) => {
   try {
-    const response = await axios.get(`${API_URL}/user/${userId}/cars`);
+    const response = await axios.get(`${API_URL}/users/${userId}/cars`);
     return response.data;
   } catch (error) {
     handleError(error);
@@ -71,7 +53,7 @@ export const fetchUserCars = async (userId: number) => {
 // Function to get a specific car for a user
 export const fetchUserCar = async (userId: number, carId: number) => {
   try {
-    const response = await axios.get(`${API_URL}/user/${userId}/cars/${carId}`);
+    const response = await axios.get(`${API_URL}/users/${userId}/cars/${carId}`);
     return response.data;
   } catch (error) {
     handleError(error);
@@ -81,7 +63,7 @@ export const fetchUserCar = async (userId: number, carId: number) => {
 // Function to add a car to the database
 export const addCarToDatabase = async (userId: number, car: Car): Promise<Car> => {
   try {
-    const response = await axios.post(`${API_URL}/user/${userId}/cars`, car);
+    const response = await axios.post(`${API_URL}/users/${userId}/cars`, car);
     return response.data;
   } catch (error) {
     handleError(error);
@@ -91,7 +73,7 @@ export const addCarToDatabase = async (userId: number, car: Car): Promise<Car> =
 // Function to update a car in the database
 export const updateUserCar = async (userId: number, carId: number, car: Partial<Car>): Promise<Car> => {
   try {
-    const response = await axios.put(`${API_URL}/user/${userId}/cars/${carId}`, car);
+    const response = await axios.put(`${API_URL}/users/${userId}/cars/${carId}`, car);
     return response.data;
   } catch (error) {
     handleError(error);
@@ -101,7 +83,7 @@ export const updateUserCar = async (userId: number, carId: number, car: Partial<
 // Function to delete a car from the database
 export const deleteUserCar = async (userId: number, carId: number) => {
   try {
-    await axios.delete(`${API_URL}/user/${userId}/cars/${carId}`);
+    await axios.delete(`${API_URL}/users/${userId}/cars/${carId}`);
   } catch (error) {
     handleError(error);
   }
@@ -111,14 +93,17 @@ export const deleteUserCar = async (userId: number, carId: number) => {
 
 export const toggleLoyaltyReward = async (userId: number, rewardId: number, isActive: boolean) => {
   // const token = await getToken();
-  console.log(userId, rewardId, isActive)
-  const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imp1c3Rhc0BqdXN0YXMuY29tIiwiaWF0IjoxNzE2ODIzOTUzLCJleHAiOjE3MTk0MTU5NTN9.AjIVxkXRYIFh4U49fgGm6cpbNxzND6ixFKh7UHfRO0I'
+  console.log(userId, rewardId, isActive);
+  const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imp1c3Rhc0BqdXN0YXMuY29tIiwiaWF0IjoxNzE2ODIzOTUzLCJleHAiOjE3MTk0MTU5NTN9.AjIVxkXRYIFh4U49fgGm6cpbNxzND6ixFKh7UHfRO0I";
   const response = await axios.patch(
-    `${API_URL}/users/${userId}/loyalty-rewards/${rewardId}`, { isActive }, {
+    `${API_URL}/users/${userId}/loyalty-rewards/${rewardId}`,
+    { isActive },
+    {
       headers: {
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${token}`,
       },
-    });
+    }
+  );
   return response.data;
 };
 
@@ -153,14 +138,13 @@ export const fetchLocation = async (locationId: number) => {
 
 export const calculateDistances = async (latitude: number, longitude: number): Promise<{ id: number; distance: number }[]> => {
   try {
-    const response = await axios.post<{ id: number; distance: number }[]>(`${API_URL}/distances`, { latitude, longitude }, { headers: { 'Content-Type': 'application/json' } });
+    const response = await axios.post<{ id: number; distance: number }[]>(`${API_URL}/distances`, { latitude, longitude }, { headers: { "Content-Type": "application/json" } });
     return response.data;
   } catch (error) {
     handleError(error);
     throw new Error("Failed to calculate distances");
   }
 };
-
 
 // MEMBERSHIP
 
@@ -174,25 +158,61 @@ export const fetchMembershipTypes = async () => {
 };
 
 export const createMembership = async (userId: number, membershipTypeId: number) => {
-  // const token = await getToken();
-  const response = await axios.post(
-    `${API_URL}/user/${userId}/membership`,
-    { membershipTypeId },
-    {
-      headers: {
-        // Authorization: `Bearer ${token}`
-      },
-    }
-  );
-  return response.data;
+  try {
+    // const token = await getToken();
+    const response = await axios.post(
+      `${API_URL}/users/${userId}/membership`,
+      { membershipTypeId },
+      {
+        headers: {
+          // Authorization: `Bearer ${token}` CHECK IF WE NEED THIS
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    handleError(error);
+  }
 };
 
 export const deleteMembership = async (userId: number) => {
   // const token = await getToken();
-  await axios.delete(`${API_URL}/user/${userId}/membership`, {
-    headers: {
-      // Authorization: `Bearer ${token}`
-    },
-  });
+  try {
+    await axios.delete(`${API_URL}/users/${userId}/membership`, {
+      headers: {
+        // Authorization: `Bearer ${token}`
+      },
+    });
+  } catch (error) {
+    handleError(error);
+  }
 };
 
+export const pauseMembership = async (userId: number) => {
+  try {
+    // const token = await getToken();
+    const response = await axios.patch(`${API_URL}/users/${userId}/membership/pause`, null, {
+      //CHECK IF WE HAVE THIS ENDPOINT
+      headers: {
+        // Authorization: `Bearer ${token}`
+      },
+    });
+    return response.data;
+  } catch (error) {
+    handleError(error);
+  }
+};
+
+export const resumeMembership = async (userId: number) => {
+  try {
+    const response = await axios.patch(`${API_URL}/users/${userId}/membership/resume`, null, {
+      //CHECK IF WE HAVE THIS ENDPOINT
+      headers: {
+        // Authorization: `Bearer ${token}`
+      },
+    });
+    return response.data;
+  } catch (error) {
+    handleError(error);
+  }
+};
