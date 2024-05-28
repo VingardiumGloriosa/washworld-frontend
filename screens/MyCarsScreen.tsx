@@ -18,7 +18,7 @@ const MyCarsScreen = () => {
   const [photo, setPhoto] = useState("");
   const [licensePlate, setLicensePlate] = useState("");
 
-  const userId = currentUser?.id || 1;
+  const userId = currentUser?.id || 9;
 
   useEffect(() => {
     dispatch(fetchCars(9));
