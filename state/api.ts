@@ -4,7 +4,7 @@ import { Car } from "./slices/carSlice";
 import axiosInstance from "./axiosConfig";
 
 // Base URL of your API
-export const API_URL = "http://172.20.10.3:3005"; //'http://localhost:3005'; //'http://192.168.68.66:3005' //
+export const API_URL = "http://192.168.68.60:3005"; //'http://localhost:3005'; //'http://192.168.68.66:3005' //
 
 const handleError = (error: AxiosError) => {
   console.error("API request failed:", error.message);
@@ -158,24 +158,61 @@ export const fetchMembershipTypes = async () => {
 };
 
 export const createMembership = async (userId: number, membershipTypeId: number) => {
-  // const token = await getToken();
-  const response = await axios.post(
-    `${API_URL}/users/${userId}/membership`,
-    { membershipTypeId },
-    {
-      headers: {
-        // Authorization: `Bearer ${token}`
-      },
-    }
-  );
-  return response.data;
+  try {
+    // const token = await getToken();
+    const response = await axios.post(
+      `${API_URL}/users/${userId}/membership`,
+      { membershipTypeId },
+      {
+        headers: {
+          // Authorization: `Bearer ${token}` CHECK IF WE NEED THIS
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    handleError(error);
+  }
 };
 
 export const deleteMembership = async (userId: number) => {
   // const token = await getToken();
-  await axios.delete(`${API_URL}/users/${userId}/membership`, {
-    headers: {
-      // Authorization: `Bearer ${token}`
-    },
-  });
+  try {
+    await axios.delete(`${API_URL}/users/${userId}/membership`, {
+      headers: {
+        // Authorization: `Bearer ${token}`
+      },
+    });
+  } catch (error) {
+    handleError(error);
+  }
+};
+
+export const pauseMembership = async (userId: number) => {
+  try {
+    // const token = await getToken();
+    const response = await axios.patch(`${API_URL}/users/${userId}/membership/pause`, null, {
+      //CHECK IF WE HAVE THIS ENDPOINT
+      headers: {
+        // Authorization: `Bearer ${token}`
+      },
+    });
+    return response.data;
+  } catch (error) {
+    handleError(error);
+  }
+};
+
+export const resumeMembership = async (userId: number) => {
+  try {
+    const response = await axios.patch(`${API_URL}/users/${userId}/membership/resume`, null, {
+      //CHECK IF WE HAVE THIS ENDPOINT
+      headers: {
+        // Authorization: `Bearer ${token}`
+      },
+    });
+    return response.data;
+  } catch (error) {
+    handleError(error);
+  }
 };

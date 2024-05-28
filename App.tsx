@@ -26,13 +26,13 @@ function AppNavigator() {
   const dispatch = useAppDispatch();
   const isAuthenticated = useAppSelector((state) => state.users.isAuthenticated);
 
-  useEffect(() => {
+  /* useEffect(() => {
     dispatch(checkAuthentication());
   }, [dispatch]);
 
   if (!isAuthenticated) {
     return <LoginSignupStack />;
-  }
+  } */
 
   return (
     <Tab.Navigator
