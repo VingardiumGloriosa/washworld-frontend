@@ -2,6 +2,7 @@
 import axios, { AxiosError } from "axios";
 import { Car } from "./slices/carSlice";
 import axiosInstance from "./axiosConfig";
+import * as SecureStore from "expo-secure-store";
 
 // Base URL of your API
 export const API_URL = "http://172.20.10.3:3005"; //'http://localhost:3005'; //'http://192.168.68.66:3005' //
@@ -18,8 +19,7 @@ const handleError = (error: AxiosError) => {
 // USER
 
 export const fetchUserHome = async (userId: number) => {
-  // const token = await getToken();
-  const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imp1c3Rhc0BqdXN0YXMuY29tIiwiaWF0IjoxNzE2ODIzOTUzLCJleHAiOjE3MTk0MTU5NTN9.AjIVxkXRYIFh4U49fgGm6cpbNxzND6ixFKh7UHfRO0I";
+  const token = await SecureStore.getItemAsync("token");
   const response = await axios.get(`${API_URL}/users/${userId}/home`, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -92,9 +92,8 @@ export const deleteUserCar = async (userId: number, carId: number) => {
 // LOYALTY REWARDS
 
 export const toggleLoyaltyReward = async (userId: number, rewardId: number, isActive: boolean) => {
-  // const token = await getToken();
   console.log(userId, rewardId, isActive);
-  const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imp1c3Rhc0BqdXN0YXMuY29tIiwiaWF0IjoxNzE2ODIzOTUzLCJleHAiOjE3MTk0MTU5NTN9.AjIVxkXRYIFh4U49fgGm6cpbNxzND6ixFKh7UHfRO0I";
+  const token = await SecureStore.getItemAsync("token");
   const response = await axios.patch(
     `${API_URL}/users/${userId}/loyalty-rewards/${rewardId}`,
     { isActive },
@@ -159,13 +158,13 @@ export const fetchMembershipTypes = async () => {
 
 export const createMembership = async (userId: number, membershipTypeId: number) => {
   try {
-    // const token = await getToken();
+    const token = await SecureStore.getItemAsync("token");
     const response = await axios.post(
       `${API_URL}/users/${userId}/membership`,
       { membershipTypeId },
       {
         headers: {
-          // Authorization: `Bearer ${token}` CHECK IF WE NEED THIS
+          Authorization: `Bearer ${token}`,
         },
       }
     );
@@ -176,11 +175,11 @@ export const createMembership = async (userId: number, membershipTypeId: number)
 };
 
 export const deleteMembership = async (userId: number) => {
-  // const token = await getToken();
+  const token = await SecureStore.getItemAsync("token");
   try {
     await axios.delete(`${API_URL}/users/${userId}/membership`, {
       headers: {
-        // Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${token}`,
       },
     });
   } catch (error) {
@@ -190,11 +189,11 @@ export const deleteMembership = async (userId: number) => {
 
 export const pauseMembership = async (userId: number) => {
   try {
-    // const token = await getToken();
+    const token = await SecureStore.getItemAsync("token");
     const response = await axios.patch(`${API_URL}/users/${userId}/membership/pause`, null, {
-      //CHECK IF WE HAVE THIS ENDPOINT
+      //CHECK IF WE HAVE THIS ENDPOINT - DUMMY FUNCTION
       headers: {
-        // Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${token}`,
       },
     });
     return response.data;
@@ -205,10 +204,11 @@ export const pauseMembership = async (userId: number) => {
 
 export const resumeMembership = async (userId: number) => {
   try {
+    const token = await SecureStore.getItemAsync("token");
     const response = await axios.patch(`${API_URL}/users/${userId}/membership/resume`, null, {
-      //CHECK IF WE HAVE THIS ENDPOINT
+      //CHECK IF WE HAVE THIS ENDPOINT - DUMMY FUNCTION
       headers: {
-        // Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${token}`,
       },
     });
     return response.data;

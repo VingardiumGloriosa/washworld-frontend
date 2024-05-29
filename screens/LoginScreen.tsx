@@ -10,9 +10,9 @@ import LoginSignupStack from "../navigation/LoginSignupStack";
 import HistoryScreen from "./HistoryScreen";
 import { StackNavigationProp } from "@react-navigation/stack";
 
-export type RootStackParamList = {
+/* export type RootStackParamList = {
   YourScreen: { id: number } | undefined;
-};
+}; */
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -22,6 +22,8 @@ export default function Login() {
   const token = useSelector((state: RootState) => state.users.token);
   const loading = useSelector((state: RootState) => state.users.loading);
   const error = useSelector((state: RootState) => state.users.error);
+
+  /* 
 
   useEffect(() => {
     async function readFromSecureStore() {
@@ -65,6 +67,7 @@ export default function Login() {
 
       // Store the token in SecureStore
       await SecureStore.setItemAsync("token", token);
+      console.log("Token created and stored:", token);
 
       // Dispatch the token to the Redux store
       dispatch(setToken(token));
@@ -81,11 +84,32 @@ export default function Login() {
       Alert.alert("Login Failed", error.message || "Invalid email or password");
     }
   };
+ */
+
+  //TRYING TO IMPLEMENT THE LOGIN FUNCTIONALITY
+
+  const handleLogin = async () => {
+    try {
+      dispatch(login({ email: email, password: password }));
+    } catch (error) {
+      console.error("Login failed:", error);
+      Alert.alert("Login Failed", error.message || "Invalid email or password");
+    }
+  };
+
+  useEffect(() => {
+    async function readFromSecureStore() {
+      const token = await SecureStore.getItemAsync("token");
+      token && dispatch(setToken(token));
+    }
+    readFromSecureStore();
+  }, []);
 
   return (
     <View style={styles.container}>
       <Logo width={160} height={80} />
       <Text style={styles.subHeader}>Log in</Text>
+      <Text>{token}</Text>
 
       <TextInput style={styles.input} placeholder="Enter email" value={email} onChangeText={setEmail} />
       <TextInput style={styles.input} placeholder="Enter password" secureTextEntry value={password} onChangeText={setPassword} />

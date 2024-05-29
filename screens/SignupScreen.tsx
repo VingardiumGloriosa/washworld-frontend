@@ -11,22 +11,24 @@ import HistoryScreen from "./HistoryScreen";
 export default function SignupScreen() {
   const navigation = useNavigation();
   const dispatch = useDispatch<AppDispatch>();
-  const [username, setUsername] = useState("");
+  const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSignup = async () => {
+  /* const handleSignup = async () => {
     try {
       // Perform signup logic here
-      const response = await dispatch(signup({ username: username, email: email, password: password })).unwrap();
-      console.log("Signing up with username:", username, "email:", email, "and password:", password);
+      const response = await dispatch(signup({ fullName: fullName, email: email, password: password })).unwrap();
+      console.log("Signing up with fullName:", fullName, "email:", email, "and password:", password);
 
       //Extract the user data from the response
-      const { /* token,  */ user } = response;
-      console.log("User signed up:", user, "with token:" /* token */);
+      const { user } = response;
+      console.log("User signed up:", user);
 
       // Simulate token creation (replace this with actual token from your API response)
-      const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imp1c3Rhc0BqdXN0YXMuY29tIiwiaWF0IjoxNzE2OTI2OTQzLCJleHAiOjE3MTk1MTg5NDN9.AZAbbFKxjDiG2vsU1ZftacFfyPe11LJCq0K1YWbXRG8";
+      //const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imp1c3Rhc0BqdXN0YXMuY29tIiwiaWF0IjoxNzE2OTI2OTQzLCJleHAiOjE3MTk1MTg5NDN9.AZAbbFKxjDiG2vsU1ZftacFfyPe11LJCq0K1YWbXRG8";
+      const token = response.token;
+
       console.log("Token type:", typeof token); // Check the type of the token
       console.log("Token value:", token); // Log the token value
 
@@ -45,9 +47,41 @@ export default function SignupScreen() {
       dispatch(setCurrentUser(user));
 
       // Clear input fields
-      setUsername("");
+      setFullName("");
       setEmail("");
       setPassword("");
+
+      // Show confirmation message
+      Alert.alert("Signup Successful", "You have successfully signed up! Please log in to access to your profile", [{ text: "OK", onPress: () => navigation.navigate("LoginScreen") }]);
+    } catch (error) {
+      console.error("Signup failed:", error);
+      Alert.alert("Signup Failed", error.message || "An error occurred during signup. Please try again later.");
+    }
+  }; */
+
+  /*  useEffect(() => {
+    async function load() {
+      // const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imp1c3Rhc0BqdXN0YXMuY29tIiwiaWF0IjoxNzE2OTI2OTQzLCJleHAiOjE3MTk1MTg5NDN9.AZAbbFKxjDiG2vsU1ZftacFfyPe11LJCq0K1YWbXRG8";
+
+      const token = await SecureStore.getItemAsync("token");
+      console.log("read token from SecureStore", token);
+      // Store the token in SecureStoreAA
+      await SecureStore.setItemAsync("token", token);
+      console.log("Token created and stored:", token);
+
+      //const token = await SecureStore.getItemAsync("token");
+      //await SecureStore.getItemAsync("token");
+      //console.log("read token from SecureStore", token);
+
+      dispatch(setToken(token || ""));
+    }
+    load();
+  }, []); */
+
+  //TRYING SOMETHING ELSE
+  const handleSignup = async () => {
+    try {
+      dispatch(signup({ fullName: fullName, email: email, password: password }));
 
       // Show confirmation message
       Alert.alert("Signup Successful", "You have successfully signed up! Please log in to access to your profile", [{ text: "OK", onPress: () => navigation.navigate("LoginScreen") }]);
@@ -59,14 +93,7 @@ export default function SignupScreen() {
 
   useEffect(() => {
     async function load() {
-      const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imp1c3Rhc0BqdXN0YXMuY29tIiwiaWF0IjoxNzE2OTI2OTQzLCJleHAiOjE3MTk1MTg5NDN9.AZAbbFKxjDiG2vsU1ZftacFfyPe11LJCq0K1YWbXRG8";
-
-      // Store the token in SecureStoreAA
-      await SecureStore.setItemAsync("token", token);
-      console.log("Token created and stored:", token);
-
-      /* const token = await SecureStore.getItemAsync("token"); */
-      await SecureStore.getItemAsync("token");
+      const token = await SecureStore.getItemAsync("token");
       console.log("read token from SecureStore", token);
 
       dispatch(setToken(token || ""));
@@ -78,7 +105,7 @@ export default function SignupScreen() {
     <View style={styles.container}>
       <Logo width={160} height={80} />
       <Text style={styles.subHeader}>Sign up</Text>
-      <TextInput style={styles.input} placeholder="Full name" value={username} onChangeText={setUsername} />
+      <TextInput style={styles.input} placeholder="Full name" value={fullName} onChangeText={setFullName} />
       <TextInput style={styles.input} placeholder="Enter email" value={email} onChangeText={setEmail} />
       <TextInput style={styles.input} placeholder="Enter password" secureTextEntry value={password} onChangeText={setPassword} />
       {/* <TextInput

@@ -54,7 +54,7 @@ const MyMembershipsScreen = () => {
           <ArrowIcon width={25} height={25} fill={"#808285"} />
         </TouchableOpacity>
         <Image source={require("../assets/images/profile-pic.png")} style={styles.profileImage} />
-        <Text style={styles.carrieTitle}>{currentUser?.username}</Text>
+        <Text style={styles.carrieTitle}>{currentUser?.fullName}</Text>
         <Text style={styles.membershipsTitle}>My Memberships</Text>
         {activeMembership ? (
           <View>

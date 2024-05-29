@@ -18,7 +18,7 @@ interface User {
   email: string;
   photo: string;
   password: string;
-  username: string;
+  fullName: string;
   membership_id: number;
   history?: HistoryItem[];
   loyaltyRewards: LoyaltyReward[];
@@ -51,7 +51,7 @@ const userSlice = createSlice({
       state.token = action.payload;
     },
     logout: (state) => {
-      state.token = null;
+      state.token = "";
       state.isAuthenticated = false;
       state.currentUser = null;
       console.log("Logging out");
@@ -68,10 +68,10 @@ const userSlice = createSlice({
     builder.addCase(signup.fulfilled, (state, action) => {
       state.loading = false;
       state.currentUser = action.payload;
-      state.token = action.payload.token;
+      state.token = action.payload.access_token;
       state.error = null;
-      state.isAuthenticated = true;
-      SecureStore.setItemAsync("token", action.payload.token);
+      SecureStore.setItemAsync("token", action.payload.access_token);
+      console.log("token", action.payload.access_token);
       console.log("Signup fulfilled", action.payload);
     });
     builder.addCase(signup.rejected, (state, action) => {
@@ -86,10 +86,12 @@ const userSlice = createSlice({
     builder.addCase(login.fulfilled, (state, action) => {
       state.loading = false;
       state.currentUser = action.payload;
-      state.token = action.payload.token;
+      state.token = action.payload.access_token;
       state.error = null;
       state.isAuthenticated = true;
-      SecureStore.setItemAsync("token", action.payload.token);
+      SecureStore.setItemAsync("token", action.payload.access_token);
+      console.log("token", action.payload.access_token);
+      console.log("Login fulfilled", action.payload);
     });
     builder.addCase(login.rejected, (state, action) => {
       state.loading = false;
@@ -132,15 +134,38 @@ const userSlice = createSlice({
   },
 });
 
-export const signup = createAsyncThunk("user/signup", async (credentials: { username: string; email: string; password: string }) => {
+/* export const signup = createAsyncThunk("user/signup", async (credentials: { fullName: string; email: string; password: string }) => {
   console.log("signup thunk", credentials);
-  const response = await UserQueries.signup(credentials.username, credentials.email, credentials.password);
+  const response = await UserQueries.signup(credentials.fullName, credentials.email, credentials.password);
+  if (!response.token) {
+    throw new Error("No token returned from signup");
+  }
+  return { user: response.user, token: response.token };
+}); */
+
+export const signup = createAsyncThunk("user/signup", async (credentials: { fullName: string; email: string; password: string }, thunkAPI) => {
+  console.log("signup thunk", credentials);
+
+  const response = await UserQueries.signup(credentials.fullName, credentials.email, credentials.password);
+  console.log("signup response", response);
+
   return response;
 });
 
-export const login = createAsyncThunk("user/login", async (credentials: { email: string; password: string }) => {
+/* export const login = createAsyncThunk("user/login", async (credentials: { email: string; password: string }) => {
   console.log("login thunk", credentials);
   const response = await UserQueries.login(credentials.email, credentials.password);
+  console.log("login response", response);
+  if (!response.token) {
+    throw new Error("No token returned from login");
+  }
+  return { user: response.user, token: response.token };
+}); */
+
+export const login = createAsyncThunk("user/login", async (credentials: { email: string; password: string }, thunkAPI) => {
+  console.log("login thunk", credentials);
+  const response = await UserQueries.login(credentials.email, credentials.password);
+  console.log("login response", response);
   return response;
 });
 
