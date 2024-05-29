@@ -71,7 +71,6 @@ const userSlice = createSlice({
       state.token = action.payload.access_token;
       state.error = null;
       SecureStore.setItemAsync("token", action.payload.access_token);
-      console.log("token", action.payload.access_token);
       console.log("Signup fulfilled", action.payload);
     });
     builder.addCase(signup.rejected, (state, action) => {

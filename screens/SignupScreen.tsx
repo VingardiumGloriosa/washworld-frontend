@@ -83,6 +83,11 @@ export default function SignupScreen() {
     try {
       dispatch(signup({ fullName: fullName, email: email, password: password }));
 
+      // Clear input fields
+      setFullName("");
+      setEmail("");
+      setPassword("");
+
       // Show confirmation message
       Alert.alert("Signup Successful", "You have successfully signed up! Please log in to access to your profile", [{ text: "OK", onPress: () => navigation.navigate("LoginScreen") }]);
     } catch (error) {

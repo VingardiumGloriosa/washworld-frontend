@@ -30,20 +30,14 @@ export const fetchUserHome = async (userId: number) => {
 
 // CARS
 
-// Function to get cars
-export const getCars = async (): Promise<Car[]> => {
-  try {
-    const response = await axios.get(`${API_URL}/locations`);
-    return response.data;
-  } catch (error) {
-    handleError(error);
-  }
-};
-
 // Function to get cars for a user
-export const fetchUserCars = async (userId: number) => {
+export const fetchUserCars = async (userId: number, token: string) => {
   try {
-    const response = await axios.get(`${API_URL}/users/${userId}/cars`);
+    const response = await axios.get(`${API_URL}/users/cars`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     return response.data;
   } catch (error) {
     handleError(error);
@@ -53,7 +47,7 @@ export const fetchUserCars = async (userId: number) => {
 // Function to get a specific car for a user
 export const fetchUserCar = async (userId: number, carId: number) => {
   try {
-    const response = await axios.get(`${API_URL}/users/${userId}/cars/${carId}`);
+    const response = await axios.get(`${API_URL}/users/cars/${carId}`);
     return response.data;
   } catch (error) {
     handleError(error);
@@ -61,29 +55,15 @@ export const fetchUserCar = async (userId: number, carId: number) => {
 };
 
 // Function to add a car to the database
-export const addCarToDatabase = async (userId: number, car: Car): Promise<Car> => {
+export const addCarToDatabase = async (userId: number, car: Car, token: string): Promise<Car> => {
   try {
-    const response = await axios.post(`${API_URL}/users/${userId}/cars`, car);
+    const response = await axios.post(`${API_URL}/users/cars`, car, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
     return response.data;
-  } catch (error) {
-    handleError(error);
-  }
-};
-
-// Function to update a car in the database
-export const updateUserCar = async (userId: number, carId: number, car: Partial<Car>): Promise<Car> => {
-  try {
-    const response = await axios.put(`${API_URL}/users/${userId}/cars/${carId}`, car);
-    return response.data;
-  } catch (error) {
-    handleError(error);
-  }
-};
-
-// Function to delete a car from the database
-export const deleteUserCar = async (userId: number, carId: number) => {
-  try {
-    await axios.delete(`${API_URL}/users/${userId}/cars/${carId}`);
   } catch (error) {
     handleError(error);
   }

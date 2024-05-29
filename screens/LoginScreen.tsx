@@ -91,6 +91,10 @@ export default function Login() {
   const handleLogin = async () => {
     try {
       dispatch(login({ email: email, password: password }));
+
+      // Clear input fields
+      setEmail("");
+      setPassword("");
     } catch (error) {
       console.error("Login failed:", error);
       Alert.alert("Login Failed", error.message || "Invalid email or password");

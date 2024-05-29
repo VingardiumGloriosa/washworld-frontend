@@ -13,9 +13,6 @@ const ProfileScreen = () => {
     // Perform logout logic here
     console.log("Logging out");
     dispatch(logout());
-
-    // Navigate to the login screen
-    navigation.navigate("LoginScreen");
   };
 
   return (
