@@ -24,7 +24,7 @@ export default function HistoryScreen() {
     dispatch(fetchUserProfile(9));
   }, [dispatch]);
 
-  const progressLeft = currentUser ? currentUser.loyaltyRewardProgress.goal - currentUser.loyaltyRewardProgress.progress : null
+  const progressLeft = currentUser ? currentUser.loyaltyRewardProgress?.goal - currentUser.loyaltyRewardProgress?.progress : null
   const progressText = progressLeft ? `Wash your car ${progressLeft} more times to unlock the next reward!` : ''
 
   return (
@@ -35,7 +35,7 @@ export default function HistoryScreen() {
         </View>
         <LoyaltyCarousel userId={currentUser?.id || 9} rewards={currentUser?.loyaltyRewards || []} dispatch={dispatch} />
         <View style={styles.progressBarContainer}>
-          <ProgressBar text={progressText} progress={currentUser?.loyaltyRewardProgress.progress/currentUser?.loyaltyRewardProgress.goal || 0} width={screenWidth - 40} height={20} backgroundColor="#f0f0f0" fillColor="#34B566" />
+          <ProgressBar text={progressText} progress={currentUser?.loyaltyRewardProgress?.progress/currentUser?.loyaltyRewardProgress?.goal || 0} width={screenWidth - 40} height={20} backgroundColor="#f0f0f0" fillColor="#34B566" />
         </View>
         <View>
           <Title text={"Recent washes"} Icon={ClockIcon} width={30} height={30} />
