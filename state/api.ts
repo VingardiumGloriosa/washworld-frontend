@@ -31,8 +31,9 @@ export const fetchUserHome = async (userId: number) => {
 // CARS
 
 // Function to get cars for a user
-export const fetchUserCars = async (userId: number, token: string) => {
+export const fetchUserCars = async () => {
   try {
+    const token = await SecureStore.getItemAsync("token");
     const response = await axios.get(`${API_URL}/users/cars`, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -55,8 +56,9 @@ export const fetchUserCar = async (userId: number, carId: number) => {
 };
 
 // Function to add a car to the database
-export const addCarToDatabase = async (userId: number, car: Car, token: string): Promise<Car> => {
+export const addCarToDatabase = async (car: Car): Promise<Car> => {
   try {
+    const token = await SecureStore.getItemAsync("token");
     const response = await axios.post(`${API_URL}/users/cars`, car, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -140,7 +142,7 @@ export const createMembership = async (userId: number, membershipTypeId: number)
   try {
     const token = await SecureStore.getItemAsync("token");
     const response = await axios.post(
-      `${API_URL}/users/${userId}/membership`,
+      `${API_URL}/users/membership`,
       { membershipTypeId },
       {
         headers: {
@@ -157,7 +159,7 @@ export const createMembership = async (userId: number, membershipTypeId: number)
 export const deleteMembership = async (userId: number) => {
   const token = await SecureStore.getItemAsync("token");
   try {
-    await axios.delete(`${API_URL}/users/${userId}/membership`, {
+    await axios.delete(`${API_URL}/users/membership`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -170,7 +172,7 @@ export const deleteMembership = async (userId: number) => {
 export const pauseMembership = async (userId: number) => {
   try {
     const token = await SecureStore.getItemAsync("token");
-    const response = await axios.patch(`${API_URL}/users/${userId}/membership/pause`, null, {
+    const response = await axios.patch(`${API_URL}/users/membership/pause`, null, {
       //CHECK IF WE HAVE THIS ENDPOINT - DUMMY FUNCTION
       headers: {
         Authorization: `Bearer ${token}`,
@@ -185,7 +187,7 @@ export const pauseMembership = async (userId: number) => {
 export const resumeMembership = async (userId: number) => {
   try {
     const token = await SecureStore.getItemAsync("token");
-    const response = await axios.patch(`${API_URL}/users/${userId}/membership/resume`, null, {
+    const response = await axios.patch(`${API_URL}/users/membership/resume`, null, {
       //CHECK IF WE HAVE THIS ENDPOINT - DUMMY FUNCTION
       headers: {
         Authorization: `Bearer ${token}`,

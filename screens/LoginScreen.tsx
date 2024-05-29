@@ -113,7 +113,6 @@ export default function Login() {
     <View style={styles.container}>
       <Logo width={160} height={80} />
       <Text style={styles.subHeader}>Log in</Text>
-      <Text>{token}</Text>
 
       <TextInput style={styles.input} placeholder="Enter email" value={email} onChangeText={setEmail} />
       <TextInput style={styles.input} placeholder="Enter password" secureTextEntry value={password} onChangeText={setPassword} />

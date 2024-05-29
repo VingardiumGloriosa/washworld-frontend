@@ -13,8 +13,7 @@ import { setToken } from "../state/slices/userSlice";
 const MyCarsScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  //const cars = useSelector((state: RootState) => state.cars.cars);
-  const [cars, setCars] = useState([]);
+  const cars = useSelector((state: RootState) => state.cars.cars);
   const { currentUser, isAuthenticated } = useSelector((state: RootState) => state.users);
   const [modalVisible, setModalVisible] = useState(false);
   const [photo, setPhoto] = useState("");
@@ -31,11 +30,11 @@ const MyCarsScreen = () => {
     readFromSecureStore();
   }, []);
 
-  /* useEffect(() => {
-    console.log("current user", currentUser, "isAuthenticated", isAuthenticated, "token", token);
+  useEffect(() => {
+    console.log("currentUser:", currentUser);
     console.log("fetching cars for user", userId);
-    dispatch(fetchCars(userId));
-  }, [dispatch, userId]);
+    dispatch(fetchCars());
+  }, [dispatch, currentUser]);
 
   const handleAddCar = async () => {
     try {
@@ -45,7 +44,6 @@ const MyCarsScreen = () => {
       const newCar = {
         userId: userId,
         car: {
-          id: cars.length + 1, // Temporary ID, should be replaced by backend-generated ID
           userId: userId,
           licensePlate: licensePlate,
           photo: photo,
@@ -53,78 +51,10 @@ const MyCarsScreen = () => {
         },
       };
 
-      console.log("handleAddCar", "car id:", newCar.car.id, "user id:", newCar.car.userId, "license plate:", newCar.car.licensePlate, "photo:", newCar.car.photo.substring(0, 100), "qr code:", newCar.car.qrCodeData);
+      console.log("handleAddCar", "user id:", newCar.car.userId, "license plate:", newCar.car.licensePlate, "photo:", newCar.car.photo.substring(0, 100), "qr code:", newCar.car.qrCodeData);
 
       dispatch(addCar(newCar));
 
-      setPhoto("");
-      setLicensePlate("");
-      setModalVisible(false);
-    } catch (error) {
-      console.error("Error in handleAddCar:", error);
-    }
-  }; */
-
-  //temporary test since I have no idea how redux works and I am here to just test some fetching and rendering bois
-  const BACKEND_URL = "http://172.20.10.3:3005"; // Replace with your actual backend URL
-  useEffect(() => {
-    const fetchCars = async () => {
-      try {
-        const response = await fetch(`${BACKEND_URL}/users/cars`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        setCars(data);
-      } catch (error) {
-        console.error("Error fetching cars:", error);
-      }
-    };
-    fetchCars();
-  }, [userId, token]);
-  //end of temporrary janky fetch code
-
-  //start of temporary janky post code
-  const postCar = async (car) => {
-    try {
-      const response = await fetch(`${BACKEND_URL}/users/cars`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(car),
-      });
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const newCar = await response.json();
-      return newCar;
-    } catch (error) {
-      console.error("Error posting car:", error);
-      throw error;
-    }
-  };
-
-  const handleAddCar = async () => {
-    try {
-      // Generate QR code data
-      const qrCodeData = `Car ID: ${cars.length + 1}, User ID: ${userId}, License Plate: ${licensePlate}`;
-      const newCar = {
-        id: cars.length + 1, // Temporary ID, should be replaced by backend-generated ID
-        userId: userId,
-        licensePlate: licensePlate,
-        photo: photo,
-        qrCodeData: qrCodeData, // Store the data to generate the QR code later
-      };
-      console.log("handleAddCar", newCar);
-      const addedCar = await postCar(newCar);
-      //dispatch(addCar(newCar)); //uncomment this line to use redux
-      setCars([...cars, addedCar]); // Temporary solution to update the car list
       setPhoto("");
       setLicensePlate("");
       setModalVisible(false);
@@ -196,8 +126,6 @@ const MyCarsScreen = () => {
 
             {/* Hidden User ID */}
             <TextInput style={styles.hiddenInput} value={`${userId}`} editable={false} />
-
-            <TextInput style={styles.hiddenInput} value={userId} editable={false} />
 
             <TouchableOpacity style={styles.cameraButton} onPress={openCamera}>
               <Text style={styles.cameraButtonText}>Take photo of car</Text>

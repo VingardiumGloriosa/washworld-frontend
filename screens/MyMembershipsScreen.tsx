@@ -37,7 +37,7 @@ const MyMembershipsScreen = () => {
   };
 
   const handleUpdateMembership = (membershipTypeId: number) => {
-    console.log("Updating membership for", currentUser?.id, "to", membershipTypeId);
+    console.log("Updating membership for", currentUser, "to", membershipTypeId);
     if (currentUser) {
       if (currentUser.membership_id) {
         Alert.alert("Cannot Update Membership", "You must cancel your current membership before updating to a new one.", [{ text: "OK" }]);

@@ -23,8 +23,8 @@ const initialState: CarState = {
 };
 
 // Thunks
-export const fetchCars = createAsyncThunk("car/fetchCars", async (userId: number) => {
-  const response = await fetchUserCars(userId);
+export const fetchCars = createAsyncThunk("car/fetchCars", async () => {
+  const response = await fetchUserCars();
   return response;
 });
 
@@ -33,8 +33,8 @@ export const fetchCar = createAsyncThunk("car/fetchCar", async ({ userId, carId 
   return response;
 });
 
-export const addCar = createAsyncThunk("car/addCar", async ({ userId, car }: { userId: number; car: Car }) => {
-  const response = await addCarToDatabase(userId, car);
+export const addCar = createAsyncThunk("car/addCar", async ({ car }: { car: Car }) => {
+  const response = await addCarToDatabase(car);
   return response;
 });
 
