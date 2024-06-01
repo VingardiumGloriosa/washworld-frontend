@@ -12,6 +12,11 @@ import { AppDispatch, RootState } from "../state/store";
 
 const screenWidth = Dimensions.get("window").width;
 
+const formatDate = (dateString) => {
+  const options = { year: 'numeric', month: 'long', day: 'numeric' };
+  return new Date(dateString).toLocaleDateString(undefined, options);
+};
+
 const HistoryScreen = React.memo(() => {
   const dispatch = useDispatch<AppDispatch>();
   const currentUser = useSelector((state: RootState) => state.users.currentUser);
@@ -19,7 +24,7 @@ const HistoryScreen = React.memo(() => {
 
   useEffect(() => {
       dispatch(fetchUserHistory());
-      }, [dispatch]);
+  }, [dispatch]);
 
   const progressLeft = useMemo(() => {
     return currentUser ? currentUser.loyaltyRewardProgress?.goal - currentUser.loyaltyRewardProgress?.progress : null;
@@ -62,7 +67,7 @@ const HistoryScreen = React.memo(() => {
                 key={wash.id} 
                 imgSrc={wash.location.photo} 
                 locationName={wash.location.name} 
-                updatedAt={wash.date} 
+                updatedAt={formatDate(wash.date)} 
                 link={wash.location.mapsUrl} 
               />
             ))
