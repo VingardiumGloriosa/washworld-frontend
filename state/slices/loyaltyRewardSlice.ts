@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { toggleLoyaltyReward, fetchUserHome, fetchLoyaltyRewards } from "../api";
+import { toggleLoyaltyReward, fetchUserHome, fetchLoyaltyRewardTypes } from "../api";
 
 export interface LoyaltyReward {
   id: number;
@@ -21,8 +21,8 @@ const initialState: LoyaltyRewardState = {
 
 // Thunk to fetch loyalty rewards
 export const fetchRewards = createAsyncThunk("loyaltyRewards/fetchRewards", async () => {
-  // const rewards = await fetchLoyaltyRewards();
-  // return rewards; // Return the fetched rewards
+  const rewards = await fetchLoyaltyRewardTypes();
+  return rewards; // Return the fetched rewards
 });
 
 // Thunk to toggle loyalty reward

@@ -3,6 +3,7 @@ import axios, { AxiosError } from "axios";
 import { Car } from "./slices/carSlice";
 import axiosInstance from "./axiosConfig";
 import * as SecureStore from "expo-secure-store";
+import Config from "react-native-config";
 
 // Base URL of your API
 export const API_URL = "http://172.20.10.3:3005"; //'http://localhost:3005'; //'http://192.168.68.66:3005' //
@@ -18,9 +19,25 @@ const handleError = (error: AxiosError) => {
 
 // USER
 
-export const fetchUserHome = async (userId: number) => {
+export const fetchUser = async () => {
+  try {
+    const token = await SecureStore.getItemAsync("token");
+    const response = await axios.get(`${API_URL}/users`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log(response.data.email)
+    return response.data;
+} catch (error) {
+  handleError(error);
+}
+};
+
+
+export const fetchUserHome = async () => {
   const token = await SecureStore.getItemAsync("token");
-  const response = await axios.get(`${API_URL}/users/${userId}/home`, {
+  const response = await axios.get(`${API_URL}/users/home`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -88,9 +105,9 @@ export const toggleLoyaltyReward = async (userId: number, rewardId: number, isAc
   return response.data;
 };
 
-export const fetchLoyaltyRewards = async () => {
+export const fetchLoyaltyRewardTypes = async () => {
   try {
-    const response = await axios.get(`${API_URL}/loyalty-rewards`);
+    const response = await axios.get(`${API_URL}/loyalty-reward-type`);
     return response.data;
   } catch (error) {
     handleError(error);
@@ -138,7 +155,7 @@ export const fetchMembershipTypes = async () => {
   }
 };
 
-export const createMembership = async (userId: number, membershipTypeId: number) => {
+export const createMembership = async (membershipTypeId: number) => {
   try {
     const token = await SecureStore.getItemAsync("token");
     const response = await axios.post(

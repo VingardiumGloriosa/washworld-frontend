@@ -27,7 +27,7 @@ const LoyaltyCarousel: React.FC<LoyaltyCarouselProps> = ({ userId, rewards, disp
 
   return (
     <View style={styles.container}>
-      <Title text="My loyalty bonuses" Icon={Crown} width={30} height={30} />
+      <Title text="My loyalty rewards" Icon={Crown} width={30} height={30} />
 
       <FlatList
         data={rewards}

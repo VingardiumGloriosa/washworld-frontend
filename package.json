@@ -32,6 +32,7 @@
     "qrcode": "^1.5.3",
     "react": "18.2.0",
     "react-native": "^0.74.1",
+    "react-native-config": "^1.5.1",
     "react-native-dropdown-picker": "^5.4.6",
     "react-native-image-picker": "^7.1.2",
     "react-native-image-resizer": "^1.4.5",

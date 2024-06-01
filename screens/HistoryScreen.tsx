@@ -1,31 +1,33 @@
-import React, { useState, useEffect } from "react";
-import { View, Text, SafeAreaView, StyleSheet, Dimensions, Image, ScrollView } from "react-native";
+import React, { useEffect, useMemo } from "react";
+import { View, SafeAreaView, StyleSheet, Dimensions, ScrollView, Text } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchUserHistory } from "../state/slices/userSlice";
 import LoyaltyCarousel from "../components/LoyaltyCarousel";
 import Logo from "../assets/svg/logo.svg";
 import ProgressBar from "../components/ProgressBar";
 import Title from "../components/Title";
 import ClockIcon from "../assets/svg/movingClock.svg";
 import RecentWashCard from "../components/RecentWashCard";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchRewards, toggleReward } from "../state/slices/loyaltyRewardSlice";
 import { AppDispatch, RootState } from "../state/store";
-import { fetchUserProfile } from "../state/slices/userSlice";
-import { current } from "@reduxjs/toolkit";
 
 const screenWidth = Dimensions.get("window").width;
 
-export default function HistoryScreen() {
+const HistoryScreen = React.memo(() => {
   const dispatch = useDispatch<AppDispatch>();
-  const history = useSelector((state: RootState) => state.users.currentUser?.history || []);
   const currentUser = useSelector((state: RootState) => state.users.currentUser);
+  const history = currentUser?.history || [];
 
   useEffect(() => {
-    // if(currentUser)
-    dispatch(fetchUserProfile(9));
-  }, [dispatch]);
+      dispatch(fetchUserHistory());
+      }, [dispatch]);
 
-  const progressLeft = currentUser ? currentUser.loyaltyRewardProgress?.goal - currentUser.loyaltyRewardProgress?.progress : null
-  const progressText = progressLeft ? `Wash your car ${progressLeft} more times to unlock the next reward!` : ''
+  const progressLeft = useMemo(() => {
+    return currentUser ? currentUser.loyaltyRewardProgress?.goal - currentUser.loyaltyRewardProgress?.progress : null;
+  }, [currentUser]);
+
+  const progressText = useMemo(() => {
+    return progressLeft ? `Wash your car ${progressLeft} more times to unlock the next reward!` : '';
+  }, [progressLeft]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -33,20 +35,43 @@ export default function HistoryScreen() {
         <View style={styles.logo}>
           <Logo width={160} height={80} />
         </View>
-        <LoyaltyCarousel userId={currentUser?.id || 9} rewards={currentUser?.loyaltyRewards || []} dispatch={dispatch} />
+        <LoyaltyCarousel 
+          userId={currentUser?.id || 9} 
+          rewards={currentUser?.loyaltyRewards || []} 
+          dispatch={dispatch} 
+        />
         <View style={styles.progressBarContainer}>
-          <ProgressBar text={progressText} progress={currentUser?.loyaltyRewardProgress?.progress/currentUser?.loyaltyRewardProgress?.goal || 0} width={screenWidth - 40} height={20} backgroundColor="#f0f0f0" fillColor="#34B566" />
+          <ProgressBar 
+            text={progressText} 
+            progress={currentUser?.loyaltyRewardProgress?.progress / currentUser?.loyaltyRewardProgress?.goal || 0} 
+            width={screenWidth - 40} 
+            height={20} 
+            backgroundColor="#f0f0f0" 
+            fillColor="#34B566" 
+          />
         </View>
         <View>
-          <Title text={"Recent washes"} Icon={ClockIcon} width={30} height={30} />
-          {history.map((wash) => (
-            <RecentWashCard key={wash.id} imgSrc={wash.location.photo} locationName={wash.location.name} updatedAt={wash.date} link={wash.location.mapsUrl} />
-          ))}
+          <Title text="Recent washes" Icon={ClockIcon} width={30} height={30} />
+          {history.length === 0 ? (
+            <Text style={styles.encouragementText}>
+              You don't have any recent washes. Wash your car to keep it shiny and earn rewards!
+            </Text>
+          ) : (
+            history.map((wash) => (
+              <RecentWashCard 
+                key={wash.id} 
+                imgSrc={wash.location.photo} 
+                locationName={wash.location.name} 
+                updatedAt={wash.date} 
+                link={wash.location.mapsUrl} 
+              />
+            ))
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>
   );
-}
+});
 
 const styles = StyleSheet.create({
   container: {
@@ -65,4 +90,13 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     paddingBottom: 50,
   },
+  encouragementText: {
+    paddingHorizontal: 20,
+    paddingVertical: 20,
+    textAlign: "center",
+    fontSize: 16,
+    color: "#808285",
+  },
 });
+
+export default HistoryScreen;

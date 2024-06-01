@@ -95,7 +95,7 @@ const MyCarsScreen = () => {
           <CarIcon width={30} height={30} fill={"black"} />
         </View>
 
-        <Text>token: {token}</Text>
+        {/* <Text>token: {token}</Text> */}
 
         {/* Dynamic Car List */}
         <View style={styles.carListContainer}>

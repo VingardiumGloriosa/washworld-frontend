@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import { AppThunk } from "../store"; // Assuming you have defined AppThunk type
-import { addCarToDatabase, fetchUserCars, fetchUserCar, updateUserCar, deleteUserCar } from "../api"; // Assuming you have an API function to fetch cars from the database
+import { addCarToDatabase, fetchUserCars, fetchUserCar } from "../api"; // Assuming you have an API function to fetch cars from the database
 
 export interface Car {
   id: number;
@@ -38,15 +38,6 @@ export const addCar = createAsyncThunk("car/addCar", async ({ car }: { car: Car 
   return response;
 });
 
-export const updateCar = createAsyncThunk("car/updateCar", async ({ userId, carId, car }: { userId: number; carId: number; car: Partial<Car> }) => {
-  const response = await updateUserCar(userId, carId, car);
-  return response;
-});
-
-export const removeCar = createAsyncThunk("car/removeCar", async ({ userId, carId }: { userId: number; carId: number }) => {
-  await deleteUserCar(userId, carId);
-  return carId;
-});
 
 const carSlice = createSlice({
   name: "car",
@@ -83,18 +74,6 @@ const carSlice = createSlice({
         state.cars.push(action.payload);
         console.log("added car");
       })
-      .addCase(updateCar.fulfilled, (state, action: PayloadAction<Car>) => {
-        const updatedCar = action.payload;
-        const index = state.cars.findIndex((car) => car.id === updatedCar.id);
-        if (index !== -1) {
-          state.cars[index] = updatedCar;
-        }
-        console.log("updated car");
-      })
-      .addCase(removeCar.fulfilled, (state, action: PayloadAction<number>) => {
-        state.cars = state.cars.filter((car) => car.id !== action.payload);
-        console.log("removed car");
-      });
   },
 });
 

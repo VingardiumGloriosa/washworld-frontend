@@ -14,85 +14,24 @@ export default function SignupScreen() {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isButtonEnabled, setIsButtonEnabled] = useState(false);
 
-  /* const handleSignup = async () => {
-    try {
-      // Perform signup logic here
-      const response = await dispatch(signup({ fullName: fullName, email: email, password: password })).unwrap();
-      console.log("Signing up with fullName:", fullName, "email:", email, "and password:", password);
-
-      //Extract the user data from the response
-      const { user } = response;
-      console.log("User signed up:", user);
-
-      // Simulate token creation (replace this with actual token from your API response)
-      //const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imp1c3Rhc0BqdXN0YXMuY29tIiwiaWF0IjoxNzE2OTI2OTQzLCJleHAiOjE3MTk1MTg5NDN9.AZAbbFKxjDiG2vsU1ZftacFfyPe11LJCq0K1YWbXRG8";
-      const token = response.token;
-
-      console.log("Token type:", typeof token); // Check the type of the token
-      console.log("Token value:", token); // Log the token value
-
-      if (typeof token !== "string") {
-        throw new Error("Invalid token");
-      }
-
-      // Store the token in SecureStoreAA
-      await SecureStore.setItemAsync("token", token);
-      console.log("Token created and stored:", token);
-
-      // Dispatch the token to the Redux store
-      dispatch(setToken(token));
-
-      //Dispatch the user to the Redux store
-      dispatch(setCurrentUser(user));
-
-      // Clear input fields
-      setFullName("");
-      setEmail("");
-      setPassword("");
-
-      // Show confirmation message
-      Alert.alert("Signup Successful", "You have successfully signed up! Please log in to access to your profile", [{ text: "OK", onPress: () => navigation.navigate("LoginScreen") }]);
-    } catch (error) {
-      console.error("Signup failed:", error);
-      Alert.alert("Signup Failed", error.message || "An error occurred during signup. Please try again later.");
-    }
-  }; */
-
-  /*  useEffect(() => {
-    async function load() {
-      // const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imp1c3Rhc0BqdXN0YXMuY29tIiwiaWF0IjoxNzE2OTI2OTQzLCJleHAiOjE3MTk1MTg5NDN9.AZAbbFKxjDiG2vsU1ZftacFfyPe11LJCq0K1YWbXRG8";
-
-      const token = await SecureStore.getItemAsync("token");
-      console.log("read token from SecureStore", token);
-      // Store the token in SecureStoreAA
-      await SecureStore.setItemAsync("token", token);
-      console.log("Token created and stored:", token);
-
-      //const token = await SecureStore.getItemAsync("token");
-      //await SecureStore.getItemAsync("token");
-      //console.log("read token from SecureStore", token);
-
-      dispatch(setToken(token || ""));
-    }
-    load();
-  }, []); */
-
-  //TRYING SOMETHING ELSE
   const handleSignup = async () => {
-    try {
-      dispatch(signup({ fullName: fullName, email: email, password: password }));
+    if (isButtonEnabled) {
+      try {
+        dispatch(signup({ fullName, email, password }));
 
-      // Clear input fields
-      setFullName("");
-      setEmail("");
-      setPassword("");
+        // Clear input fields
+        setFullName("");
+        setEmail("");
+        setPassword("");
 
-      // Show confirmation message
-      Alert.alert("Signup Successful", "You have successfully signed up! Please log in to access to your profile", [{ text: "OK", onPress: () => navigation.navigate("LoginScreen") }]);
-    } catch (error) {
-      console.error("Signup failed:", error);
-      Alert.alert("Signup Failed", error.message || "An error occurred during signup. Please try again later.");
+        // Show confirmation message
+        Alert.alert("Signup Successful", "You have successfully signed up! Please log in to access your profile", [{ text: "OK", onPress: () => navigation.navigate("LoginScreen") }]);
+      } catch (error) {
+        console.error("Signup failed:", error);
+        Alert.alert("Signup Failed", error.message || "An error occurred during signup. Please try again later.");
+      }
     }
   };
 
@@ -106,6 +45,10 @@ export default function SignupScreen() {
     load();
   }, []);
 
+  useEffect(() => {
+    setIsButtonEnabled(fullName !== "" && email !== "" && password !== "");
+  }, [fullName, email, password]);
+
   return (
     <View style={styles.container}>
       <Logo width={160} height={80} />
@@ -113,12 +56,7 @@ export default function SignupScreen() {
       <TextInput style={styles.input} placeholder="Full name" value={fullName} onChangeText={setFullName} />
       <TextInput style={styles.input} placeholder="Enter email" value={email} onChangeText={setEmail} />
       <TextInput style={styles.input} placeholder="Enter password" secureTextEntry value={password} onChangeText={setPassword} />
-      {/* <TextInput
-        style={styles.input}
-        placeholder="Repeat password"
-        secureTextEntry
-      />    */}
-      <TouchableOpacity style={styles.button} onPress={handleSignup}>
+      <TouchableOpacity style={[styles.button, !isButtonEnabled && styles.buttonDisabled]} onPress={handleSignup} disabled={!isButtonEnabled}>
         <Text style={styles.buttonText}>Sign up</Text>
       </TouchableOpacity>
       <TouchableOpacity onPress={() => navigation.navigate("LoginScreen")}>
@@ -160,6 +98,9 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
     marginBottom: 10,
+  },
+  buttonDisabled: {
+    backgroundColor: "#A5D6A7",
   },
   buttonText: {
     color: "#fff",

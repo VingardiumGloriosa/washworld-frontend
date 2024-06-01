@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { UserQueries } from "../userQueries";
 import * as SecureStore from "expo-secure-store";
-import { fetchUserHome } from "../api";
+import { fetchUser, fetchUserHome } from "../api";
 import { Location } from "./locationsSlice";
 import { LoyaltyReward } from "./loyaltyRewardSlice";
 
@@ -36,7 +36,7 @@ const initialState: UserState = {
   token: null,
   loading: false,
   error: null,
-  isAuthenticated: false, // Toggle for testing authentication flow
+  isAuthenticated: false,
 };
 
 const userSlice = createSlice({
@@ -67,7 +67,6 @@ const userSlice = createSlice({
     });
     builder.addCase(signup.fulfilled, (state, action) => {
       state.loading = false;
-      state.currentUser = action.payload;
       state.token = action.payload.access_token;
       state.error = null;
       SecureStore.setItemAsync("token", action.payload.access_token);
@@ -84,7 +83,7 @@ const userSlice = createSlice({
     });
     builder.addCase(login.fulfilled, (state, action) => {
       state.loading = false;
-      state.currentUser = action.payload;
+      state.currentUser = action.payload.user;
       state.token = action.payload.access_token;
       state.error = null;
       state.isAuthenticated = true;
@@ -117,30 +116,49 @@ const userSlice = createSlice({
     builder.addCase(checkAuthentication.pending, (state) => {
       state.loading = true;
     }); */
+    builder.addCase(fetchUserHistory.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    });
+    builder.addCase(fetchUserHistory.fulfilled, (state, action) => {
+      state.loading = false;
+      state.currentUser = action.payload;
+      // state.currentUser.history = action.payload.history;
+      // state.currentUser.loyaltyRewardProgress = action.payload.loyaltyRewardProgress;
+      // state.currentUser.loyaltyRewards = action.payload.loyaltyRewards;
+
+      state.error = null;
+    });
+    builder.addCase(fetchUserHistory.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.error.message;
+    });
     builder.addCase(fetchUserProfile.pending, (state) => {
       state.loading = true;
       state.error = null;
     });
+    // builder.addCase(fetchUserProfile.fulfilled, (state, action) => {
+    //   state.loading = false;
+    //   state.currentUser = action.payload;
+    //   state.error = null;
+    // });
     builder.addCase(fetchUserProfile.fulfilled, (state, action) => {
       state.loading = false;
-      state.currentUser = action.payload;
+      if (state.currentUser) {
+        state.currentUser.email = action.payload.email;
+        state.currentUser.photo = action.payload.photo;
+        state.currentUser.membership_id = action.payload.membership;
+        state.currentUser.fullName = action.payload.fullName;
+      }
       state.error = null;
     });
+    
     builder.addCase(fetchUserProfile.rejected, (state, action) => {
       state.loading = false;
       state.error = action.error.message;
-    });
+    });    
   },
 });
-
-/* export const signup = createAsyncThunk("user/signup", async (credentials: { fullName: string; email: string; password: string }) => {
-  console.log("signup thunk", credentials);
-  const response = await UserQueries.signup(credentials.fullName, credentials.email, credentials.password);
-  if (!response.token) {
-    throw new Error("No token returned from signup");
-  }
-  return { user: response.user, token: response.token };
-}); */
 
 export const signup = createAsyncThunk("user/signup", async (credentials: { fullName: string; email: string; password: string }, thunkAPI) => {
   console.log("signup thunk", credentials);
@@ -150,16 +168,6 @@ export const signup = createAsyncThunk("user/signup", async (credentials: { full
 
   return response;
 });
-
-/* export const login = createAsyncThunk("user/login", async (credentials: { email: string; password: string }) => {
-  console.log("login thunk", credentials);
-  const response = await UserQueries.login(credentials.email, credentials.password);
-  console.log("login response", response);
-  if (!response.token) {
-    throw new Error("No token returned from login");
-  }
-  return { user: response.user, token: response.token };
-}); */
 
 export const login = createAsyncThunk("user/login", async (credentials: { email: string; password: string }, thunkAPI) => {
   console.log("login thunk", credentials);
@@ -179,8 +187,13 @@ export const checkAuthentication = createAsyncThunk("user/checkAuthentication", 
   return null;
 });
 
-export const fetchUserProfile = createAsyncThunk("user/fetchUserProfile", async (userId: number) => {
-  const response = await fetchUserHome(userId);
+export const fetchUserHistory = createAsyncThunk("user/fetchUserHistory", async () => {
+  const response = await fetchUserHome();
+  return response;
+});
+
+export const fetchUserProfile = createAsyncThunk("user/fetchUserProfile", async () => {
+  const response = await fetchUser();
   return response;
 });
 
