@@ -3,7 +3,7 @@ import { SuperQueries } from "./SuperQueries";
 import axiosInstance from "./axiosConfig";
 
 export class UserQueries extends SuperQueries {
-  static baseUrl = 'http://192.168.68.66:3005' + "/users/";
+  static baseUrl = super.baseUrl + "/users/";
 
   /* static async signup(fullName: string, email: string, password: string) {
     const response = await axios.post(`${this.baseUrl}`, {
