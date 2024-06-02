@@ -18,7 +18,7 @@ const ProfileScreen = () => {
    
 
    console.log("Checking currentUser in useEffect", currentUser);
-    if (!currentUser.email) {
+    if (!currentUser?.email) {
       console.log("Fetching user profile...");
       dispatch(fetchUserProfile());
       console.log(currentUser)
@@ -40,7 +40,7 @@ const ProfileScreen = () => {
         <Image source={require("../assets/images/profile-pic.png")} style={styles.profileImage} />
         {currentUser ? (
           <>
-            <Text style={styles.userName}>{currentUser.fullName}</Text>
+            <Text style={styles.userName}>{currentUser?.fullName}</Text>
             {/* <Text style={styles.loyaltyText}>17 loyalty rewards claimed</Text> */}
           </>
         ) : (

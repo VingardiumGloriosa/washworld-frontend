@@ -106,13 +106,17 @@ const MyCarsScreen = () => {
       {/* Dynamic Car List */}
       <View style={styles.carListContainer}>
         {/* Container with Background Color */}
-        {cars.map((car, index) => (
+        {cars.map((car, index) => {
+          return (
           <View key={index} style={styles.carCardContainer}>
             {/* QR Code */}
             <QRCode value={car.qrCodeData} size={250} />
 
             {/* Car Image */}
-            <Image source={{ uri: `${car.photo}` }} style={styles.photo} />
+            {
+              car.photo &&
+                <Image src={car.photo} style={styles.photo} />
+            }
             {/* License Plate Text */}
             <Text style={styles.licensePlate}>License Plate: {car.licensePlate}</Text>
             {/* Delete Button */}
@@ -120,7 +124,8 @@ const MyCarsScreen = () => {
               <Text style={styles.deleteText}>Delete</Text>
             </TouchableOpacity>
           </View>
-        ))}
+        )}
+        )}
       </View>
 
 

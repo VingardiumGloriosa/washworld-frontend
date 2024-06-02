@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { Button, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import ImageResizer from "react-native-image-resizer";
+import React from "react";
 
 export default function CameraScreen({ route }) {
   const { onCapture } = route.params; // Destructure the onCapture callback from route params
@@ -59,7 +60,7 @@ export default function CameraScreen({ route }) {
       const fullBase64Image = `data:image/jpg;base64,${photo.base64}`;
 
       // Pass the full base64 image back to the previous screen
-      onCapture(fullBase64Image);
+      onCapture(photo.base64);
       navigation.goBack();
     }
   };
