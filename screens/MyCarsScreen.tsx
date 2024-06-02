@@ -20,6 +20,7 @@ const MyCarsScreen = () => {
   const [photo, setPhoto] = useState("");
   const [licensePlate, setLicensePlate] = useState("");
   const token = useSelector((state: RootState) => state.users.token);
+  const [carToDelete, setCarToDelete] = useState(null);
 
   const userId = currentUser?.id;
 
@@ -39,23 +40,15 @@ const MyCarsScreen = () => {
 
   const handleAddCar = async () => {
     try {
-      // Generate QR code data
-      const qrCodeData = `Car ID: ${cars.length + 1}, User ID: ${userId}, License Plate: ${licensePlate}`;
-
-      const newCar = {
-        userId: userId,
-        car: {
-          userId: userId,
-          licensePlate: licensePlate,
-          photo: photo,
-          qrCodeData: qrCodeData,
-        },
+      const newCarPayload = {
+        userId: 24, // Assuming 24 is the correct user ID
+        licensePlate: licensePlate,
+        photo: photo
       };
-
-      console.log("handleAddCar", "user id:", newCar.car.userId, "license plate:", newCar.car.licensePlate, "photo:", newCar.car.photo.substring(0, 100), "qr code:", newCar.car.qrCodeData);
-
-      dispatch(addCar(newCar));
-
+  
+      console.log(newCarPayload)
+      dispatch(addCar(newCarPayload));
+  
       setPhoto("");
       setLicensePlate("");
       setModalVisible(false);
@@ -189,19 +182,13 @@ const styles = StyleSheet.create({
     position: 'relative', 
     paddingBottom: 80,
   },
-  // container: {
-  //   flex: 1,
-  //   backgroundColor: "white",
-  //   padding: 16,
-  //   paddingBottom: 80, // Adjust the paddingBottom to create space between the button and the bottom
-  // },
+
   buttonContainer: {
     position: "absolute",
-    bottom: 0, // Adjust the bottom position to set the distance from the bottom
+    bottom: 10, // Adjust the bottom position to set the distance from the bottom
     left: 16,
     right: 16,
     backgroundColor: "#808285",
-    borderRadius: 10,
     alignItems: "center",
     justifyContent: "center",
     paddingVertical: 15,

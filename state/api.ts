@@ -6,7 +6,7 @@ import * as SecureStore from "expo-secure-store";
 import Config from "react-native-config";
 
 // Base URL of your API
-export const API_URL = "http://172.20.10.3:3005"; //'http://localhost:3005'; //'http://192.168.68.66:3005' //
+export const API_URL = 'http://192.168.68.66:3005'//"http://172.20.10.3:3005"; //'http://localhost:3005'; //'http://192.168.68.66:3005' //
 
 const handleError = (error: AxiosError) => {
   console.error("API request failed:", error.message);
@@ -62,24 +62,35 @@ export const fetchUserCars = async () => {
   }
 };
 
-// Function to get a specific car for a user
-export const fetchUserCar = async (userId: number, carId: number) => {
+// Function to add a car to the database
+export const addCarToDatabase = async (car: Car): Promise<Car> => {
   try {
-    const response = await axios.get(`${API_URL}/users/cars/${carId}`);
+    const token = await SecureStore.getItemAsync("token");
+    console.log("Token:", token);
+    console.log('Request Payload:', car);
+
+    const response = await axios.post(`${API_URL}/users/cars`, car, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+    
+    console.log('Response from API:', response.data);
     return response.data;
   } catch (error) {
     handleError(error);
   }
 };
 
-// Function to add a car to the database
-export const addCarToDatabase = async (car: Car): Promise<Car> => {
+
+export const deleteUserCar = async (carId: number) => {
   try {
     const token = await SecureStore.getItemAsync("token");
-    const response = await axios.post(`${API_URL}/users/cars`, car, {
+    const response = await axios.delete(`${API_URL}/users/cars/${carId}`,
+    {
       headers: {
         Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
       },
     });
     return response.data;
