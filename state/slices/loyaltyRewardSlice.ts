@@ -26,8 +26,8 @@ export const fetchRewards = createAsyncThunk("loyaltyRewards/fetchRewards", asyn
 });
 
 // Thunk to toggle loyalty reward
-export const toggleReward = createAsyncThunk("loyaltyReward/toggleReward", async ({ userId, rewardId, isActive }: { userId: number, rewardId: number, isActive: boolean }) => {
-  const response = await toggleLoyaltyReward(userId, rewardId, isActive);
+export const toggleReward = createAsyncThunk("loyaltyReward/toggleReward", async ({ rewardId, isActive }: { rewardId: number, isActive: boolean }) => {
+  const response = await toggleLoyaltyReward(rewardId, isActive);
   return response;
 });
 

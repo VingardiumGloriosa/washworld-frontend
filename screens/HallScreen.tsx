@@ -8,6 +8,8 @@ import {
   Text,
   ActivityIndicator,
   TouchableOpacity,
+  PermissionsAndroid,
+  Platform,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
@@ -19,6 +21,7 @@ import MapIcon from "../assets/svg/map.svg";
 import DropDownPicker from "react-native-dropdown-picker";
 import { AppDispatch, RootState } from "../state/store";
 import { calculateDistancesForAllLocations, fetchAllLocations } from "../state/slices/locationsSlice";
+import Geolocation from 'react-native-geolocation-service';
 
 const HallScreen = () => {
   const navigation = useNavigation();
@@ -32,7 +35,47 @@ const HallScreen = () => {
   const [items, setItems] = useState([]);
 
   useEffect(() => {
-    dispatch(calculateDistancesForAllLocations());
+    const DEFAULT_LOCATION = {
+      latitude: 55.77419181465124, 
+      longitude: 12.514585695774914
+    }
+
+    const requestLocationPermission = async () => {
+      if (Platform.OS === 'android') {
+        try {
+          const granted = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+            {
+              title: 'Location Permission',
+              message: 'This app needs access to your location.',
+              buttonNeutral: 'Ask Me Later',
+              buttonNegative: 'Cancel',
+              buttonPositive: 'OK',
+            },
+          );
+          if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+            Geolocation.getCurrentPosition(
+              (position) => {
+                dispatch(calculateDistancesForAllLocations(position.coords));
+              },
+              (error) => {
+                console.log(error.code, error.message);
+                dispatch(calculateDistancesForAllLocations(DEFAULT_LOCATION));
+              },
+              { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+            );
+          } else {
+            console.log('Location permission denied');
+            dispatch(calculateDistancesForAllLocations(DEFAULT_LOCATION));
+          }
+        } catch (err) {
+          console.warn(err);
+          dispatch(calculateDistancesForAllLocations(DEFAULT_LOCATION));
+        }
+      }
+    };
+
+    requestLocationPermission();
   }, [dispatch]);
 
   useEffect(() => {

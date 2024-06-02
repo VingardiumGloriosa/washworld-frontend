@@ -49,9 +49,9 @@ export const fetchAllLocations = createAsyncThunk('location/fetchAllLocations', 
 });
 
 //Thunk to calculate distances for all locations
-export const calculateDistancesForAllLocations = createAsyncThunk('location/calculateDistancesForAllLocations', async (_, { getState, dispatch }) => {
+export const calculateDistancesForAllLocations = createAsyncThunk('location/calculateDistancesForAllLocations', async (coords : { latitude: number, longitude: number }) => {
   const locations = await fetchLocations();
-  const distances = await calculateDistances(55.77419181465124, 12.514585695774914)
+  const distances = await calculateDistances(coords.latitude, coords.longitude)
   const updatedLocations = locations.map(location => {
     return ({
       ...location,

@@ -18,7 +18,7 @@ const LoyaltyCarousel: React.FC<LoyaltyCarouselProps> = ({ userId, rewards, disp
 
   const renderItem = ({ item }: { item: LoyaltyReward }) => {
     const handleCardClick = () => {
-      dispatch(toggleReward({ userId: userId, rewardId: item.id, isActive: !item.isActive }))
+      dispatch(toggleReward({ rewardId: item.id, isActive: !item.isActive }))
       item.isActive = !item.isActive
     }
 
