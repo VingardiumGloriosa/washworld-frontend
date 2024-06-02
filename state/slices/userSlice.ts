@@ -123,10 +123,6 @@ const userSlice = createSlice({
     builder.addCase(fetchUserHistory.fulfilled, (state, action) => {
       state.loading = false;
       state.currentUser = action.payload;
-      // state.currentUser.history = action.payload.history;
-      // state.currentUser.loyaltyRewardProgress = action.payload.loyaltyRewardProgress;
-      // state.currentUser.loyaltyRewards = action.payload.loyaltyRewards;
-
       state.error = null;
     });
     builder.addCase(fetchUserHistory.rejected, (state, action) => {
@@ -137,14 +133,10 @@ const userSlice = createSlice({
       state.loading = true;
       state.error = null;
     });
-    // builder.addCase(fetchUserProfile.fulfilled, (state, action) => {
-    //   state.loading = false;
-    //   state.currentUser = action.payload;
-    //   state.error = null;
-    // });
     builder.addCase(fetchUserProfile.fulfilled, (state, action) => {
       state.loading = false;
       if (state.currentUser) {
+        state.currentUser.id = action.payload.id;
         state.currentUser.email = action.payload.email;
         state.currentUser.photo = action.payload.photo;
         state.currentUser.membership_id = action.payload.membership;
