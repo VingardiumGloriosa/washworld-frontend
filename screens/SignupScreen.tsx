@@ -6,7 +6,6 @@ import { useDispatch } from "react-redux";
 import { setToken, signup, setCurrentUser } from "../state/slices/userSlice";
 import * as SecureStore from "expo-secure-store";
 import { useNavigation } from "@react-navigation/native";
-import HistoryScreen from "./HistoryScreen";
 
 export default function SignupScreen() {
   const navigation = useNavigation();
@@ -38,8 +37,6 @@ export default function SignupScreen() {
   useEffect(() => {
     async function load() {
       const token = await SecureStore.getItemAsync("token");
-      console.log("read token from SecureStore", token);
-
       dispatch(setToken(token || ""));
     }
     load();

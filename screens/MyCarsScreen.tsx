@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, Modal, TextInput } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, Modal, TextInput, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import ArrowIcon from "../assets/svg/leftArrow.svg";
 import CarIcon from "../assets/svg/car.svg";
 import { useDispatch, useSelector } from "react-redux";
-import { addCar, fetchCars } from "../state/slices/carSlice";
+import { addCar, fetchCars, deleteCar } from "../state/slices/carSlice";
 import { RootState } from "../state/store";
 import QRCode from "react-native-qrcode-svg";
 import * as SecureStore from "expo-secure-store";
@@ -16,9 +16,11 @@ const MyCarsScreen = () => {
   const cars = useSelector((state: RootState) => state.cars.cars);
   const { currentUser, isAuthenticated } = useSelector((state: RootState) => state.users);
   const [modalVisible, setModalVisible] = useState(false);
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [photo, setPhoto] = useState("");
   const [licensePlate, setLicensePlate] = useState("");
   const token = useSelector((state: RootState) => state.users.token);
+  const [carToDelete, setCarToDelete] = useState(null);
 
   const userId = currentUser?.id;
 
@@ -38,23 +40,15 @@ const MyCarsScreen = () => {
 
   const handleAddCar = async () => {
     try {
-      // Generate QR code data
-      const qrCodeData = `Car ID: ${cars.length + 1}, User ID: ${userId}, License Plate: ${licensePlate}`;
-
-      const newCar = {
-        userId: userId,
-        car: {
-          userId: userId,
-          licensePlate: licensePlate,
-          photo: photo,
-          qrCodeData: qrCodeData,
-        },
+      const newCarPayload = {
+        userId: 24, // Assuming 24 is the correct user ID
+        licensePlate: licensePlate,
+        photo: photo
       };
-
-      console.log("handleAddCar", "user id:", newCar.car.userId, "license plate:", newCar.car.licensePlate, "photo:", newCar.car.photo.substring(0, 100), "qr code:", newCar.car.qrCodeData);
-
-      dispatch(addCar(newCar));
-
+  
+      console.log(newCarPayload)
+      dispatch(addCar(newCarPayload));
+  
       setPhoto("");
       setLicensePlate("");
       setModalVisible(false);
@@ -82,40 +76,54 @@ const MyCarsScreen = () => {
     setModalVisible(false);
   };
 
+  const handleDeleteCar = (car) => {
+    setCarToDelete(car);
+    setDeleteModalVisible(true);
+  };
+
+  const confirmDeleteCar = () => {
+    if (carToDelete) {
+      console.log('in confirm ' + carToDelete.id);
+      dispatch(deleteCar(carToDelete.id));
+      setDeleteModalVisible(false);
+      setCarToDelete(null);
+    }
+  };
+
   return (
-    <ScrollView contentContainerStyle={styles.scrollViewContainer}>
-      <View style={styles.container}>
-        <TouchableOpacity style={styles.arrowContainer} onPress={() => navigation.goBack()}>
-          <ArrowIcon width={25} height={25} fill={"#808285"} />
-        </TouchableOpacity>
-
-        {/* Title and Car Icon */}
-        <View style={styles.titleContainer}>
-          <Text style={styles.title}>My Cars</Text>
-          <CarIcon width={30} height={30} fill={"black"} />
-        </View>
-
-        {/* <Text>token: {token}</Text> */}
-
-        {/* Dynamic Car List */}
-        <View style={styles.carListContainer}>
-          {/* Container with Background Color */}
-          {cars.map((car, index) => (
-            <View key={index} style={styles.carCardContainer}>
-              {/* QR Code */}
-              <QRCode value={car.qrCodeData} size={250} />
-
-              {/* Car Image */}
-              <Image source={{ uri: `${car.photo}` }} style={styles.photo} />
-              {/* License Plate Text */}
-              <Text style={styles.licensePlate}>License Plate: {car.licensePlate}</Text>
-            </View>
-          ))}
-        </View>
-      </View>
-      <TouchableOpacity style={styles.button} onPress={() => setModalVisible(true)}>
-        <Text style={styles.buttonText}>Add car</Text>
+    <View>
+    <ScrollView contentContainerStyle={styles.container}>
+      <TouchableOpacity style={styles.arrowContainer} onPress={() => navigation.goBack()}>
+        <ArrowIcon width={25} height={25} fill={"#808285"} />
       </TouchableOpacity>
+
+      {/* Title and Car Icon */}
+      <View style={styles.titleContainer}>
+        <Text style={styles.title}>My Cars</Text>
+        <CarIcon width={30} height={30} fill={"black"} />
+      </View>
+
+      {/* Dynamic Car List */}
+      <View style={styles.carListContainer}>
+        {/* Container with Background Color */}
+        {cars.map((car, index) => (
+          <View key={index} style={styles.carCardContainer}>
+            {/* QR Code */}
+            <QRCode value={car.qrCodeData} size={250} />
+
+            {/* Car Image */}
+            <Image source={{ uri: `${car.photo}` }} style={styles.photo} />
+            {/* License Plate Text */}
+            <Text style={styles.licensePlate}>License Plate: {car.licensePlate}</Text>
+            {/* Delete Button */}
+            <TouchableOpacity onPress={() => handleDeleteCar(car)}>
+              <Text style={styles.deleteText}>Delete</Text>
+            </TouchableOpacity>
+          </View>
+        ))}
+      </View>
+
+
       {/* Modal */}
       <Modal visible={modalVisible} animationType="slide" transparent={true}>
         <View style={styles.modalOverlay}>
@@ -140,18 +148,55 @@ const MyCarsScreen = () => {
           </View>
         </View>
       </Modal>
+
+      {/* Delete Modal */}
+      <Modal visible={deleteModalVisible} animationType="slide" transparent={true}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <Text style={styles.modalTitle}>Confirm Delete</Text>
+            <Text>Are you sure you want to delete this car?</Text>
+            <TouchableOpacity style={styles.deleteButton} onPress={confirmDeleteCar}>
+              <Text style={styles.deleteButtonText}>Delete</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.cancelButton} onPress={() => setDeleteModalVisible(false)}>
+              <Text style={styles.cancelButtonText}>Cancel</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </ScrollView>
+      {/* Add Car Button */}
+      <TouchableOpacity style={styles.buttonContainer} onPress={() => setModalVisible(true)}>
+    <Text style={styles.buttonText}>Add car</Text>
+  </TouchableOpacity>
+
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  scrollViewContainer: {
-    flexGrow: 1,
-  },
   container: {
-    flex: 1,
-    backgroundColor: "white",
+    flexGrow: 1,
+    backgroundColor: "#F2F3F4",
     padding: 16,
+    position: 'relative', 
+    paddingBottom: 80,
+  },
+
+  buttonContainer: {
+    position: "absolute",
+    bottom: 10, // Adjust the bottom position to set the distance from the bottom
+    left: 16,
+    right: 16,
+    backgroundColor: "#808285",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 15,
+  },
+  buttonText: {
+    color: "white",
+    fontSize: 16,
+    fontFamily: "Gilroy-Medium",
   },
   arrowContainer: {
     position: "absolute",
@@ -198,6 +243,12 @@ const styles = StyleSheet.create({
   licensePlate: {
     fontFamily: "Gilroy-Heavy",
     fontSize: 20,
+  },
+  deleteText: {
+    fontFamily: "Gilroy-Heavy",
+    fontSize: 16,
+    color: "red",
+    marginTop: 10,
   },
   button: {
     backgroundColor: "#808285",
@@ -286,6 +337,21 @@ const styles = StyleSheet.create({
   },
   cancelButtonText: {
     color: "#808285",
+    fontSize: 16,
+    fontFamily: "Gilroy-Medium",
+  },
+  deleteButton: {
+    backgroundColor: "red",
+    color: "white",
+    fontSize: 16,
+    fontWeight: "bold",
+    alignItems: "center",
+    paddingVertical: 15,
+    marginBottom: 10,
+    width: "100%",
+  },
+  deleteButtonText: {
+    color: "white",
     fontSize: 16,
     fontFamily: "Gilroy-Medium",
   },
