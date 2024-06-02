@@ -170,7 +170,7 @@ export const login = createAsyncThunk("user/login", async (credentials: { email:
 
 export const checkAuthentication = createAsyncThunk("user/checkAuthentication", async () => {
   const token = await SecureStore.getItemAsync("token");
-  console.log("Retrieved token", token);
+  //console.log("Retrieved token", token);
   if (token) {
     // Optionally fetch user info with the token
     const user = await UserQueries.fetchUserWithToken(token);

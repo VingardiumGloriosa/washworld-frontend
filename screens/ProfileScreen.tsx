@@ -25,11 +25,6 @@ const ProfileScreen = () => {
     }
   }, [dispatch, currentUser]);
 
-  // useEffect(() => {
-  //   if (currentUser) {
-  //     console.log("currentUser updated", currentUser.email);
-  //   }
-  // }, [currentUser]);
 
   if (loading || !currentUser) {
     return (

@@ -90,38 +90,6 @@ const MyMembershipsScreen = () => {
             </TouchableOpacity>
           </View>
         )}
-
-        {/*This is the same as the code above, but with a hardcoded membership type*/}
-
-        {/* <View style={styles.membershipContainer}>
-          <View style={styles.leftContainer}>
-            <Text style={styles.membershipText}>Premium Plus (1 car)</Text>
-          </View>
-
-          <View style={styles.rightContainer}>
-            <Text style={styles.priceText}>99kr. /month</Text>
-          </View>
-        </View>
-
-        <Text style={styles.membershipsTitle}>Next payment charge is due May 8th Active since 2023 December 8th</Text>
-        <Text style={styles.membershipDesription}>Billing Details</Text>
-        <Text style={styles.membershipDesription}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam egestas turpis libero, placerat pharetra lectus vestibulum a. Donec elementum, metus vitae porttitor efficitur, mauris ex hendrerit velit, vel tempus lorem turpis vitae arcu.
-        </Text>
-        <View style={styles.membershipContainer}>
-          <TouchableOpacity style={styles.leftContainer}>
-            <Text style={styles.membershipText}>Pause</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.rightContainerOrange} onPress={handleCancelMembership}>
-            <Text style={styles.priceText}>Cancel</Text>
-          </TouchableOpacity>
-        </View> */}
-
-        {/*end of hardcoded membership type*/}
-
-        {/*all memberships*/}
-
         <Text style={styles.membershipsTitle2}>Upgrade/downgrade membership</Text>
         {membershipTypes.map((membership) => (
           <TouchableOpacity key={membership.id} style={styles.membershipContainer} onPress={() => handleUpdateMembership(membership.id)}>

@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import { AppThunk } from "../store"; // Assuming you have defined AppThunk type
-import { addCarToDatabase, fetchUserCars, fetchUserCar, deleteUserCar } from "../api"; // Assuming you have an API function to fetch cars from the database
+import { addCarToDatabase, fetchUserCars, deleteUserCar } from "../api"; // Assuming you have an API function to fetch cars from the database
 
 export interface Car {
   id: number;
@@ -36,7 +36,6 @@ export const deleteCar = createAsyncThunk("car/deleteCar", async (carId: number)
 
 export const addCar = createAsyncThunk("car/addCar", async (car: Car) => {
   try {
-    console.log('in thunk: ' + car)
     const response = await addCarToDatabase(car);
     return response;
   } catch (error) {
