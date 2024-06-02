@@ -55,11 +55,6 @@ export default function CameraScreen({ route }) {
       const asset = await MediaLibrary.createAssetAsync(photo.uri);
       await MediaLibrary.createAlbumAsync("Camera", asset, false);
       console.log("Photo saved to gallery:", asset.uri);
-
-      // Add the data URI scheme to the base64 string
-      const fullBase64Image = `data:image/jpg;base64,${photo.base64}`;
-
-      // Pass the full base64 image back to the previous screen
       onCapture(photo.base64);
       navigation.goBack();
     }

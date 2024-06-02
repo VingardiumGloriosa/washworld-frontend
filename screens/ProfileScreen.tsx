@@ -17,6 +17,7 @@ import {
   updateUserPhoto,
 } from "../state/slices/userSlice";
 import * as ImagePicker from "expo-image-picker";
+import * as FileSystem from "expo-file-system";
 import { Ionicons } from "@expo/vector-icons";
 
 const ProfileScreen = () => {
@@ -30,20 +31,38 @@ const ProfileScreen = () => {
   const [image, setImage] = useState<string | null>(null);
 
   const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-      base64: true,
-    });
+    console.log("pickImage function triggered");
+    try {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
 
-    console.log(result);
+      console.log("ImagePicker result:", result);
 
-    if (!result.canceled) {
-      const fullBase64Image = `data:image/jpg;base64,${result.base64}`;
-      setImage(fullBase64Image);
-      dispatch(updateUserPhoto(result.base64));
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        const uri = result.assets[0].uri;
+        console.log("Reading image as base64 from URI:", uri);
+
+        const base64Image = await FileSystem.readAsStringAsync(uri, {
+          encoding: FileSystem.EncodingType.Base64,
+        });
+
+        if (base64Image) {
+          const formattedBase64Image = `data:image/jpeg;base64,${base64Image}`;
+          setImage(formattedBase64Image);
+          console.log("Base64 Image:", formattedBase64Image);
+          dispatch(updateUserPhoto(formattedBase64Image));
+        } else {
+          console.error("Failed to convert image to base64");
+        }
+      } else {
+        console.log("Image picking was canceled or no assets found");
+      }
+    } catch (error) {
+      console.error("Error picking image:", error);
     }
   };
 
@@ -95,7 +114,7 @@ const ProfileScreen = () => {
               image
                 ? { uri: image }
                 : currentUser.photo
-                ? { uri: `${currentUser.photo}` }
+                ? { uri: currentUser.photo }
                 : require("../assets/images/profile-pic.png")
             }
             style={styles.profileImage}

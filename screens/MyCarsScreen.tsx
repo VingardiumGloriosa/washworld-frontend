@@ -1,5 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, Modal, TextInput, Alert } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  ScrollView,
+  Modal,
+  TextInput,
+  Alert,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import ArrowIcon from "../assets/svg/leftArrow.svg";
 import CarIcon from "../assets/svg/car.svg";
@@ -14,7 +24,9 @@ const MyCarsScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const cars = useSelector((state: RootState) => state.cars.cars);
-  const { currentUser, isAuthenticated } = useSelector((state: RootState) => state.users);
+  const { currentUser, isAuthenticated } = useSelector(
+    (state: RootState) => state.users
+  );
   const [modalVisible, setModalVisible] = useState(false);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [photo, setPhoto] = useState("");
@@ -43,12 +55,12 @@ const MyCarsScreen = () => {
       const newCarPayload = {
         userId: 24, // Assuming 24 is the correct user ID
         licensePlate: licensePlate,
-        photo: photo
+        photo: photo,
       };
-  
-      console.log(newCarPayload)
+
+      console.log(newCarPayload);
       dispatch(addCar(newCarPayload));
-  
+
       setPhoto("");
       setLicensePlate("");
       setModalVisible(false);
@@ -83,7 +95,7 @@ const MyCarsScreen = () => {
 
   const confirmDeleteCar = () => {
     if (carToDelete) {
-      console.log('in confirm ' + carToDelete.id);
+      console.log("in confirm " + carToDelete.id);
       dispatch(deleteCar(carToDelete.id));
       setDeleteModalVisible(false);
       setCarToDelete(null);
@@ -92,89 +104,120 @@ const MyCarsScreen = () => {
 
   return (
     <View>
-    <ScrollView contentContainerStyle={styles.container}>
-      <TouchableOpacity style={styles.arrowContainer} onPress={() => navigation.goBack()}>
-        <ArrowIcon width={25} height={25} fill={"#808285"} />
-      </TouchableOpacity>
+      <ScrollView contentContainerStyle={styles.container}>
+        <TouchableOpacity
+          style={styles.arrowContainer}
+          onPress={() => navigation.goBack()}
+        >
+          <ArrowIcon width={25} height={25} fill={"#808285"} />
+        </TouchableOpacity>
 
-      {/* Title and Car Icon */}
-      <View style={styles.titleContainer}>
-        <Text style={styles.title}>My Cars</Text>
-        <CarIcon width={30} height={30} fill={"black"} />
-      </View>
-
-      {/* Dynamic Car List */}
-      <View style={styles.carListContainer}>
-        {/* Container with Background Color */}
-        {cars.map((car, index) => {
-          return (
-          <View key={index} style={styles.carCardContainer}>
-            {/* QR Code */}
-            <QRCode value={car.qrCodeData} size={250} />
-
-            {/* Car Image */}
-            {
-              car.photo &&
-                <Image src={car.photo} style={styles.photo} />
-            }
-            {/* License Plate Text */}
-            <Text style={styles.licensePlate}>License Plate: {car.licensePlate}</Text>
-            {/* Delete Button */}
-            <TouchableOpacity onPress={() => handleDeleteCar(car)}>
-              <Text style={styles.deleteText}>Delete</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-        )}
-      </View>
-
-
-      {/* Modal */}
-      <Modal visible={modalVisible} animationType="slide" transparent={true}>
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContainer}>
-            <Text style={styles.modalTitle}>Add a New Car</Text>
-            {/* License Plate Input */}
-            <TextInput style={styles.input} placeholder="License Plate" value={licensePlate} onChangeText={setLicensePlate} />
-
-            {/* Hidden User ID */}
-            <TextInput style={styles.hiddenInput} value={`${userId}`} editable={false} />
-
-            <TouchableOpacity style={styles.cameraButton} onPress={openCamera}>
-              <Text style={styles.cameraButtonText}>Take photo of car</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.submitButton} onPress={handleAddCar}>
-              <Text style={styles.submitButtonText}>Submit</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.cancelButton} onPress={handleCancel}>
-              <Text style={styles.cancelButtonText}>Cancel</Text>
-            </TouchableOpacity>
-          </View>
+        {/* Title and Car Icon */}
+        <View style={styles.titleContainer}>
+          <Text style={styles.title}>My Cars</Text>
+          <CarIcon width={30} height={30} fill={"black"} />
         </View>
-      </Modal>
 
-      {/* Delete Modal */}
-      <Modal visible={deleteModalVisible} animationType="slide" transparent={true}>
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContainer}>
-            <Text style={styles.modalTitle}>Confirm Delete</Text>
-            <Text>Are you sure you want to delete this car?</Text>
-            <TouchableOpacity style={styles.deleteButton} onPress={confirmDeleteCar}>
-              <Text style={styles.deleteButtonText}>Delete</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.cancelButton} onPress={() => setDeleteModalVisible(false)}>
-              <Text style={styles.cancelButtonText}>Cancel</Text>
-            </TouchableOpacity>
-          </View>
+        {/* Dynamic Car List */}
+        <View style={styles.carListContainer}>
+          {/* Container with Background Color */}
+          {cars.map((car, index) => {
+            return (
+              <View key={index} style={styles.carCardContainer}>
+                {/* QR Code */}
+                <QRCode value={car.qrCodeData} size={250} />
+
+                {/* Car Image */}
+                {car.photo && <Image src={car.photo} style={styles.photo} />}
+                {/* License Plate Text */}
+                <Text style={styles.licensePlate}>
+                  License Plate: {car.licensePlate}
+                </Text>
+                {/* Delete Button */}
+                <TouchableOpacity onPress={() => handleDeleteCar(car)}>
+                  <Text style={styles.deleteText}>Delete</Text>
+                </TouchableOpacity>
+              </View>
+            );
+          })}
         </View>
-      </Modal>
-    </ScrollView>
+
+        {/* Modal */}
+        <Modal visible={modalVisible} animationType="slide" transparent={true}>
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContainer}>
+              <Text style={styles.modalTitle}>Add a New Car</Text>
+              {/* License Plate Input */}
+              <TextInput
+                style={styles.input}
+                placeholder="License Plate"
+                value={licensePlate}
+                onChangeText={setLicensePlate}
+              />
+
+              {/* Hidden User ID */}
+              <TextInput
+                style={styles.hiddenInput}
+                value={`${userId}`}
+                editable={false}
+              />
+
+              <TouchableOpacity
+                style={styles.cameraButton}
+                onPress={openCamera}
+              >
+                <Text style={styles.cameraButtonText}>Take photo of car</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.submitButton}
+                onPress={handleAddCar}
+              >
+                <Text style={styles.submitButtonText}>Submit</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.cancelButton}
+                onPress={handleCancel}
+              >
+                <Text style={styles.cancelButtonText}>Cancel</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+
+        {/* Delete Modal */}
+        <Modal
+          visible={deleteModalVisible}
+          animationType="slide"
+          transparent={true}
+        >
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContainer}>
+              <Text style={styles.modalTitle}>Confirm Delete</Text>
+              <Text>Are you sure you want to delete this car?</Text>
+              <TouchableOpacity
+                style={styles.deleteButton}
+                onPress={confirmDeleteCar}
+              >
+                <Text style={styles.deleteButtonText}>Delete</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.cancelButton}
+                onPress={() => setDeleteModalVisible(false)}
+              >
+                <Text style={styles.cancelButtonText}>Cancel</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+      </ScrollView>
       {/* Add Car Button */}
-      <TouchableOpacity style={styles.buttonContainer} onPress={() => setModalVisible(true)}>
-    <Text style={styles.buttonText}>Add car</Text>
-  </TouchableOpacity>
-
+      <TouchableOpacity
+        style={styles.buttonContainer}
+        onPress={() => setModalVisible(true)}
+      >
+        <Text style={styles.buttonText}>Add car</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -184,7 +227,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     backgroundColor: "#F2F3F4",
     padding: 16,
-    position: 'relative', 
+    position: "relative",
     paddingBottom: 80,
   },
 
