@@ -119,14 +119,12 @@ export const deleteUserCar = async (carId: number) => {
 // LOYALTY REWARDS
 
 export const toggleLoyaltyReward = async (
-  userId: number,
   rewardId: number,
   isActive: boolean
 ) => {
-  console.log(userId, rewardId, isActive);
   const token = await SecureStore.getItemAsync("token");
   const response = await axios.patch(
-    `${API_URL}/users/${userId}/loyalty-rewards/${rewardId}`,
+    `${API_URL}/users/loyalty-rewards/${rewardId}`,
     { isActive },
     {
       headers: {
