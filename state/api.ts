@@ -7,7 +7,7 @@ import Config from "react-native-config";
 
 // Base URL of your API
 
-export const API_URL = 'http://192.168.68.66:3005'//"http://172.20.10.3:3005"; //'http://localhost:3005'; //'http://192.168.68.66:3005' //
+export const API_URL = "http://192.168.8.5:3005"; //"http://172.20.10.3:3005"; //'http://localhost:3005'; //'http://192.168.68.66:3005' //
 
 const handleError = (error: AxiosError) => {
   console.error("API request failed:", error.message);
@@ -45,6 +45,25 @@ export const fetchUserHome = async () => {
   return response.data;
 };
 
+export const updateProfilePhoto = async (photo: string) => {
+  try {
+    const token = await SecureStore.getItemAsync("token");
+    const response = await axios.post(
+      `${API_URL}/users/update-photo`,
+      { photo },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    handleError(error);
+  }
+};
+
 // CARS
 
 // Function to get cars for a user
@@ -67,7 +86,7 @@ export const addCarToDatabase = async (car: Car): Promise<Car> => {
   try {
     const token = await SecureStore.getItemAsync("token");
     console.log("Token:", token);
-    console.log('Request Payload:', car);
+    console.log("Request Payload:", car);
 
     const response = await axios.post(`${API_URL}/users/cars`, car, {
       headers: {
@@ -75,20 +94,18 @@ export const addCarToDatabase = async (car: Car): Promise<Car> => {
         "Content-Type": "application/json",
       },
     });
-    
-    console.log('Response from API:', response.data);
+
+    console.log("Response from API:", response.data);
     return response.data;
   } catch (error) {
     handleError(error);
   }
 };
 
-
 export const deleteUserCar = async (carId: number) => {
   try {
     const token = await SecureStore.getItemAsync("token");
-    const response = await axios.delete(`${API_URL}/users/cars/${carId}`,
-    {
+    const response = await axios.delete(`${API_URL}/users/cars/${carId}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

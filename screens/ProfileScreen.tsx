@@ -11,8 +11,13 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../state/store";
-import { fetchUserProfile, logout } from "../state/slices/userSlice";
+import {
+  fetchUserProfile,
+  logout,
+  updateUserPhoto,
+} from "../state/slices/userSlice";
 import * as ImagePicker from "expo-image-picker";
+import { Ionicons } from "@expo/vector-icons";
 
 const ProfileScreen = () => {
   const navigation = useNavigation();
@@ -22,7 +27,7 @@ const ProfileScreen = () => {
   );
   const loading = useSelector((state: RootState) => state.users.loading);
 
-  const [image, setImage] = useState(null);
+  const [image, setImage] = useState<string | null>(null);
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -30,7 +35,7 @@ const ProfileScreen = () => {
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
-      base64: true, // Add this line to get base64 result
+      base64: true,
     });
 
     console.log(result);
@@ -38,6 +43,7 @@ const ProfileScreen = () => {
     if (!result.canceled) {
       const fullBase64Image = `data:image/jpg;base64,${result.base64}`;
       setImage(fullBase64Image);
+      dispatch(updateUserPhoto(result.base64));
     }
   };
 
@@ -69,7 +75,6 @@ const ProfileScreen = () => {
     if (!currentUser.email) {
       console.log("Fetching user profile...");
       dispatch(fetchUserProfile());
-      console.log(currentUser);
     }
   }, [dispatch, currentUser]);
 
@@ -84,16 +89,26 @@ const ProfileScreen = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={showAlert}>
+        <View style={styles.profileImageContainer}>
           <Image
-            source={require("../assets/images/profile-pic.png")}
+            source={
+              image
+                ? { uri: image }
+                : currentUser.photo
+                ? { uri: `${currentUser.photo}` }
+                : require("../assets/images/profile-pic.png")
+            }
             style={styles.profileImage}
           />
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.cameraIconContainer}
+            onPress={showAlert}
+          >
+            <Ionicons name="camera" size={24} color="white" />
+          </TouchableOpacity>
+        </View>
         {currentUser ? (
-          <>
-            <Text style={styles.userName}>{currentUser.fullName}</Text>
-          </>
+          <Text style={styles.userName}>{currentUser.fullName}</Text>
         ) : (
           <Text style={styles.userName}>Loading...</Text>
         )}
@@ -139,10 +154,23 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 20,
   },
+  profileImageContainer: {
+    position: "relative",
+    width: 100,
+    height: 100,
+  },
   profileImage: {
     width: 100,
     height: 100,
     borderRadius: 50,
+  },
+  cameraIconContainer: {
+    position: "absolute",
+    bottom: 0,
+    right: 0,
+    backgroundColor: "rgba(0, 0, 0, 0.6)",
+    borderRadius: 12,
+    padding: 4,
   },
   userName: {
     fontSize: 18,
