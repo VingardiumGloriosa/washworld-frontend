@@ -1,35 +1,77 @@
-import React, { useEffect } from "react";
-import { View, Text, Image, TouchableOpacity, StyleSheet, ActivityIndicator } from "react-native";
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  StyleSheet,
+  ActivityIndicator,
+  Alert,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../state/store";
 import { fetchUserProfile, logout } from "../state/slices/userSlice";
+import * as ImagePicker from "expo-image-picker";
 
 const ProfileScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch<AppDispatch>();
-  const currentUser = useSelector((state: RootState) => state.users.currentUser);
+  const currentUser = useSelector(
+    (state: RootState) => state.users.currentUser
+  );
   const loading = useSelector((state: RootState) => state.users.loading);
+
+  const [image, setImage] = useState(null);
+
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+      base64: true, // Add this line to get base64 result
+    });
+
+    console.log(result);
+
+    if (!result.canceled) {
+      const fullBase64Image = `data:image/jpg;base64,${result.base64}`;
+      setImage(fullBase64Image);
+    }
+  };
+
+  const showAlert = () => {
+    Alert.alert(
+      "Profile Picture",
+      "Choose an option",
+      [
+        {
+          text: "Upload Photo",
+          onPress: pickImage,
+        },
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+      ],
+      { cancelable: true }
+    );
+  };
 
   const handleLogout = () => {
     console.log("Logging out");
     dispatch(logout());
-  };useEffect(() => {
-   
+  };
 
-   console.log("Checking currentUser in useEffect", currentUser);
+  useEffect(() => {
+    console.log("Checking currentUser in useEffect", currentUser);
     if (!currentUser.email) {
       console.log("Fetching user profile...");
       dispatch(fetchUserProfile());
-      console.log(currentUser)
+      console.log(currentUser);
     }
   }, [dispatch, currentUser]);
-
-  // useEffect(() => {
-  //   if (currentUser) {
-  //     console.log("currentUser updated", currentUser.email);
-  //   }
-  // }, [currentUser]);
 
   if (loading || !currentUser) {
     return (
@@ -42,24 +84,37 @@ const ProfileScreen = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Image source={require("../assets/images/profile-pic.png")} style={styles.profileImage} />
+        <TouchableOpacity onPress={showAlert}>
+          <Image
+            source={require("../assets/images/profile-pic.png")}
+            style={styles.profileImage}
+          />
+        </TouchableOpacity>
         {currentUser ? (
           <>
             <Text style={styles.userName}>{currentUser.fullName}</Text>
-            {/* <Text style={styles.loyaltyText}>17 loyalty rewards claimed</Text> */}
           </>
         ) : (
           <Text style={styles.userName}>Loading...</Text>
         )}
       </View>
       <View style={styles.menu}>
-        <TouchableOpacity style={[styles.button, { backgroundColor: "#34B566" }]} onPress={() => navigation.navigate("MyMemberships")}>
+        <TouchableOpacity
+          style={[styles.button, { backgroundColor: "#34B566" }]}
+          onPress={() => navigation.navigate("MyMemberships")}
+        >
           <Text style={styles.buttonText}>My Memberships</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("MyCars")}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.navigate("MyCars")}
+        >
           <Text style={styles.buttonText}>My Cars</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.button, { backgroundColor: "#57585A" }]} onPress={handleLogout}>
+        <TouchableOpacity
+          style={[styles.button, { backgroundColor: "#57585A" }]}
+          onPress={handleLogout}
+        >
           <Text style={styles.buttonText}>Log Out</Text>
         </TouchableOpacity>
       </View>
@@ -94,12 +149,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginTop: 10,
     fontFamily: "Gilroy-ExtraBold",
-  },
-  loyaltyText: {
-    fontSize: 16,
-    color: "grey",
-    marginBottom: 20,
-    fontFamily: "Gilroy-Regular",
   },
   menu: {
     width: "100%",

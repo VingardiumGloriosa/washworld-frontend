@@ -6,7 +6,7 @@ import * as SecureStore from "expo-secure-store";
 import Config from "react-native-config";
 
 // Base URL of your API
-export const API_URL = "http://172.20.10.3:3005"; //'http://localhost:3005'; //'http://192.168.68.66:3005' //
+export const API_URL = "http://192.168.8.5:3005"; //'http://localhost:3005'; //'http://192.168.68.66:3005' //
 
 const handleError = (error: AxiosError) => {
   console.error("API request failed:", error.message);
@@ -27,13 +27,12 @@ export const fetchUser = async () => {
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log(response.data.email)
+    console.log(response.data.email);
     return response.data;
-} catch (error) {
-  handleError(error);
-}
+  } catch (error) {
+    handleError(error);
+  }
 };
-
 
 export const fetchUserHome = async () => {
   const token = await SecureStore.getItemAsync("token");
@@ -90,7 +89,11 @@ export const addCarToDatabase = async (car: Car): Promise<Car> => {
 
 // LOYALTY REWARDS
 
-export const toggleLoyaltyReward = async (userId: number, rewardId: number, isActive: boolean) => {
+export const toggleLoyaltyReward = async (
+  userId: number,
+  rewardId: number,
+  isActive: boolean
+) => {
   console.log(userId, rewardId, isActive);
   const token = await SecureStore.getItemAsync("token");
   const response = await axios.patch(
@@ -134,9 +137,16 @@ export const fetchLocation = async (locationId: number) => {
   }
 };
 
-export const calculateDistances = async (latitude: number, longitude: number): Promise<{ id: number; distance: number }[]> => {
+export const calculateDistances = async (
+  latitude: number,
+  longitude: number
+): Promise<{ id: number; distance: number }[]> => {
   try {
-    const response = await axios.post<{ id: number; distance: number }[]>(`${API_URL}/distances`, { latitude, longitude }, { headers: { "Content-Type": "application/json" } });
+    const response = await axios.post<{ id: number; distance: number }[]>(
+      `${API_URL}/distances`,
+      { latitude, longitude },
+      { headers: { "Content-Type": "application/json" } }
+    );
     return response.data;
   } catch (error) {
     handleError(error);
@@ -189,12 +199,16 @@ export const deleteMembership = async (userId: number) => {
 export const pauseMembership = async (userId: number) => {
   try {
     const token = await SecureStore.getItemAsync("token");
-    const response = await axios.patch(`${API_URL}/users/membership/pause`, null, {
-      //CHECK IF WE HAVE THIS ENDPOINT - DUMMY FUNCTION
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await axios.patch(
+      `${API_URL}/users/membership/pause`,
+      null,
+      {
+        //CHECK IF WE HAVE THIS ENDPOINT - DUMMY FUNCTION
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
     return response.data;
   } catch (error) {
     handleError(error);
@@ -204,12 +218,16 @@ export const pauseMembership = async (userId: number) => {
 export const resumeMembership = async (userId: number) => {
   try {
     const token = await SecureStore.getItemAsync("token");
-    const response = await axios.patch(`${API_URL}/users/membership/resume`, null, {
-      //CHECK IF WE HAVE THIS ENDPOINT - DUMMY FUNCTION
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await axios.patch(
+      `${API_URL}/users/membership/resume`,
+      null,
+      {
+        //CHECK IF WE HAVE THIS ENDPOINT - DUMMY FUNCTION
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
     return response.data;
   } catch (error) {
     handleError(error);
