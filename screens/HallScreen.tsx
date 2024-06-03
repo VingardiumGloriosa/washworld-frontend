@@ -37,6 +37,16 @@ const HallScreen = () => {
   const [value, setValue] = useState("any");
   const [items, setItems] = useState([]);
 
+  // Using static because emulator doesn't work with geolocation
+  useEffect(() => {
+    const DEFAULT_LOCATION = {
+      latitude: 55.77419181465124,
+      longitude: 12.514585695774914,
+    };
+
+    dispatch(calculateDistancesForAllLocations(DEFAULT_LOCATION))
+  }, [dispatch])
+
   /*useEffect(() => {
     const DEFAULT_LOCATION = {
       latitude: 55.77419181465124,
