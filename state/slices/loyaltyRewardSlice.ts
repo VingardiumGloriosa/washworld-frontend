@@ -44,14 +44,21 @@ const loyaltyRewardSlice = createSlice({
       .addCase(toggleReward.fulfilled, (state, action: PayloadAction<LoyaltyReward>) => {
         state.loading = false;
         const updatedReward = action.payload;
+        console.log("Received updated reward:", updatedReward);
+        
+        // Find the index of the reward with the matching id
         const index = state.rewards.findIndex((reward) => reward.id === updatedReward.id);
+        
         if (index !== -1) {
-          state.rewards[index] = updatedReward;
+            // Update the isActive state of the reward
+            state.rewards[index].isActive = updatedReward.isActive;
+            console.log("Reward state is:", state.rewards[index].isActive);
         } else {
-          state.rewards.push(updatedReward);
+            state.rewards.push(updatedReward);
         }
+        
         state.error = null;
-      })
+    })
       .addCase(toggleReward.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;

@@ -31,9 +31,9 @@ export const fetchMembershipTypesData = createAsyncThunk("membership/fetchMember
   return response;
 });
 
-export const addMembership = createAsyncThunk("membership/addMembership", async ({ userId, membershipTypeId }: { userId: number; membershipTypeId: number }) => {
-  console.log("Add Membership Thunk Called", userId, membershipTypeId);
-  const response = await createMembership(userId, membershipTypeId);
+export const addMembership = createAsyncThunk("membership/addMembership", async ({membershipTypeId }: {membershipTypeId: number }) => {
+  console.log("Add Membership Thunk Called", membershipTypeId);
+  const response = await createMembership(membershipTypeId);
   console.log("Add Membership Response", response);
   return response;
 });

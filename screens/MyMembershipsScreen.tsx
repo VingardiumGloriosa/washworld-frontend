@@ -53,7 +53,7 @@ const MyMembershipsScreen = () => {
   };
 
   const handleUpdateMembership = (membershipTypeId: number) => {
-    console.log("Updating membership for", currentUser, "to", membershipTypeId);
+    console.log("Updating membership for", currentUser.fullName, "to", membershipTypeId);
     if (currentUser) {
       if (currentUser.membership_id) {
         Alert.alert(
@@ -62,7 +62,8 @@ const MyMembershipsScreen = () => {
           [{ text: "OK" }]
         );
       } else {
-        dispatch(addMembership({ userId: currentUser.id, membershipTypeId }));
+        console.log('membership type id: ' + membershipTypeId)
+        dispatch(addMembership({membershipTypeId} ));
       }
     }
   };
