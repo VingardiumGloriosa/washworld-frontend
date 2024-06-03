@@ -23,7 +23,7 @@ const HallScreen = () => {
   const [value, setValue] = useState("any");
   const [items, setItems] = useState([]);
 
-  /* useEffect(() => {
+  useEffect(() => {
     const DEFAULT_LOCATION = {
       latitude: 55.77419181465124,
       longitude: 12.514585695774914,
@@ -62,7 +62,7 @@ const HallScreen = () => {
     };
 
     requestLocationPermission();
-  }, [dispatch]); */
+  }, [dispatch]);
 
   useEffect(() => {
     if (locations.length > 0) {

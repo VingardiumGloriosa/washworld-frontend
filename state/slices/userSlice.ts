@@ -58,6 +58,9 @@ const userSlice = createSlice({
 
       SecureStore.deleteItemAsync("token");
     },
+    setError: (state, action) => {
+      state.error = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(signup.pending, (state) => {
@@ -95,17 +98,6 @@ const userSlice = createSlice({
       state.loading = false;
       state.error = action.error.message;
     });
-    builder.addCase(checkAuthentication.fulfilled, (state, action) => {
-      if (action.payload) {
-        state.isAuthenticated = true;
-        state.token = action.payload.token;
-        state.currentUser = action.payload.user;
-      } else {
-        state.isAuthenticated = false;
-        state.token = null;
-        state.currentUser = null;
-      }
-    });
     builder.addCase(updateUserPhoto.pending, (state) => {
       state.loading = true;
       state.error = null;
@@ -120,16 +112,6 @@ const userSlice = createSlice({
     builder.addCase(updateUserPhoto.rejected, (state, action) => {
       state.loading = false;
     });
-    // uncommment when done testing authentication flow
-    /* 
-    builder.addCase(checkAuthentication.rejected, (state) => {
-      state.isAuthenticated = false;
-      state.token = null;
-      state.currentUser = null;
-    });
-    builder.addCase(checkAuthentication.pending, (state) => {
-      state.loading = true;
-    }); */
     builder.addCase(fetchUserHistory.pending, (state) => {
       state.loading = true;
       state.error = null;
@@ -182,17 +164,6 @@ export const login = createAsyncThunk("user/login", async (credentials: { email:
   return response;
 });
 
-export const checkAuthentication = createAsyncThunk("user/checkAuthentication", async () => {
-  const token = await SecureStore.getItemAsync("token");
-  //console.log("Retrieved token", token);
-  if (token) {
-    // Optionally fetch user info with the token
-    const user = await UserQueries.fetchUserWithToken(token);
-    return { user, token };
-  }
-  return null;
-});
-
 export const fetchUserHistory = createAsyncThunk("user/fetchUserHistory", async () => {
   const response = await fetchUserHome();
   return response;
@@ -211,6 +182,10 @@ export const updateUserPhoto = createAsyncThunk("user/updateUserPhoto", async (p
     return thunkAPI.rejectWithValue(error.message);
   }
 });
+
+export const setError = (error: string) => {
+  return { type: "users/setError", payload: error };
+};
 
 export const { setCurrentUser, setToken, logout } = userSlice.actions;
 

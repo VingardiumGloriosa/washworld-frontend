@@ -13,7 +13,6 @@ import HallStack from "./navigation/HallStack";
 import { Provider } from "react-redux";
 import { store } from "./state/store";
 import ProfileStack from "./navigation/ProfileStack";
-import { checkAuthentication } from "./state/slices/userSlice";
 import LoginSignupStack from "./navigation/LoginSignupStack";
 import { useAppDispatch, useAppSelector } from "./state/hooks";
 import GlobalLoader from "./components/GlobalLoader";
@@ -23,10 +22,6 @@ const Tab = createBottomTabNavigator();
 function AppNavigator() {
   const dispatch = useAppDispatch();
   const isAuthenticated = useAppSelector((state) => state.users.isAuthenticated);
-
-  useEffect(() => {
-    dispatch(checkAuthentication());
-  }, [dispatch]);
 
   if (!isAuthenticated) {
     return <LoginSignupStack />;
