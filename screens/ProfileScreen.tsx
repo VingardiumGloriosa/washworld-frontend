@@ -90,7 +90,7 @@ const ProfileScreen = () => {
   };
 
   useEffect(() => {
-    console.log("Checking currentUser in useEffect", currentUser);
+    console.log("Checking currentUser in useEffect", currentUser.email);
     if (!currentUser?.email) {
       console.log("Fetching user profile...");
       dispatch(fetchUserProfile());

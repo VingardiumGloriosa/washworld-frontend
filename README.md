@@ -1,1 +1,1 @@
-run with npx expo start
+run with: npx expo start
