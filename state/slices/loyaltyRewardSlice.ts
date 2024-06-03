@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { toggleLoyaltyReward, fetchUserHome, fetchLoyaltyRewardTypes } from "../api";
+import { updateLoyaltyRewards } from './userSlice';
 
 export interface LoyaltyReward {
   id: number;
@@ -26,8 +27,11 @@ export const fetchRewards = createAsyncThunk("loyaltyRewards/fetchRewards", asyn
 });
 
 // Thunk to toggle loyalty reward
-export const toggleReward = createAsyncThunk("loyaltyReward/toggleReward", async ({ rewardId, isActive }: { rewardId: number, isActive: boolean }) => {
+export const toggleReward = createAsyncThunk("loyaltyReward/toggleReward", async ({ rewardId, isActive }: { rewardId: number, isActive: boolean }, { dispatch }) => {
   const response = await toggleLoyaltyReward(rewardId, isActive);
+
+  dispatch(updateLoyaltyRewards(response));
+
   return response;
 });
 
@@ -41,31 +45,10 @@ const loyaltyRewardSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(toggleReward.fulfilled, (state, action: PayloadAction<LoyaltyReward>) => {
+      .addCase(toggleReward.fulfilled, (state, action: PayloadAction<{ rewardId: number, isActive: boolean }>) => {
         state.loading = false;
         const updatedReward = action.payload;
-        console.log("Received updated reward:", updatedReward);
 
-        const newRewards = state.rewards.map(reward => {
-            if(reward.id !== updatedReward.id) return reward;
-
-            reward.isActive = updatedReward.isActive;
-            return reward;
-        });
-
-        state.rewards = newRewards
-        
-        // Find the index of the reward with the matching id
-        // const index = state.rewards.findIndex((reward) => reward.id === updatedReward.id);
-        
-        // if (index !== -1) {
-        //     // Update the isActive state of the reward
-        //     state.rewards[index].isActive = updatedReward.isActive;
-        //     console.log("Reward state is:", state.rewards[index].isActive);
-        // } else {
-        //     state.rewards.push(updatedReward);
-        // }
-        
         state.error = null;
     })
       .addCase(toggleReward.rejected, (state, action) => {
@@ -79,6 +62,7 @@ const loyaltyRewardSlice = createSlice({
       .addCase(fetchRewards.fulfilled, (state, action: PayloadAction<LoyaltyReward[]>) => {
         state.loading = false;
         state.rewards = action.payload;
+        console.log('rewards populated as', state.rewards)
         state.error = null;
       })
       .addCase(fetchRewards.rejected, (state, action) => {

@@ -50,6 +50,19 @@ const userSlice = createSlice({
     setToken: (state, action: PayloadAction<string>) => {
       state.token = action.payload;
     },
+    updateLoyaltyRewards(state, action: PayloadAction<{ rewardId: number; isActive: boolean }>) {
+     // console.log(action.payload, 'AAAAAAAAAA')
+      state.currentUser = {
+        ...state.currentUser, 
+        loyaltyRewards: state.currentUser.loyaltyRewards.map(lr => {
+          if(lr.id !== action.payload.rewardId) return lr;
+
+          return {
+            ...lr,
+            isActive: action.payload.isActive
+          }
+        }) };
+    },
     logout: (state) => {
       state.token = "";
       state.isAuthenticated = false;
@@ -187,6 +200,6 @@ export const setError = (error: string) => {
   return { type: "users/setError", payload: error };
 };
 
-export const { setCurrentUser, setToken, logout } = userSlice.actions;
+export const { setCurrentUser, setToken, logout, updateLoyaltyRewards } = userSlice.actions;
 
 export default userSlice.reducer;

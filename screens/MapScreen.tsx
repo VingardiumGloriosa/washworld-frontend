@@ -12,16 +12,12 @@ import ArrowIcon from "../assets/svg/leftArrow.svg"; // Ensure the SVG path is c
 import { useNavigation } from "@react-navigation/native";
 import { AppDispatch, RootState } from "../state/store";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchAllLocations } from "../state/slices/locationsSlice";
+import { calculateDistancesForAllLocations, fetchAllLocations } from "../state/slices/locationsSlice";
 
 const MapScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch<AppDispatch>();
   const locations = useSelector((state: RootState) => state.location.locations);
-  
-  useEffect(() => {
-    dispatch(fetchAllLocations());
-  }, [dispatch]);
 
   return (
     <View style={styles.container}>

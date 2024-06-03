@@ -6,7 +6,7 @@ import Config from "react-native-config";
 
 // Base URL of your API
 
-export const API_URL = "http://192.168.8.5:3005"; //"http://172.20.10.3:3005"; //'http://localhost:3005'; //'http://192.168.68.66:3005' //
+export const API_URL = 'http://192.168.68.66:3005'; //"http://172.20.10.3:3005"; //'http://localhost:3005'; //'http://192.168.68.66:3005' //
 
 const handleError = (error: AxiosError) => {
   console.error("API request failed:", error.message);
