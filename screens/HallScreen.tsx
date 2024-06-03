@@ -76,7 +76,7 @@ const HallScreen = () => {
     };
 
     requestLocationPermission();
-  }, [dispatch]);
+  }, [dispatch, Geolocation, PermissionsAndroid.RESULTS, PermissionsAndroid.PERMISSIONS, Platform.OS]);
 
   useEffect(() => {
     if (locations.length > 0) {
