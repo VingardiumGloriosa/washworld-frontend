@@ -10,15 +10,13 @@ import ProfileIcon from "./assets/svg/profile.svg";
 import * as Font from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import HallStack from "./navigation/HallStack";
-/* import CarStack from "./navigation/CarStack"; */
-import LoginScreen from "./screens/LoginScreen";
-import SignUpScreen from "./screens/SignupScreen";
 import { Provider } from "react-redux";
 import { store } from "./state/store";
 import ProfileStack from "./navigation/ProfileStack";
 import { checkAuthentication } from "./state/slices/userSlice";
 import LoginSignupStack from "./navigation/LoginSignupStack";
 import { useAppDispatch, useAppSelector } from "./state/hooks";
+import GlobalLoader from "./components/GlobalLoader";
 
 const Tab = createBottomTabNavigator();
 
@@ -105,6 +103,7 @@ export default function App() {
     <Provider store={store}>
       <NavigationContainer>
         <AppNavigator />
+        <GlobalLoader />
       </NavigationContainer>
     </Provider>
   );

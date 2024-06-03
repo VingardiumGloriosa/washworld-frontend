@@ -1,16 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import {
-  SafeAreaView,
-  FlatList,
-  Image,
-  StyleSheet,
-  View,
-  Text,
-  ActivityIndicator,
-  TouchableOpacity,
-  PermissionsAndroid,
-  Platform,
-} from "react-native";
+import { SafeAreaView, FlatList, Image, StyleSheet, View, Text, ActivityIndicator, TouchableOpacity, PermissionsAndroid, Platform } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import WashCard from "../components/WashCard";
@@ -21,7 +10,7 @@ import MapIcon from "../assets/svg/map.svg";
 import DropDownPicker from "react-native-dropdown-picker";
 import { AppDispatch, RootState } from "../state/store";
 import { calculateDistancesForAllLocations, fetchAllLocations } from "../state/slices/locationsSlice";
-import Geolocation from 'react-native-geolocation-service';
+import Geolocation from "react-native-geolocation-service";
 
 const HallScreen = () => {
   const navigation = useNavigation();
@@ -34,25 +23,22 @@ const HallScreen = () => {
   const [value, setValue] = useState("any");
   const [items, setItems] = useState([]);
 
-  useEffect(() => {
+  /* useEffect(() => {
     const DEFAULT_LOCATION = {
-      latitude: 55.77419181465124, 
-      longitude: 12.514585695774914
-    }
+      latitude: 55.77419181465124,
+      longitude: 12.514585695774914,
+    };
 
     const requestLocationPermission = async () => {
-      if (Platform.OS === 'android') {
+      if (Platform.OS === "android") {
         try {
-          const granted = await PermissionsAndroid.request(
-            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-            {
-              title: 'Location Permission',
-              message: 'This app needs access to your location.',
-              buttonNeutral: 'Ask Me Later',
-              buttonNegative: 'Cancel',
-              buttonPositive: 'OK',
-            },
-          );
+          const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION, {
+            title: "Location Permission",
+            message: "This app needs access to your location.",
+            buttonNeutral: "Ask Me Later",
+            buttonNegative: "Cancel",
+            buttonPositive: "OK",
+          });
           if (granted === PermissionsAndroid.RESULTS.GRANTED) {
             Geolocation.getCurrentPosition(
               (position) => {
@@ -65,7 +51,7 @@ const HallScreen = () => {
               { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
             );
           } else {
-            console.log('Location permission denied');
+            console.log("Location permission denied");
             dispatch(calculateDistancesForAllLocations(DEFAULT_LOCATION));
           }
         } catch (err) {
@@ -76,7 +62,7 @@ const HallScreen = () => {
     };
 
     requestLocationPermission();
-  }, [dispatch]);
+  }, [dispatch]); */
 
   useEffect(() => {
     if (locations.length > 0) {
@@ -91,40 +77,34 @@ const HallScreen = () => {
     }
   }, [locations]);
 
-  const filteredWashHallData =
-    value === "any"
-      ? locations
-      : locations.filter((item) => item.name.toLowerCase() === value);
+  const filteredWashHallData = value === "any" ? locations : locations.filter((item) => item.name.toLowerCase() === value);
 
-  const renderItem = useCallback(
-    ({ item }) => {
-      // Ensure washHalls and selfWashHalls exist and provide default values if not
-      const washHalls = item.washHalls || { available: 0, total: 0, outOfService: 0, nextAvailable: null };
-      const selfWashHalls = item.selfWashHalls || { available: 0, total: 0, outOfService: 0, nextAvailable: null };
-      const distanceInKm = item.distance ? (item.distance/1000).toFixed(1) : null
-      return (
-        <WashCard
-          key={item.id}
-          ImageComponent={
-            <Image
-              source={{ uri: item.photo }} // Use the URI from the item's photo
-              style={{ width: 100, height: 60 }} // Apply any additional styles if needed
-            />
-          }
-          locationName={item.name}
-          address={item.address}
-          distance={distanceInKm ?? "N/A"}
-          availableWashHalls={washHalls.available.toString()}
-          availableSelfWash={selfWashHalls.available.toString()}
-          totalWashHalls={washHalls.total.toString()}
-          totalSelfWash={selfWashHalls.total.toString()}
-          outOfService={washHalls.outOfService}
-          waitTime={0} // Assuming wait time is not available from the API
-        />
-      );
-    },
-    []
-  );
+  const renderItem = useCallback(({ item }) => {
+    // Ensure washHalls and selfWashHalls exist and provide default values if not
+    const washHalls = item.washHalls || { available: 0, total: 0, outOfService: 0, nextAvailable: null };
+    const selfWashHalls = item.selfWashHalls || { available: 0, total: 0, outOfService: 0, nextAvailable: null };
+    const distanceInKm = item.distance ? (item.distance / 1000).toFixed(1) : null;
+    return (
+      <WashCard
+        key={item.id}
+        ImageComponent={
+          <Image
+            source={{ uri: item.photo }} // Use the URI from the item's photo
+            style={{ width: 100, height: 60 }} // Apply any additional styles if needed
+          />
+        }
+        locationName={item.name}
+        address={item.address}
+        distance={distanceInKm ?? "N/A"}
+        availableWashHalls={washHalls.available.toString()}
+        availableSelfWash={selfWashHalls.available.toString()}
+        totalWashHalls={washHalls.total.toString()}
+        totalSelfWash={selfWashHalls.total.toString()}
+        outOfService={washHalls.outOfService}
+        waitTime={0} // Assuming wait time is not available from the API
+      />
+    );
+  }, []);
 
   if (loading) return <ActivityIndicator size="large" color="#34B566" />;
   if (error) return <Text>Error: {error}</Text>;
@@ -156,11 +136,7 @@ const HallScreen = () => {
         </TouchableOpacity>
       </View>
       <Title text={"Wash Halls"} Icon={WashHallIcon} width={30} height={30} />
-      <FlatList
-        data={filteredWashHallData}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id.toString()}
-      />
+      <FlatList data={filteredWashHallData} renderItem={renderItem} keyExtractor={(item) => item.id.toString()} />
     </SafeAreaView>
   );
 };

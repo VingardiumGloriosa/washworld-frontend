@@ -166,79 +166,51 @@ const userSlice = createSlice({
   },
 });
 
-export const signup = createAsyncThunk(
-  "user/signup",
-  async (
-    credentials: { fullName: string; email: string; password: string },
-    thunkAPI
-  ) => {
-    console.log("signup thunk", credentials);
+export const signup = createAsyncThunk("user/signup", async (credentials: { fullName: string; email: string; password: string }, thunkAPI) => {
+  console.log("signup thunk", credentials);
 
-    const response = await UserQueries.signup(
-      credentials.fullName,
-      credentials.email,
-      credentials.password
-    );
-    console.log("signup response", response);
+  const response = await UserQueries.signup(credentials.fullName, credentials.email, credentials.password);
+  console.log("signup response", response);
 
+  return response;
+});
+
+export const login = createAsyncThunk("user/login", async (credentials: { email: string; password: string }, thunkAPI) => {
+  console.log("login thunk", credentials);
+  const response = await UserQueries.login(credentials.email, credentials.password);
+  console.log("login response", response);
+  return response;
+});
+
+export const checkAuthentication = createAsyncThunk("user/checkAuthentication", async () => {
+  const token = await SecureStore.getItemAsync("token");
+  //console.log("Retrieved token", token);
+  if (token) {
+    // Optionally fetch user info with the token
+    const user = await UserQueries.fetchUserWithToken(token);
+    return { user, token };
+  }
+  return null;
+});
+
+export const fetchUserHistory = createAsyncThunk("user/fetchUserHistory", async () => {
+  const response = await fetchUserHome();
+  return response;
+});
+
+export const fetchUserProfile = createAsyncThunk("user/fetchUserProfile", async () => {
+  const response = await fetchUser();
+  return response;
+});
+
+export const updateUserPhoto = createAsyncThunk("user/updateUserPhoto", async (photo: string, thunkAPI) => {
+  try {
+    const response = await updateProfilePhoto(photo);
     return response;
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.message);
   }
-);
-
-export const login = createAsyncThunk(
-  "user/login",
-  async (credentials: { email: string; password: string }, thunkAPI) => {
-    console.log("login thunk", credentials);
-    const response = await UserQueries.login(
-      credentials.email,
-      credentials.password
-    );
-    console.log("login response", response);
-    return response;
-  }
-);
-
-export const checkAuthentication = createAsyncThunk(
-  "user/checkAuthentication",
-  async () => {
-    const token = await SecureStore.getItemAsync("token");
-    //console.log("Retrieved token", token);
-    if (token) {
-      // Optionally fetch user info with the token
-      const user = await UserQueries.fetchUserWithToken(token);
-      return { user, token };
-    }
-    return null;
-  }
-);
-
-export const fetchUserHistory = createAsyncThunk(
-  "user/fetchUserHistory",
-  async () => {
-    const response = await fetchUserHome();
-    return response;
-  }
-);
-
-export const fetchUserProfile = createAsyncThunk(
-  "user/fetchUserProfile",
-  async () => {
-    const response = await fetchUser();
-    return response;
-  }
-);
-
-export const updateUserPhoto = createAsyncThunk(
-  "user/updateUserPhoto",
-  async (photo: string, thunkAPI) => {
-    try {
-      const response = await updateProfilePhoto(photo);
-      return response;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.message);
-    }
-  }
-);
+});
 
 export const { setCurrentUser, setToken, logout } = userSlice.actions;
 

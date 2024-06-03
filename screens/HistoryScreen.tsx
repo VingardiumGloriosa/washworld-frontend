@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from "react";
-import { View, SafeAreaView, StyleSheet, Dimensions, ScrollView, Text } from "react-native";
+import { View, SafeAreaView, StyleSheet, Dimensions, ScrollView, Text, ActivityIndicator } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUserHistory } from "../state/slices/userSlice";
 import LoyaltyCarousel from "../components/LoyaltyCarousel";
@@ -9,11 +9,12 @@ import Title from "../components/Title";
 import ClockIcon from "../assets/svg/movingClock.svg";
 import RecentWashCard from "../components/RecentWashCard";
 import { AppDispatch, RootState } from "../state/store";
+import { setLoading } from "../state/slices/globalSlice";
 
 const screenWidth = Dimensions.get("window").width;
 
 const formatDate = (dateString) => {
-  const options = { year: 'numeric', month: 'long', day: 'numeric' };
+  const options = { year: "numeric", month: "long", day: "numeric" };
   return new Date(dateString).toLocaleDateString(undefined, options);
 };
 
@@ -21,9 +22,11 @@ const HistoryScreen = React.memo(() => {
   const dispatch = useDispatch<AppDispatch>();
   const currentUser = useSelector((state: RootState) => state.users.currentUser);
   const history = currentUser?.history || [];
+  const loading = useSelector((state: RootState) => state.global.loading);
 
   useEffect(() => {
-      dispatch(fetchUserHistory());
+    dispatch(setLoading(true));
+    dispatch(fetchUserHistory()).finally(() => dispatch(setLoading(false)));
   }, [dispatch]);
 
   const progressLeft = useMemo(() => {
@@ -31,7 +34,7 @@ const HistoryScreen = React.memo(() => {
   }, [currentUser]);
 
   const progressText = useMemo(() => {
-    return progressLeft ? `Wash your car ${progressLeft} more times to unlock the next reward!` : '';
+    return progressLeft ? `Wash your car ${progressLeft} more times to unlock the next reward!` : "";
   }, [progressLeft]);
 
   return (
@@ -40,37 +43,16 @@ const HistoryScreen = React.memo(() => {
         <View style={styles.logo}>
           <Logo width={160} height={80} />
         </View>
-        <LoyaltyCarousel 
-          userId={currentUser?.id || 9} 
-          rewards={currentUser?.loyaltyRewards || []} 
-          dispatch={dispatch} 
-        />
+        <LoyaltyCarousel userId={currentUser?.id || 9} rewards={currentUser?.loyaltyRewards || []} dispatch={dispatch} />
         <View style={styles.progressBarContainer}>
-          <ProgressBar 
-            text={progressText} 
-            progress={currentUser?.loyaltyRewardProgress?.progress / currentUser?.loyaltyRewardProgress?.goal || 0} 
-            width={screenWidth - 40} 
-            height={20} 
-            backgroundColor="#f0f0f0" 
-            fillColor="#34B566" 
-          />
+          <ProgressBar text={progressText} progress={currentUser?.loyaltyRewardProgress?.progress / currentUser?.loyaltyRewardProgress?.goal || 0} width={screenWidth - 40} height={20} backgroundColor="#f0f0f0" fillColor="#34B566" />
         </View>
         <View>
           <Title text="Recent washes" Icon={ClockIcon} width={30} height={30} />
           {history.length === 0 ? (
-            <Text style={styles.encouragementText}>
-              You don't have any recent washes. Wash your car to keep it shiny and earn rewards!
-            </Text>
+            <Text style={styles.encouragementText}>You don't have any recent washes. Wash your car to keep it shiny and earn rewards!</Text>
           ) : (
-            history.map((wash) => (
-              <RecentWashCard 
-                key={wash.id} 
-                imgSrc={wash.location.photo} 
-                locationName={wash.location.name} 
-                updatedAt={formatDate(wash.date)} 
-                link={wash.location.mapsUrl} 
-              />
-            ))
+            history.map((wash) => <RecentWashCard key={wash.id} imgSrc={wash.location.photo} locationName={wash.location.name} updatedAt={formatDate(wash.date)} link={wash.location.mapsUrl} />)
           )}
         </View>
       </ScrollView>
@@ -81,6 +63,12 @@ const HistoryScreen = React.memo(() => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "white",
+  },
+  loaderContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
     backgroundColor: "white",
   },
   logo: {

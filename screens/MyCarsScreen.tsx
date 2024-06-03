@@ -1,15 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Image,
-  ScrollView,
-  Modal,
-  TextInput,
-  Alert,
-} from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, Modal, TextInput, Alert, ActivityIndicator } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import ArrowIcon from "../assets/svg/leftArrow.svg";
 import CarIcon from "../assets/svg/car.svg";
@@ -24,15 +14,14 @@ const MyCarsScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const cars = useSelector((state: RootState) => state.cars.cars);
-  const { currentUser, isAuthenticated } = useSelector(
-    (state: RootState) => state.users
-  );
+  const { currentUser, isAuthenticated } = useSelector((state: RootState) => state.users);
   const [modalVisible, setModalVisible] = useState(false);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [photo, setPhoto] = useState("");
   const [licensePlate, setLicensePlate] = useState("");
   const token = useSelector((state: RootState) => state.users.token);
   const [carToDelete, setCarToDelete] = useState(null);
+  const loading = useSelector((state: RootState) => state.cars.loading);
 
   const userId = currentUser?.id;
 
@@ -102,13 +91,18 @@ const MyCarsScreen = () => {
     }
   };
 
+  if (loading || !cars) {
+    return (
+      <View style={styles.loaderContainer}>
+        <ActivityIndicator size="large" color="#34B566" />
+      </View>
+    );
+  }
+
   return (
     <View>
       <ScrollView contentContainerStyle={styles.container}>
-        <TouchableOpacity
-          style={styles.arrowContainer}
-          onPress={() => navigation.goBack()}
-        >
+        <TouchableOpacity style={styles.arrowContainer} onPress={() => navigation.goBack()}>
           <ArrowIcon width={25} height={25} fill={"#808285"} />
         </TouchableOpacity>
 
@@ -130,9 +124,7 @@ const MyCarsScreen = () => {
                 {/* Car Image */}
                 {car.photo && <Image src={car.photo} style={styles.photo} />}
                 {/* License Plate Text */}
-                <Text style={styles.licensePlate}>
-                  License Plate: {car.licensePlate}
-                </Text>
+                <Text style={styles.licensePlate}>License Plate: {car.licensePlate}</Text>
                 {/* Delete Button */}
                 <TouchableOpacity onPress={() => handleDeleteCar(car)}>
                   <Text style={styles.deleteText}>Delete</Text>
@@ -148,37 +140,19 @@ const MyCarsScreen = () => {
             <View style={styles.modalContainer}>
               <Text style={styles.modalTitle}>Add a New Car</Text>
               {/* License Plate Input */}
-              <TextInput
-                style={styles.input}
-                placeholder="License Plate"
-                value={licensePlate}
-                onChangeText={setLicensePlate}
-              />
+              <TextInput style={styles.input} placeholder="License Plate" value={licensePlate} onChangeText={setLicensePlate} />
 
               {/* Hidden User ID */}
-              <TextInput
-                style={styles.hiddenInput}
-                value={`${userId}`}
-                editable={false}
-              />
+              <TextInput style={styles.hiddenInput} value={`${userId}`} editable={false} />
 
-              <TouchableOpacity
-                style={styles.cameraButton}
-                onPress={openCamera}
-              >
+              <TouchableOpacity style={styles.cameraButton} onPress={openCamera}>
                 <Text style={styles.cameraButtonText}>Take photo of car</Text>
               </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.submitButton}
-                onPress={handleAddCar}
-              >
+              <TouchableOpacity style={styles.submitButton} onPress={handleAddCar}>
                 <Text style={styles.submitButtonText}>Submit</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity
-                style={styles.cancelButton}
-                onPress={handleCancel}
-              >
+              <TouchableOpacity style={styles.cancelButton} onPress={handleCancel}>
                 <Text style={styles.cancelButtonText}>Cancel</Text>
               </TouchableOpacity>
             </View>
@@ -186,25 +160,15 @@ const MyCarsScreen = () => {
         </Modal>
 
         {/* Delete Modal */}
-        <Modal
-          visible={deleteModalVisible}
-          animationType="slide"
-          transparent={true}
-        >
+        <Modal visible={deleteModalVisible} animationType="slide" transparent={true}>
           <View style={styles.modalOverlay}>
             <View style={styles.modalContainer}>
               <Text style={styles.modalTitle}>Confirm Delete</Text>
               <Text>Are you sure you want to delete this car?</Text>
-              <TouchableOpacity
-                style={styles.deleteButton}
-                onPress={confirmDeleteCar}
-              >
+              <TouchableOpacity style={styles.deleteButton} onPress={confirmDeleteCar}>
                 <Text style={styles.deleteButtonText}>Delete</Text>
               </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.cancelButton}
-                onPress={() => setDeleteModalVisible(false)}
-              >
+              <TouchableOpacity style={styles.cancelButton} onPress={() => setDeleteModalVisible(false)}>
                 <Text style={styles.cancelButtonText}>Cancel</Text>
               </TouchableOpacity>
             </View>
@@ -212,10 +176,7 @@ const MyCarsScreen = () => {
         </Modal>
       </ScrollView>
       {/* Add Car Button */}
-      <TouchableOpacity
-        style={styles.buttonContainer}
-        onPress={() => setModalVisible(true)}
-      >
+      <TouchableOpacity style={styles.buttonContainer} onPress={() => setModalVisible(true)}>
         <Text style={styles.buttonText}>Add car</Text>
       </TouchableOpacity>
     </View>
@@ -230,7 +191,12 @@ const styles = StyleSheet.create({
     position: "relative",
     paddingBottom: 80,
   },
-
+  loaderContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "white",
+  },
   buttonContainer: {
     position: "absolute",
     bottom: 10, // Adjust the bottom position to set the distance from the bottom
@@ -309,11 +275,6 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     marginTop: 20,
     width: "90%",
-  },
-  buttonText: {
-    color: "white",
-    fontSize: 16,
-    fontFamily: "Gilroy-Medium",
   },
   modalOverlay: {
     flex: 1,

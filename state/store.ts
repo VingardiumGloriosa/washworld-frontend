@@ -4,19 +4,21 @@ import usersReducer from "./slices/userSlice";
 import membershipsReducer from "./slices/membershipsSlice";
 import loyaltyRewardReducer from "./slices/loyaltyRewardSlice";
 import carReducer from "./slices/carSlice";
+import globalReducer from "./slices/globalSlice";
 
 export const store = configureStore({
-    reducer: {
-        location: locationsReducer,
-        users: usersReducer,
-        memberships: membershipsReducer,
-        loyaltyRewards: loyaltyRewardReducer,
-        cars: carReducer,
-      },
-      middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware({
-          serializableCheck: false, 
-        }),
+  reducer: {
+    location: locationsReducer,
+    users: usersReducer,
+    memberships: membershipsReducer,
+    loyaltyRewards: loyaltyRewardReducer,
+    cars: carReducer,
+    global: globalReducer,
+  },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+    }),
 });
 
 export type RootState = ReturnType<typeof store.getState>;
