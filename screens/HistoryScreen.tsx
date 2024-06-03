@@ -40,8 +40,7 @@ const HistoryScreen = React.memo(() => {
         <View style={styles.logo}>
           <Logo width={160} height={80} />
         </View>
-        <LoyaltyCarousel 
-          userId={currentUser?.id || 9} 
+        <LoyaltyCarousel
           rewards={currentUser?.loyaltyRewards || []} 
           dispatch={dispatch} 
         />
