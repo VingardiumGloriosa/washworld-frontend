@@ -8,18 +8,17 @@ import { PayloadAction, ThunkDispatch } from "@reduxjs/toolkit";
 
 interface LoyaltyCarouselProps {
   rewards: LoyaltyReward[];
-  userId: number;
   dispatch: ThunkDispatch<void, void, PayloadAction>;
 }
 
 const { width: viewportWidth } = Dimensions.get("window");
 
-const LoyaltyCarousel: React.FC<LoyaltyCarouselProps> = ({ userId, rewards, dispatch }) => {
+const LoyaltyCarousel: React.FC<LoyaltyCarouselProps> = ({ rewards, dispatch }) => {
 
   const renderItem = ({ item }: { item: LoyaltyReward }) => {
     const handleCardClick = () => {
       dispatch(toggleReward({ rewardId: item.id, isActive: !item.isActive }))
-      item.isActive = !item.isActive
+      // item.isActive = !item.isActive
     }
 
     return <LoyaltyCard title={item.name} isActive={item.isActive} onPress={handleCardClick} />;
