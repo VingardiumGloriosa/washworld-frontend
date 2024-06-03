@@ -1,9 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Image, TouchableOpacity, StyleSheet, ActivityIndicator, Alert } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  StyleSheet,
+  ActivityIndicator,
+  Alert,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../state/store";
-import { fetchUserProfile, logout, updateUserPhoto } from "../state/slices/userSlice";
+import {
+  fetchUserProfile,
+  logout,
+  updateUserPhoto,
+} from "../state/slices/userSlice";
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
 import { Ionicons } from "@expo/vector-icons";
@@ -11,7 +23,9 @@ import { Ionicons } from "@expo/vector-icons";
 const ProfileScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch<AppDispatch>();
-  const currentUser = useSelector((state: RootState) => state.users.currentUser);
+  const currentUser = useSelector(
+    (state: RootState) => state.users.currentUser
+  );
   const loading = useSelector((state: RootState) => state.users.loading);
 
   const [image, setImage] = useState<string | null>(null);
@@ -39,8 +53,8 @@ const ProfileScreen = () => {
         if (base64Image) {
           const formattedBase64Image = `data:image/jpeg;base64,${base64Image}`;
           setImage(formattedBase64Image);
-          console.log("Base64 Image:", formattedBase64Image);
-          dispatch(updateUserPhoto(formattedBase64Image));
+          //console.log("Base64 Image:", formattedBase64Image);
+          dispatch(updateUserPhoto(base64Image));
         } else {
           console.error("Failed to convert image to base64");
         }
@@ -96,21 +110,46 @@ const ProfileScreen = () => {
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.profileImageContainer}>
-          <Image source={image ? { uri: image } : currentUser.photo ? { uri: currentUser.photo } : require("../assets/images/profile-pic.png")} style={styles.profileImage} />
-          <TouchableOpacity style={styles.cameraIconContainer} onPress={showAlert}>
+          <Image
+            source={
+              image
+                ? { uri: image }
+                : currentUser.photo
+                ? { uri: currentUser.photo }
+                : require("../assets/images/profile-pic.png")
+            }
+            style={styles.profileImage}
+          />
+          <TouchableOpacity
+            style={styles.cameraIconContainer}
+            onPress={showAlert}
+          >
             <Ionicons name="camera" size={24} color="white" />
           </TouchableOpacity>
         </View>
-        {currentUser ? <Text style={styles.userName}>{currentUser?.fullName}</Text> : <Text style={styles.userName}>Loading...</Text>}
+        {currentUser ? (
+          <Text style={styles.userName}>{currentUser?.fullName}</Text>
+        ) : (
+          <Text style={styles.userName}>Loading...</Text>
+        )}
       </View>
       <View style={styles.menu}>
-        <TouchableOpacity style={[styles.button, { backgroundColor: "#34B566" }]} onPress={() => navigation.navigate("MyMemberships")}>
+        <TouchableOpacity
+          style={[styles.button, { backgroundColor: "#34B566" }]}
+          onPress={() => navigation.navigate("MyMemberships")}
+        >
           <Text style={styles.buttonText}>My Memberships</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("MyCars")}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.navigate("MyCars")}
+        >
           <Text style={styles.buttonText}>My Cars</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.button, { backgroundColor: "#57585A" }]} onPress={handleLogout}>
+        <TouchableOpacity
+          style={[styles.button, { backgroundColor: "#57585A" }]}
+          onPress={handleLogout}
+        >
           <Text style={styles.buttonText}>Log Out</Text>
         </TouchableOpacity>
       </View>

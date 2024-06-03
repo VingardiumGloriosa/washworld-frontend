@@ -1,5 +1,16 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { SafeAreaView, FlatList, Image, StyleSheet, View, Text, ActivityIndicator, TouchableOpacity, PermissionsAndroid, Platform } from "react-native";
+import {
+  SafeAreaView,
+  FlatList,
+  Image,
+  StyleSheet,
+  View,
+  Text,
+  ActivityIndicator,
+  TouchableOpacity,
+  PermissionsAndroid,
+  Platform,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import WashCard from "../components/WashCard";
@@ -9,7 +20,10 @@ import LocationIcon from "../assets/svg/location.svg";
 import MapIcon from "../assets/svg/map.svg";
 import DropDownPicker from "react-native-dropdown-picker";
 import { AppDispatch, RootState } from "../state/store";
-import { calculateDistancesForAllLocations, fetchAllLocations } from "../state/slices/locationsSlice";
+import {
+  calculateDistancesForAllLocations,
+  fetchAllLocations,
+} from "../state/slices/locationsSlice";
 import Geolocation from "react-native-geolocation-service";
 
 const HallScreen = () => {
@@ -23,7 +37,7 @@ const HallScreen = () => {
   const [value, setValue] = useState("any");
   const [items, setItems] = useState([]);
 
-  useEffect(() => {
+  /*useEffect(() => {
     const DEFAULT_LOCATION = {
       latitude: 55.77419181465124,
       longitude: 12.514585695774914,
@@ -75,15 +89,30 @@ const HallScreen = () => {
       ];
       setItems(uniqueLocations);
     }
-  }, [locations]);
+  }, [locations]);*/
 
-  const filteredWashHallData = value === "any" ? locations : locations.filter((item) => item.name.toLowerCase() === value);
+  const filteredWashHallData =
+    value === "any"
+      ? locations
+      : locations.filter((item) => item.name.toLowerCase() === value);
 
   const renderItem = useCallback(({ item }) => {
     // Ensure washHalls and selfWashHalls exist and provide default values if not
-    const washHalls = item.washHalls || { available: 0, total: 0, outOfService: 0, nextAvailable: null };
-    const selfWashHalls = item.selfWashHalls || { available: 0, total: 0, outOfService: 0, nextAvailable: null };
-    const distanceInKm = item.distance ? (item.distance / 1000).toFixed(1) : null;
+    const washHalls = item.washHalls || {
+      available: 0,
+      total: 0,
+      outOfService: 0,
+      nextAvailable: null,
+    };
+    const selfWashHalls = item.selfWashHalls || {
+      available: 0,
+      total: 0,
+      outOfService: 0,
+      nextAvailable: null,
+    };
+    const distanceInKm = item.distance
+      ? (item.distance / 1000).toFixed(1)
+      : null;
     return (
       <WashCard
         key={item.id}
@@ -136,7 +165,11 @@ const HallScreen = () => {
         </TouchableOpacity>
       </View>
       <Title text={"Wash Halls"} Icon={WashHallIcon} width={30} height={30} />
-      <FlatList data={filteredWashHallData} renderItem={renderItem} keyExtractor={(item) => item.id.toString()} />
+      <FlatList
+        data={filteredWashHallData}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id.toString()}
+      />
     </SafeAreaView>
   );
 };
