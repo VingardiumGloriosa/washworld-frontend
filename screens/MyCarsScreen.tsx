@@ -45,7 +45,7 @@ const MyCarsScreen = () => {
   }, []);
 
   useEffect(() => {
-    console.log("currentUser:", currentUser);
+    //console.log("currentUser:", currentUser);
     console.log("fetching cars for user", userId);
     dispatch(fetchCars());
   }, [dispatch, currentUser]);

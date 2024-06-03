@@ -30,7 +30,7 @@ const MyMembershipsScreen = () => {
   const { currentUser } = useSelector((state: RootState) => state.users);
 
   useEffect(() => {
-    console.log("currentUser:", currentUser);
+    //console.log("currentUser:", currentUser);
     dispatch(fetchMembershipTypesData());
   }, [dispatch, currentUser]);
 

@@ -54,7 +54,7 @@ const HallScreen = () => {
             },
           );
           if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-            Geolocation.getCurrentPosition(
+            Geolocation?.getCurrentPosition(
               (position) => {
                 dispatch(calculateDistancesForAllLocations(position.coords));
               },
@@ -63,7 +63,7 @@ const HallScreen = () => {
                 dispatch(calculateDistancesForAllLocations(DEFAULT_LOCATION));
               },
               { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
-            );
+            ); 
           } else {
             console.log('Location permission denied');
             dispatch(calculateDistancesForAllLocations(DEFAULT_LOCATION));
