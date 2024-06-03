@@ -137,13 +137,13 @@ const styles = StyleSheet.create({
   },
   profileImageContainer: {
     position: "relative",
-    width: 100,
-    height: 100,
+    width: 248,
+    height: 248,
   },
   profileImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
+    width: 248,
+    height: 248,
+    borderRadius: 200,
   },
   cameraIconContainer: {
     position: "absolute",
@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
     padding: 4,
   },
   userName: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: "bold",
     marginTop: 10,
     fontFamily: "Gilroy-ExtraBold",

@@ -89,6 +89,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 16,
     color: "#808285",
+    fontFamily: "Gilroy-SemiBold",
   },
 });
 

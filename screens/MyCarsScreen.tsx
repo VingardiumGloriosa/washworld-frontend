@@ -22,7 +22,7 @@ const MyCarsScreen = () => {
   const token = useSelector((state: RootState) => state.users.token);
   const [carToDelete, setCarToDelete] = useState(null);
   const loading = useSelector((state: RootState) => state.cars.loading);
-
+  const [showQRCode, setShowQRCode] = useState({});
   const userId = currentUser?.id;
 
   useEffect(() => {
@@ -42,12 +42,12 @@ const MyCarsScreen = () => {
   const handleAddCar = async () => {
     try {
       const newCarPayload = {
-        userId: 24, // Assuming 24 is the correct user ID
+        userId: userId, // Assuming 24 is the correct user ID
         licensePlate: licensePlate,
         photo: photo,
       };
 
-      console.log(newCarPayload);
+      console.log("new car payload:", newCarPayload);
       dispatch(addCar(newCarPayload));
 
       setPhoto("");
@@ -91,6 +91,13 @@ const MyCarsScreen = () => {
     }
   };
 
+  const toggleQRCode = (carId) => {
+    setShowQRCode((prevShowQRCode) => ({
+      ...prevShowQRCode,
+      [carId]: !prevShowQRCode[carId],
+    }));
+  };
+
   if (loading || !cars) {
     return (
       <View style={styles.loaderContainer}>
@@ -119,14 +126,21 @@ const MyCarsScreen = () => {
             return (
               <View key={index} style={styles.carCardContainer}>
                 {/* QR Code */}
-                <QRCode value={car.qrCodeData} size={250} />
+                {showQRCode[car.id] && <QRCode value={car.qrCodeData} size={250} />}
 
                 {/* Car Image */}
                 {car.photo && <Image src={car.photo} style={styles.photo} />}
-                {/* License Plate Text */}
-                <Text style={styles.licensePlate}>License Plate: {car.licensePlate}</Text>
+                {/* License Plate Text + QR code button */}
+                <View style={styles.infoContainer}>
+                  <View style={styles.leftContainer}>
+                    <Text style={styles.licensePlateText}>{car.licensePlate}</Text>
+                  </View>
+                  <TouchableOpacity style={[styles.rightContainer, showQRCode[car.id] ? styles.showQRCodeButton : null]} onPress={() => toggleQRCode(car.id)}>
+                    <Text style={styles.qrCodeButtonText}>{showQRCode[car.id] ? "Hide QR code" : "Show QR code"}</Text>
+                  </TouchableOpacity>
+                </View>
                 {/* Delete Button */}
-                <TouchableOpacity onPress={() => handleDeleteCar(car)}>
+                <TouchableOpacity onPress={() => handleDeleteCar(car)} style={styles.deleteButton}>
                   <Text style={styles.deleteText}>Delete</Text>
                 </TouchableOpacity>
               </View>
@@ -186,7 +200,7 @@ const MyCarsScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: "#F2F3F4",
+    backgroundColor: "#fff",
     padding: 16,
     position: "relative",
     paddingBottom: 80,
@@ -254,15 +268,46 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 10,
   },
-  licensePlate: {
+  infoContainer: {
+    flexDirection: "row",
+    marginTop: 20,
+    overflow: "hidden",
+    backgroundColor: "#F2F3F4",
+    marginBottom: 15,
+  },
+  leftContainer: {
+    flex: 2,
+    paddingVertical: 25,
+    justifyContent: "center",
+  },
+  rightContainer: {
+    flex: 2,
+    backgroundColor: "#34B566",
+    justifyContent: "center",
+    transform: [{ skewX: "-30deg" }],
+    marginRight: -20,
+    paddingRight: 15,
+  },
+  showQRCodeButton: {
+    backgroundColor: "#808285",
+  },
+  licensePlateText: {
+    color: "#1E1E1E",
     fontFamily: "Gilroy-Heavy",
-    fontSize: 20,
+    fontSize: 18,
+    textAlign: "left",
+  },
+  qrCodeButtonText: {
+    color: "#fff",
+    fontFamily: "Gilroy-SemiBold",
+    fontSize: 16,
+    textAlign: "center",
+    transform: [{ skewX: "30deg" }],
   },
   deleteText: {
-    fontFamily: "Gilroy-Heavy",
+    fontFamily: "Gilroy-SemiBold",
     fontSize: 16,
-    color: "red",
-    marginTop: 10,
+    color: "#fff",
   },
   button: {
     backgroundColor: "#808285",
@@ -350,7 +395,7 @@ const styles = StyleSheet.create({
     fontFamily: "Gilroy-Medium",
   },
   deleteButton: {
-    backgroundColor: "red",
+    backgroundColor: "#E3513A",
     color: "white",
     fontSize: 16,
     fontWeight: "bold",

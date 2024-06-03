@@ -81,6 +81,7 @@ export default function App() {
         await Font.loadAsync({
           "Gilroy-Regular": require("./assets/fonts/Gilroy-Regular.otf"),
           "Gilroy-Medium": require("./assets/fonts/Gilroy-Medium.otf"),
+          "Gilroy-SemiBold": require("./assets/fonts/Gilroy-SemiBold.otf"),
           "Gilroy-ExtraBold": require("./assets/fonts/Gilroy-ExtraBold.otf"),
           "Gilroy-Heavy": require("./assets/fonts/Gilroy-Heavy.otf"),
         });

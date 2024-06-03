@@ -188,21 +188,21 @@ const styles = StyleSheet.create({
   },
   membershipText: {
     color: "#1E1E1E",
-    fontFamily: "Gilroy-Regular",
+    fontFamily: "Gilroy-SemiBold",
     fontSize: 18,
     textAlign: "center", // Center text horizontally
   },
   pausedText: {
     fontWeight: "bold",
     color: "#ff0000",
-    fontFamily: "Gilroy-Regular",
+    fontFamily: "Gilroy-SemiBold",
     fontSize: 18,
     textAlign: "center",
   },
   priceText: {
     color: "#fff",
-    fontFamily: "Gilroy-Regular",
-    fontSize: 18,
+    fontFamily: "Gilroy-Medium",
+    fontSize: 16,
     textAlign: "center", // Center text horizontally
     transform: [{ skewX: "30deg" }],
   },

@@ -1,7 +1,6 @@
 // api.ts
 import axios, { AxiosError } from "axios";
 import { Car } from "./slices/carSlice";
-import axiosInstance from "./axiosConfig";
 import * as SecureStore from "expo-secure-store";
 import Config from "react-native-config";
 
