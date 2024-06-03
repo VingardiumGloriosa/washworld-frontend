@@ -1,15 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Image,
-  ScrollView,
-  Modal,
-  TextInput,
-  Alert,
-} from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, Modal, TextInput, Alert, ActivityIndicator } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import ArrowIcon from "../assets/svg/leftArrow.svg";
 import CarIcon from "../assets/svg/car.svg";
@@ -24,16 +14,15 @@ const MyCarsScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const cars = useSelector((state: RootState) => state.cars.cars);
-  const { currentUser, isAuthenticated } = useSelector(
-    (state: RootState) => state.users
-  );
+  const { currentUser, isAuthenticated } = useSelector((state: RootState) => state.users);
   const [modalVisible, setModalVisible] = useState(false);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [photo, setPhoto] = useState("");
   const [licensePlate, setLicensePlate] = useState("");
   const token = useSelector((state: RootState) => state.users.token);
   const [carToDelete, setCarToDelete] = useState(null);
-
+  const loading = useSelector((state: RootState) => state.cars.loading);
+  const [showQRCode, setShowQRCode] = useState({});
   const userId = currentUser?.id;
 
   useEffect(() => {
@@ -53,12 +42,12 @@ const MyCarsScreen = () => {
   const handleAddCar = async () => {
     try {
       const newCarPayload = {
-        userId: 24, // Assuming 24 is the correct user ID
+        userId: userId, // Assuming 24 is the correct user ID
         licensePlate: licensePlate,
         photo: photo,
       };
 
-      console.log(newCarPayload);
+      console.log("new car payload:", newCarPayload);
       dispatch(addCar(newCarPayload));
 
       setPhoto("");
@@ -102,13 +91,25 @@ const MyCarsScreen = () => {
     }
   };
 
+  const toggleQRCode = (carId) => {
+    setShowQRCode((prevShowQRCode) => ({
+      ...prevShowQRCode,
+      [carId]: !prevShowQRCode[carId],
+    }));
+  };
+
+  if (loading || !cars) {
+    return (
+      <View style={styles.loaderContainer}>
+        <ActivityIndicator size="large" color="#34B566" />
+      </View>
+    );
+  }
+
   return (
     <View>
       <ScrollView contentContainerStyle={styles.container}>
-        <TouchableOpacity
-          style={styles.arrowContainer}
-          onPress={() => navigation.goBack()}
-        >
+        <TouchableOpacity style={styles.arrowContainer} onPress={() => navigation.goBack()}>
           <ArrowIcon width={25} height={25} fill={"#808285"} />
         </TouchableOpacity>
 
@@ -125,16 +126,21 @@ const MyCarsScreen = () => {
             return (
               <View key={index} style={styles.carCardContainer}>
                 {/* QR Code */}
-                <QRCode value={car.qrCodeData} size={250} />
+                {showQRCode[car.id] && <QRCode value={car.qrCodeData} size={250} />}
 
                 {/* Car Image */}
                 {car.photo && <Image src={car.photo} style={styles.photo} />}
-                {/* License Plate Text */}
-                <Text style={styles.licensePlate}>
-                  License Plate: {car.licensePlate}
-                </Text>
+                {/* License Plate Text + QR code button */}
+                <View style={styles.infoContainer}>
+                  <View style={styles.leftContainer}>
+                    <Text style={styles.licensePlateText}>{car.licensePlate}</Text>
+                  </View>
+                  <TouchableOpacity style={[styles.rightContainer, showQRCode[car.id] ? styles.showQRCodeButton : null]} onPress={() => toggleQRCode(car.id)}>
+                    <Text style={styles.qrCodeButtonText}>{showQRCode[car.id] ? "Hide QR code" : "Show QR code"}</Text>
+                  </TouchableOpacity>
+                </View>
                 {/* Delete Button */}
-                <TouchableOpacity onPress={() => handleDeleteCar(car)}>
+                <TouchableOpacity onPress={() => handleDeleteCar(car)} style={styles.deleteButton}>
                   <Text style={styles.deleteText}>Delete</Text>
                 </TouchableOpacity>
               </View>
@@ -148,37 +154,19 @@ const MyCarsScreen = () => {
             <View style={styles.modalContainer}>
               <Text style={styles.modalTitle}>Add a New Car</Text>
               {/* License Plate Input */}
-              <TextInput
-                style={styles.input}
-                placeholder="License Plate"
-                value={licensePlate}
-                onChangeText={setLicensePlate}
-              />
+              <TextInput style={styles.input} placeholder="License Plate" value={licensePlate} onChangeText={setLicensePlate} />
 
               {/* Hidden User ID */}
-              <TextInput
-                style={styles.hiddenInput}
-                value={`${userId}`}
-                editable={false}
-              />
+              <TextInput style={styles.hiddenInput} value={`${userId}`} editable={false} />
 
-              <TouchableOpacity
-                style={styles.cameraButton}
-                onPress={openCamera}
-              >
+              <TouchableOpacity style={styles.cameraButton} onPress={openCamera}>
                 <Text style={styles.cameraButtonText}>Take photo of car</Text>
               </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.submitButton}
-                onPress={handleAddCar}
-              >
+              <TouchableOpacity style={styles.submitButton} onPress={handleAddCar}>
                 <Text style={styles.submitButtonText}>Submit</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity
-                style={styles.cancelButton}
-                onPress={handleCancel}
-              >
+              <TouchableOpacity style={styles.cancelButton} onPress={handleCancel}>
                 <Text style={styles.cancelButtonText}>Cancel</Text>
               </TouchableOpacity>
             </View>
@@ -186,25 +174,15 @@ const MyCarsScreen = () => {
         </Modal>
 
         {/* Delete Modal */}
-        <Modal
-          visible={deleteModalVisible}
-          animationType="slide"
-          transparent={true}
-        >
+        <Modal visible={deleteModalVisible} animationType="slide" transparent={true}>
           <View style={styles.modalOverlay}>
             <View style={styles.modalContainer}>
               <Text style={styles.modalTitle}>Confirm Delete</Text>
               <Text>Are you sure you want to delete this car?</Text>
-              <TouchableOpacity
-                style={styles.deleteButton}
-                onPress={confirmDeleteCar}
-              >
+              <TouchableOpacity style={styles.deleteButton} onPress={confirmDeleteCar}>
                 <Text style={styles.deleteButtonText}>Delete</Text>
               </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.cancelButton}
-                onPress={() => setDeleteModalVisible(false)}
-              >
+              <TouchableOpacity style={styles.cancelButton} onPress={() => setDeleteModalVisible(false)}>
                 <Text style={styles.cancelButtonText}>Cancel</Text>
               </TouchableOpacity>
             </View>
@@ -212,10 +190,7 @@ const MyCarsScreen = () => {
         </Modal>
       </ScrollView>
       {/* Add Car Button */}
-      <TouchableOpacity
-        style={styles.buttonContainer}
-        onPress={() => setModalVisible(true)}
-      >
+      <TouchableOpacity style={styles.buttonContainer} onPress={() => setModalVisible(true)}>
         <Text style={styles.buttonText}>Add car</Text>
       </TouchableOpacity>
     </View>
@@ -225,12 +200,17 @@ const MyCarsScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: "#F2F3F4",
+    backgroundColor: "#fff",
     padding: 16,
     position: "relative",
     paddingBottom: 80,
   },
-
+  loaderContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "white",
+  },
   buttonContainer: {
     position: "absolute",
     bottom: 10, // Adjust the bottom position to set the distance from the bottom
@@ -288,15 +268,46 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 10,
   },
-  licensePlate: {
+  infoContainer: {
+    flexDirection: "row",
+    marginTop: 20,
+    overflow: "hidden",
+    backgroundColor: "#F2F3F4",
+    marginBottom: 15,
+  },
+  leftContainer: {
+    flex: 2,
+    paddingVertical: 25,
+    justifyContent: "center",
+  },
+  rightContainer: {
+    flex: 2,
+    backgroundColor: "#34B566",
+    justifyContent: "center",
+    transform: [{ skewX: "-30deg" }],
+    marginRight: -20,
+    paddingRight: 15,
+  },
+  showQRCodeButton: {
+    backgroundColor: "#808285",
+  },
+  licensePlateText: {
+    color: "#1E1E1E",
     fontFamily: "Gilroy-Heavy",
-    fontSize: 20,
+    fontSize: 18,
+    textAlign: "left",
+  },
+  qrCodeButtonText: {
+    color: "#fff",
+    fontFamily: "Gilroy-SemiBold",
+    fontSize: 16,
+    textAlign: "center",
+    transform: [{ skewX: "30deg" }],
   },
   deleteText: {
-    fontFamily: "Gilroy-Heavy",
+    fontFamily: "Gilroy-SemiBold",
     fontSize: 16,
-    color: "red",
-    marginTop: 10,
+    color: "#fff",
   },
   button: {
     backgroundColor: "#808285",
@@ -309,11 +320,6 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     marginTop: 20,
     width: "90%",
-  },
-  buttonText: {
-    color: "white",
-    fontSize: 16,
-    fontFamily: "Gilroy-Medium",
   },
   modalOverlay: {
     flex: 1,
@@ -389,7 +395,7 @@ const styles = StyleSheet.create({
     fontFamily: "Gilroy-Medium",
   },
   deleteButton: {
-    backgroundColor: "red",
+    backgroundColor: "#E3513A",
     color: "white",
     fontSize: 16,
     fontWeight: "bold",

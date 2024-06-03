@@ -4,7 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import Logo from "../assets/svg/logo.svg";
 import { AppDispatch, RootState } from "../state/store";
 import { useDispatch, useSelector } from "react-redux";
-import { login, setToken } from "../state/slices/userSlice";
+import { login, setError, setToken } from "../state/slices/userSlice";
 import * as SecureStore from "expo-secure-store";
 
 export default function Login() {
@@ -33,7 +33,11 @@ export default function Login() {
       setPassword("");
     } catch (error) {
       console.error("Login failed:", error);
-      Alert.alert("Login Failed", error.message || "Invalid email or password");
+      if (error.message === "INVALID_CREDENTIALS") {
+        dispatch(setError("INVALID_CREDENTIALS"));
+      } else {
+        dispatch(setError("UNKNOWN_ERROR"));
+      }
     }
   };
 
@@ -52,28 +56,12 @@ export default function Login() {
       <Logo width={160} height={80} />
       <Text style={styles.subHeader}>Log in</Text>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Enter email"
-        value={email}
-        onChangeText={setEmail}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Enter password"
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-      />
+      <TextInput style={styles.input} placeholder="Enter email" value={email} onChangeText={setEmail} />
+      <TextInput style={styles.input} placeholder="Enter password" secureTextEntry value={password} onChangeText={setPassword} />
 
       {loading && <Text>Loading...</Text>}
-      {error && <Text style={styles.errorText}>{error}</Text>}
-
-      <TouchableOpacity
-        style={[styles.button, isButtonDisabled && styles.buttonDisabled]}
-        onPress={handleLogin}
-        disabled={isButtonDisabled}
-      >
+      {error && <Text style={styles.errorText}>{error === "INVALID_CREDENTIALS" ? "Invalid email or password. Please try again." : "Invalid email or password. Please try again."}</Text>}
+      <TouchableOpacity style={[styles.button, isButtonDisabled && styles.buttonDisabled]} onPress={handleLogin} disabled={isButtonDisabled}>
         <Text style={styles.buttonText}>Log in</Text>
       </TouchableOpacity>
 
@@ -133,4 +121,3 @@ const styles = StyleSheet.create({
     color: "red",
   },
 });
-

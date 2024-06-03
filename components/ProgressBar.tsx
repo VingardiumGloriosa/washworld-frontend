@@ -10,14 +10,7 @@ interface ProgressBarProps {
   fillColor: string;
 }
 
-const ProgressBar: React.FC<ProgressBarProps> = ({
-  text,
-  progress,
-  width,
-  height,
-  backgroundColor,
-  fillColor,
-}) => {
+const ProgressBar: React.FC<ProgressBarProps> = ({ text, progress, width, height, backgroundColor, fillColor }) => {
   const filledWidth = width * progress;
   return (
     <View>
@@ -52,11 +45,11 @@ const styles = StyleSheet.create({
     left: 0,
   },
   progressText: {
-    fontSize: 16,
+    fontSize: 14,
     textAlign: "left",
     fontWeight: "bold",
     marginRight: 60,
-    fontFamily: "Gilroy-ExtraBold",
+    fontFamily: "Gilroy-SemiBold",
   },
 });
 
