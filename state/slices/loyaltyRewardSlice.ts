@@ -45,17 +45,26 @@ const loyaltyRewardSlice = createSlice({
         state.loading = false;
         const updatedReward = action.payload;
         console.log("Received updated reward:", updatedReward);
+
+        const newRewards = state.rewards.map(reward => {
+            if(reward.id !== updatedReward.id) return reward;
+
+            reward.isActive = updatedReward.isActive;
+            return reward;
+        });
+
+        state.rewards = newRewards
         
         // Find the index of the reward with the matching id
-        const index = state.rewards.findIndex((reward) => reward.id === updatedReward.id);
+        // const index = state.rewards.findIndex((reward) => reward.id === updatedReward.id);
         
-        if (index !== -1) {
-            // Update the isActive state of the reward
-            state.rewards[index].isActive = updatedReward.isActive;
-            console.log("Reward state is:", state.rewards[index].isActive);
-        } else {
-            state.rewards.push(updatedReward);
-        }
+        // if (index !== -1) {
+        //     // Update the isActive state of the reward
+        //     state.rewards[index].isActive = updatedReward.isActive;
+        //     console.log("Reward state is:", state.rewards[index].isActive);
+        // } else {
+        //     state.rewards.push(updatedReward);
+        // }
         
         state.error = null;
     })
