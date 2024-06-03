@@ -10,25 +10,18 @@ import ProfileIcon from "./assets/svg/profile.svg";
 import * as Font from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import HallStack from "./navigation/HallStack";
-/* import CarStack from "./navigation/CarStack"; */
-import LoginScreen from "./screens/LoginScreen";
-import SignUpScreen from "./screens/SignupScreen";
 import { Provider } from "react-redux";
 import { store } from "./state/store";
 import ProfileStack from "./navigation/ProfileStack";
-import { checkAuthentication } from "./state/slices/userSlice";
 import LoginSignupStack from "./navigation/LoginSignupStack";
 import { useAppDispatch, useAppSelector } from "./state/hooks";
+import GlobalLoader from "./components/GlobalLoader";
 
 const Tab = createBottomTabNavigator();
 
 function AppNavigator() {
   const dispatch = useAppDispatch();
   const isAuthenticated = useAppSelector((state) => state.users.isAuthenticated);
-
-  useEffect(() => {
-    dispatch(checkAuthentication());
-  }, [dispatch]);
 
   if (!isAuthenticated) {
     return <LoginSignupStack />;
@@ -83,6 +76,7 @@ export default function App() {
         await Font.loadAsync({
           "Gilroy-Regular": require("./assets/fonts/Gilroy-Regular.otf"),
           "Gilroy-Medium": require("./assets/fonts/Gilroy-Medium.otf"),
+          "Gilroy-SemiBold": require("./assets/fonts/Gilroy-SemiBold.otf"),
           "Gilroy-ExtraBold": require("./assets/fonts/Gilroy-ExtraBold.otf"),
           "Gilroy-Heavy": require("./assets/fonts/Gilroy-Heavy.otf"),
         });
@@ -105,6 +99,7 @@ export default function App() {
     <Provider store={store}>
       <NavigationContainer>
         <AppNavigator />
+        <GlobalLoader />
       </NavigationContainer>
     </Provider>
   );

@@ -1,32 +1,16 @@
 import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Image,
-  ScrollView,
-  Alert,
-} from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, Alert, ActivityIndicator } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  fetchMembershipTypesData,
-  addMembership,
-  removeMembership,
-  togglePauseMembership,
-} from "../state/slices/membershipsSlice";
+import { fetchMembershipTypesData, addMembership, removeMembership, togglePauseMembership } from "../state/slices/membershipsSlice";
 import ArrowIcon from "../assets/svg/leftArrow.svg";
 import { RootState, AppDispatch } from "../state/store";
 
 const MyMembershipsScreen = () => {
   const [image, setImage] = useState<string | null>(null);
-
   const navigation = useNavigation();
   const dispatch: AppDispatch = useDispatch();
-
-  const { membershipTypes, loading, error, activeMembership, isPaused } =
-    useSelector((state: RootState) => state.memberships);
+  const { membershipTypes, loading, error, activeMembership, isPaused } = useSelector((state: RootState) => state.memberships);
   const { currentUser } = useSelector((state: RootState) => state.users);
 
   useEffect(() => {
@@ -56,11 +40,7 @@ const MyMembershipsScreen = () => {
     console.log("Updating membership for", currentUser.fullName, "to", membershipTypeId);
     if (currentUser) {
       if (currentUser.membership_id) {
-        Alert.alert(
-          "Cannot Update Membership",
-          "You must cancel your current membership before updating to a new one.",
-          [{ text: "OK" }]
-        );
+        Alert.alert("Cannot Update Membership", "You must cancel your current membership before updating to a new one.", [{ text: "OK" }]);
       } else {
         console.log('membership type id: ' + membershipTypeId)
         dispatch(addMembership({membershipTypeId} ));
@@ -68,39 +48,28 @@ const MyMembershipsScreen = () => {
     }
   };
 
+  if (loading) {
+    return (
+      <View style={styles.loaderContainer}>
+        <ActivityIndicator size="large" color="#34B566" />
+      </View>
+    );
+  }
+
   return (
     <ScrollView contentContainerStyle={styles.scrollViewContainer}>
       <View style={styles.container}>
-        <TouchableOpacity
-          style={styles.arrowContainer}
-          onPress={() => navigation.goBack()}
-        >
+        <TouchableOpacity style={styles.arrowContainer} onPress={() => navigation.goBack()}>
           <ArrowIcon width={25} height={25} fill={"#808285"} />
         </TouchableOpacity>
-        <Image
-          source={
-            image
-              ? { uri: image }
-              : currentUser.photo
-              ? { uri: `${currentUser.photo}` }
-              : require("../assets/images/profile-pic.png")
-          }
-          style={styles.profileImage}
-        />
+        <Image source={image ? { uri: image } : currentUser.photo ? { uri: `${currentUser.photo}` } : require("../assets/images/profile-pic.png")} style={styles.profileImage} />
         <Text style={styles.carrieTitle}>{currentUser?.fullName}</Text>
         <Text style={styles.membershipsTitle}>My Memberships</Text>
         {activeMembership ? (
           <View>
-            <View
-              style={[
-                styles.membershipContainer,
-                isPaused && styles.pausedMembership,
-              ]}
-            >
+            <View style={[styles.membershipContainer, isPaused && styles.pausedMembership]}>
               <View style={styles.leftContainer}>
-                <Text style={styles.membershipText}>
-                  {activeMembership.name}
-                </Text>
+                <Text style={styles.membershipText}>{activeMembership.name}</Text>
                 {isPaused && <Text style={styles.pausedText}>Paused</Text>}
               </View>
               <View style={styles.rightContainer}>
@@ -109,49 +78,29 @@ const MyMembershipsScreen = () => {
                 </Text>
               </View>
             </View>
-            <Text style={styles.membershipsTitle}>
-              Next payment charge is due May 8th Active since 2023 December 8th
-            </Text>
+            <Text style={styles.membershipsTitle}>Next payment charge is due May 8th Active since 2023 December 8th</Text>
             <Text style={styles.membershipDesription}>Billing Details</Text>
             <Text style={styles.membershipDesription}>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam
-              egestas turpis libero, placerat pharetra lectus vestibulum a.
-              Donec elementum, metus vitae porttitor efficitur, mauris ex
-              hendrerit velit, vel tempus lorem turpis vitae arcu.
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam egestas turpis libero, placerat pharetra lectus vestibulum a. Donec elementum, metus vitae porttitor efficitur, mauris ex hendrerit velit, vel tempus lorem turpis vitae
+              arcu.
             </Text>
           </View>
         ) : (
-          <Text style={styles.noMembershipText}>
-            You don't have an active subscription.
-          </Text>
+          <Text style={styles.noMembershipText}>You don't have an active subscription.</Text>
         )}
         {activeMembership && (
           <View style={styles.membershipContainer}>
-            <TouchableOpacity
-              style={styles.leftContainer}
-              onPress={handlePauseMembership}
-            >
-              <Text style={styles.membershipText}>
-                {isPaused ? "Resume" : "Pause"}
-              </Text>
+            <TouchableOpacity style={styles.leftContainer} onPress={handlePauseMembership}>
+              <Text style={styles.membershipText}>{isPaused ? "Resume" : "Pause"}</Text>
             </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.rightContainerOrange}
-              onPress={handleCancelMembership}
-            >
+            <TouchableOpacity style={styles.rightContainerOrange} onPress={handleCancelMembership}>
               <Text style={styles.priceText}>Cancel</Text>
             </TouchableOpacity>
           </View>
         )}
-        <Text style={styles.membershipsTitle2}>
-          Upgrade/downgrade membership
-        </Text>
+        <Text style={styles.membershipsTitle2}>Upgrade/downgrade membership</Text>
         {membershipTypes.map((membership) => (
-          <TouchableOpacity
-            key={membership.id}
-            style={styles.membershipContainer}
-            onPress={() => handleUpdateMembership(membership.id)}
-          >
+          <TouchableOpacity key={membership.id} style={styles.membershipContainer} onPress={() => handleUpdateMembership(membership.id)}>
             <View style={styles.leftContainer}>
               <Text style={styles.membershipText}>{membership.name}</Text>
             </View>
@@ -175,6 +124,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "white",
     padding: 16,
+  },
+  loaderContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "white",
   },
   arrowContainer: {
     position: "absolute",
@@ -234,21 +189,21 @@ const styles = StyleSheet.create({
   },
   membershipText: {
     color: "#1E1E1E",
-    fontFamily: "Gilroy-Regular",
+    fontFamily: "Gilroy-SemiBold",
     fontSize: 18,
     textAlign: "center", // Center text horizontally
   },
   pausedText: {
     fontWeight: "bold",
     color: "#ff0000",
-    fontFamily: "Gilroy-Regular",
+    fontFamily: "Gilroy-SemiBold",
     fontSize: 18,
     textAlign: "center",
   },
   priceText: {
     color: "#fff",
-    fontFamily: "Gilroy-Regular",
-    fontSize: 18,
+    fontFamily: "Gilroy-Medium",
+    fontSize: 16,
     textAlign: "center", // Center text horizontally
     transform: [{ skewX: "30deg" }],
   },

@@ -1,13 +1,12 @@
 // api.ts
 import axios, { AxiosError } from "axios";
 import { Car } from "./slices/carSlice";
-import axiosInstance from "./axiosConfig";
 import * as SecureStore from "expo-secure-store";
 import Config from "react-native-config";
 
 // Base URL of your API
 
-export const API_URL = "http://192.168.8.5:3005"; //"http://172.20.10.3:3005"; //'http://localhost:3005'; //'http://192.168.68.66:3005' //
+export const API_URL = "http://192.168.1.102:3005"; //"http://172.20.10.3:3005"; //'http://localhost:3005'; //'http://192.168.68.66:3005' //
 
 const handleError = (error: AxiosError) => {
   console.error("API request failed:", error.message);
@@ -118,10 +117,7 @@ export const deleteUserCar = async (carId: number) => {
 
 // LOYALTY REWARDS
 
-export const toggleLoyaltyReward = async (
-  rewardId: number,
-  isActive: boolean
-) => {
+export const toggleLoyaltyReward = async (rewardId: number, isActive: boolean) => {
   const token = await SecureStore.getItemAsync("token");
   const response = await axios.patch(
     `${API_URL}/users/loyalty-rewards/${rewardId}`,
@@ -164,16 +160,9 @@ export const fetchLocation = async (locationId: number) => {
   }
 };
 
-export const calculateDistances = async (
-  latitude: number,
-  longitude: number
-): Promise<{ id: number; distance: number }[]> => {
+export const calculateDistances = async (latitude: number, longitude: number): Promise<{ id: number; distance: number }[]> => {
   try {
-    const response = await axios.post<{ id: number; distance: number }[]>(
-      `${API_URL}/distances`,
-      { latitude, longitude },
-      { headers: { "Content-Type": "application/json" } }
-    );
+    const response = await axios.post<{ id: number; distance: number }[]>(`${API_URL}/distances`, { latitude, longitude }, { headers: { "Content-Type": "application/json" } });
     return response.data;
   } catch (error) {
     handleError(error);
@@ -226,16 +215,12 @@ export const deleteMembership = async (userId: number) => {
 export const pauseMembership = async (userId: number) => {
   try {
     const token = await SecureStore.getItemAsync("token");
-    const response = await axios.patch(
-      `${API_URL}/users/membership/pause`,
-      null,
-      {
-        //CHECK IF WE HAVE THIS ENDPOINT - DUMMY FUNCTION
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const response = await axios.patch(`${API_URL}/users/membership/pause`, null, {
+      //CHECK IF WE HAVE THIS ENDPOINT - DUMMY FUNCTION
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     return response.data;
   } catch (error) {
     handleError(error);
@@ -245,16 +230,12 @@ export const pauseMembership = async (userId: number) => {
 export const resumeMembership = async (userId: number) => {
   try {
     const token = await SecureStore.getItemAsync("token");
-    const response = await axios.patch(
-      `${API_URL}/users/membership/resume`,
-      null,
-      {
-        //CHECK IF WE HAVE THIS ENDPOINT - DUMMY FUNCTION
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const response = await axios.patch(`${API_URL}/users/membership/resume`, null, {
+      //CHECK IF WE HAVE THIS ENDPOINT - DUMMY FUNCTION
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     return response.data;
   } catch (error) {
     handleError(error);
